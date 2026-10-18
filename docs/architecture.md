@@ -44,6 +44,10 @@ This document describes how the app is put together technically: which modules e
 
 ## Modules and responsibilities
 
+The Xcode project is generated from `project.yml` with XcodeGen and is not in
+git, so adding a file means adding a file — not resolving a conflict in a
+project file. One app target, one test target.
+
 ### `App/`
 - `WinterApp`: the entry point. Builds the `ModelContainer` and the services, and injects them through the SwiftUI environment.
 - Decides which root screen is shown: **Setup** while the configuration is incomplete, otherwise **Home**.

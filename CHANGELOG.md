@@ -14,5 +14,11 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - Mockups of eight screens.
 - Proxy (Cloudflare Worker) for the zweef.app API key.
 
+- Xcode project generated with XcodeGen from `project.yml`; universal iPhone and iPad app target, a Swift Testing target, and a String Catalog with `en`, `nl` and `fr`.
+- Domain rules as pure functions with tests: session duration and flags, decimal hours, duration text per language, the closing time (including both daylight-saving nights), and the zweef.app registration description with its dedup tag.
+- SwiftData models and `SessionStore`: start, stop (also someone else's timer), undo, close the day including earlier unclosed days, and automatic stop at the closing time.
+- Sample club data for previews and tests.
+
 ### Changed
 - All repository documentation is written in English.
+- `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.

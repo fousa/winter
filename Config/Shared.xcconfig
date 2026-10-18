@@ -1,5 +1,8 @@
 // Shared build settings. Personal values live in Local.xcconfig (not in git).
-#include? "Local.xcconfig"
+// Defaults first, then Local.xcconfig, so a fresh clone builds without any setup
+// and your own values still win.
+BUNDLE_ID_PREFIX = com.example
+DEVELOPMENT_TEAM =
 
 PRODUCT_BUNDLE_IDENTIFIER = $(BUNDLE_ID_PREFIX).winter
 IPHONEOS_DEPLOYMENT_TARGET = 26.0
@@ -9,3 +12,5 @@ SWIFT_VERSION = 6.0
 TARGETED_DEVICE_FAMILY = 1,2
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+
+#include? "Local.xcconfig"

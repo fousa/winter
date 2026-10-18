@@ -43,7 +43,7 @@ The app is generic: everything club-specific (name, members, aircraft, period) c
 |---|---|
 | `period_id` | The active period at the moment of upload (cached; fetched again when in doubt) |
 | `user_id`, `user_name` | The member (`zweefId`, full name) |
-| `date` | `yyyy-MM-dd` of `start` in Europe/Brussels |
+| `date` | `yyyy-MM-dd` of `start` in the device's own time zone, which is what defines "the day" for the club (Europe/Brussels for the clubs this targets) |
 | `hours` | The duration in hours, two decimals (2h15 → 2.25). Rounding: the exact minutes, unless the club decides otherwise |
 | `material_id` | The chosen aircraft, or `null` |
 | `workorder_id` | `null` |

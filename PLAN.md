@@ -2,20 +2,22 @@
 
 Work phase by phase; after each phase, make sure the app builds and the tests pass.
 
+`Winter.xcodeproj` is generated: run `xcodegen generate` after cloning or after adding files.
+
 ## Phase 0 — Project
-- [ ] Xcode project "Winter" (iOS/iPadOS 26, SwiftUI, Swift 6, universal iPhone + iPad, all orientations). Preferably generated with XcodeGen (`project.yml`) so Claude Code can manage it.
-- [ ] Folder structure as described in CLAUDE.md; String Catalog with `en` as the source language plus `nl` and `fr`.
-- [ ] Test target with Swift Testing.
+- [x] Xcode project "Winter" (iOS/iPadOS 26, SwiftUI, Swift 6, universal iPhone + iPad, all orientations). Preferably generated with XcodeGen (`project.yml`) so Claude Code can manage it.
+- [x] Folder structure as described in CLAUDE.md; String Catalog with `en` as the source language plus `nl` and `fr`.
+- [x] Test target with Swift Testing.
 
 ## Phase 0b — Open source
-- [ ] Git repository with README, LICENSE, .gitignore, `Config/*.xcconfig` (no secrets).
+- [x] Git repository with README, LICENSE, .gitignore, `Config/*.xcconfig` (no secrets).
 - [ ] A check in CI or pre-commit that no tokens or keys end up in commits (e.g. gitleaks).
 
 ## Phase 1 — Domain and storage
-- [ ] SwiftData models from `docs/data-model.md`.
-- [ ] Domain rules as pure functions + tests (duration, decimal hours, flags, closing time, canCloseDay, description).
-- [ ] `SessionStore`: start, stop (including someone else's timer), undo within 10 s, close the day, auto-stop.
-- [ ] Seed with sample members for previews and first tests.
+- [x] SwiftData models from `docs/data-model.md`.
+- [x] Domain rules as pure functions + tests (duration, decimal hours, flags, closing time, canCloseDay, description).
+- [x] `SessionStore`: start, stop (including someone else's timer), undo, close the day, auto-stop. The 10-second undo *window* is a UI concern and lands with `Confirmation` in phase 2.
+- [x] Seed with sample members for previews and first tests.
 
 ## Phase 2 — UI with fake data
 - [ ] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.

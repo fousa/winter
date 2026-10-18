@@ -1,0 +1,81 @@
+# XcodeGen project definition. Winter.xcodeproj is generated from this file and
+# is not in git: run `xcodegen generate` after changing it (see CONTRIBUTING.md).
+name: Winter
+
+options:
+  bundleIdPrefix: com.example
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "26.0"
+  groupSortPosition: top
+
+configs:
+  Debug: debug
+  Release: release
+
+configFiles:
+  Debug: Config/Shared.xcconfig
+  Release: Config/Shared.xcconfig
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  Winter:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Configuration
+      - path: Data
+      - path: DesignSystem
+        excludes: ["**/*.md"]
+      - path: Domain
+      - path: Features
+        excludes: ["**/*.md"]
+      - path: Resources
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Winter
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        # The app ships in these three languages only. See ADR 0010.
+        INFOPLIST_KEY_CFBundleLocalizations: en nl fr
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        DEVELOPMENT_ASSET_PATHS: ""
+
+  WinterTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: Winter
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  Winter:
+    build:
+      targets:
+        Winter: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - WinterTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

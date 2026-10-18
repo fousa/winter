@@ -28,8 +28,9 @@ Each device keeps its own hours and uploads them itself. A timer that is running
 Every setting is documented in [`docs/configuration.md`](docs/configuration.md), including MDM configuration.
 
 ## Building it yourself
-1. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and fill in your `DEVELOPMENT_TEAM` and `BUNDLE_ID_PREFIX`.
-2. Open the project in Xcode 26 and build it for your iPhone or iPad.
+1. Install [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`.
+2. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and fill in your `DEVELOPMENT_TEAM` and `BUNDLE_ID_PREFIX`. (Optional: it builds under `com.example` without this.)
+3. Run `xcodegen generate` to create `Winter.xcodeproj`, then open it in Xcode 26 and build it for your iPhone or iPad.
 
 ## Documentation
 Everything lives in [`docs/`](docs/README.md): the installation guide for clubs, configuration, the functional specification, architecture, data model, synchronisation, the zweef.app API, design, and the [design decisions](docs/decisions/README.md).

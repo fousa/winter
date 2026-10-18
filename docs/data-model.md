@@ -4,7 +4,8 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
 
 ```swift
 @Model final class Member {
-    @Attribute(.unique) var zweefId: Int
+    #Unique<Member>([\.zweefId])
+    var zweefId: Int
     var firstName: String
     var lastName: String
     var isActive: Bool
@@ -15,7 +16,8 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
 }
 
 @Model final class Aircraft {     // from material.json
-    @Attribute(.unique) var zweefId: Int
+    #Unique<Aircraft>([\.zweefId])
+    var zweefId: Int
     var name: String              // e.g. "ASK 21"
     var registration: String?
     var isGlider: Bool
@@ -33,7 +35,8 @@ enum SyncState: String, Codable {
 }
 
 @Model final class WorkSession {
-    @Attribute(.unique) var id: UUID
+    #Unique<WorkSession>([\.id])
+    var id: UUID
     var memberId: Int
     var start: Date
     var stop: Date?
@@ -62,7 +65,8 @@ enum SyncState: String, Codable {
 // - managed configuration (MDM) takes precedence and is read-only
 
 @Model final class TaskDefinition {  // the configurable task list
-    @Attribute(.unique) var key: String
+    #Unique<TaskDefinition>([\.key])
+    var key: String
     var label: String             // seeded from the catalog in the setup language;
                                   // once the club edits it, it is club data and is shown as typed
     var symbolName: String
