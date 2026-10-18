@@ -1,13 +1,16 @@
 # Changelog
 
-Alle noemenswaardige wijzigingen staan in dit bestand. Formaat volgens [Keep a Changelog](https://keepachangelog.com/nl/1.1.0/), versies volgens [Semantic Versioning](https://semver.org/lang/nl/).
+All notable changes are recorded in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
-### Toegevoegd
-- Projectnaam **Winter**; de app is generiek voor elke club op zweef.app.
-- Clubnaam wordt opgehaald uit zweef.app (`GET /club.json`) bij aanmelden en bij elke refresh.
-- Functionele specificatie, architectuur, datamodel, sync- en API-documentatie.
-- Ontwerpbeslissingen als ADR's (0001–0008).
-- Installatiegids voor clubs en configuratiedocumentatie.
-- Mockups van acht schermen.
-- Proxy (Cloudflare Worker) voor de zweef.app API-sleutel.
+### Added
+- The project name **Winter**; the app is generic and works for any club on zweef.app.
+- The club name is fetched from zweef.app (`GET /club.json`) when connecting and on every refresh.
+- Functional specification, architecture, data model, sync and API documentation.
+- Design decisions as ADRs (0001–0008).
+- Installation guide for clubs and configuration documentation.
+- Mockups of eight screens.
+- Proxy (Cloudflare Worker) for the zweef.app API key.
+
+### Changed
+- All repository documentation is written in English.

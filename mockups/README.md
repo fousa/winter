@@ -1,16 +1,18 @@
 # Mockups
 
-Bronbestanden van het design-canvas (https://claude.ai/artifact/XMfZ6e3Hj5xbwkNHAXixna). Ze gebruiken de runtime van dat canvas (`support.js`, `<x-dc>`, `{{holes}}`) en openen dus niet los in een browser. Gebruik ze als referentie voor layout, maten (pt = px), kleuren en teksten.
+Source files from the design canvas (https://claude.ai/artifact/XMfZ6e3Hj5xbwkNHAXixna). They use that canvas's runtime (`support.js`, `<x-dc>`, `{{holes}}`), so they do not open standalone in a browser. Use them as the reference for layout, sizes (pt = px), colours and copy.
 
-| Bestand | Scherm |
+The file names come from the canvas and are kept as they are there.
+
+| File | Screen |
 |---|---|
-| `Main.dc.html` | 1 · Startscherm (tweak `aanHetWerk` 0–10) |
-| `Start.dc.html` | 2 · Starten (sheet) |
-| `Gestart.dc.html` | 3 · Bevestiging start |
-| `Stop.dc.html` | 4 · Stoppen (sheet) |
-| `Gestopt.dc.html` | 5 · Bevestiging stop |
-| `Dagoverzicht.dc.html` | 6 · Dag afsluiten |
-| `Sync.dc.html` | 7 · Synchronisatie |
-| `Druk.dc.html` | 8 · Startscherm met 8 leden aan het werk |
+| `Main.dc.html` | 1 · Home (tweak `aanHetWerk` 0–10) |
+| `Start.dc.html` | 2 · Start (sheet) |
+| `Gestart.dc.html` | 3 · Start confirmation |
+| `Stop.dc.html` | 4 · Stop (sheet) |
+| `Gestopt.dc.html` | 5 · Stop confirmation |
+| `Dagoverzicht.dc.html` | 6 · Close day |
+| `Sync.dc.html` | 7 · Synchronisation |
+| `Druk.dc.html` | 8 · Home with 8 members working |
 
-Avatars in de mockups zijn getekende plaatshouders; de app toont de echte profielfoto uit zweef.app of initialen.
+The avatars in the mockups are drawn placeholders; the app shows the real profile photo from zweef.app, or initials.

@@ -1,93 +1,93 @@
-# Functionele specificatie
+# Functional specification
 
-## Doel
-Leden registreren hun onderhoudsuren op een gedeelde iPad in de hangar/werkplaats, zonder login, met zo weinig mogelijk tikken. De uren komen in zweef.app terecht als maintenance-hours-registraties, waar het bestuur ze goedkeurt.
+## Purpose
+Members log their maintenance hours on a shared iPad in the hangar/workshop, without logging in, with as few taps as possible. The hours end up in zweef.app as maintenance-hours registrations, where the board approves them.
 
-## Rollen
-| Rol | Wat | Waar |
+## Roles
+| Role | What | Where |
 |---|---|---|
-| Lid | Start/stopt eigen sessie, kiest optioneel taak en toestel, sluit de dag af als laatste | iPad |
-| Bestuur / onderhoudsverantwoordelijke | Keurt registraties goed, corrigeert | zweef.app |
+| Member | Starts/stops their own session, optionally picks a task and an aircraft, closes the day if they are the last to leave | iPad |
+| Board / maintenance officer | Approves registrations, corrects them | zweef.app |
 
-## Omgeving
-- Eén iPad, liggend, vast aan de muur of op een standaard, in Begeleide toegang (Guided Access).
-- Scherm blijft aan tijdens gebruik (`isIdleTimerDisabled = true` zolang er een timer loopt of de app recent gebruikt is); dimmen mag na 2 minuten inactiviteit.
-- Internet is onstabiel of afwezig. De app moet volledig offline werken.
+## Environment
+- One iPad, landscape, mounted on a wall or a stand, in Guided Access.
+- The screen stays on while the app is in use (`isIdleTimerDisabled = true` as long as a timer is running or the app was used recently); it may dim after two minutes of inactivity.
+- Internet is unreliable or absent. The app must work fully offline.
 
-## Schermen (zie docs/design.md voor details)
-0. **Setup-assistent** (eerste start) en **Instellingen** (verborgen, achter beheercode) — zie docs/configuration.md.
-1. **Startscherm** — ledenlijst (vaak hier + alle leden, zoeken, letterindex), statusknop sync, knop "Dag afsluiten", zwevende balk "Nu aan het werk".
-2. **Starten** (sheet) — foto + naam, "Start", "Dat ben ik niet".
-3. **Bevestiging start** — glazen kaart, "Ongedaan maken" (10 s), sluit vanzelf na 3 s.
-4. **Stoppen** (sheet) — persoon + lopende timer links, taaklijst + toestelkeuze rechts, "Stop en bewaar".
-5. **Bevestiging stop** — duur, taak/toestel, "Ongedaan maken", sluit vanzelf na 3 s.
-6. **Dag afsluiten** — overzicht van de dag, gemarkeerde sessies, "Dag afsluiten".
-7. **Synchronisatie** — verbinding, wachtende/geweigerde/geüploade sessies, "Nu opnieuw proberen".
+## Screens (see docs/design.md for details)
+0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
+1. **Home** — member list (often here + all members, search, letter index), sync status button, "Close day" button, floating "Working now" bar.
+2. **Start** (sheet) — photo + name, "Start", "That's not me".
+3. **Start confirmation** — glass card, "Undo" (10 s), dismisses itself after 3 s.
+4. **Stop** (sheet) — person and running timer on the left, task list and aircraft picker on the right, "Stop and save".
+5. **Stop confirmation** — duration, task/aircraft, "Undo", dismisses itself after 3 s.
+6. **Close day** — overview of the day, flagged sessions, "Close day".
+7. **Synchronisation** — connection, pending/rejected/uploaded sessions, "Try again now".
 
 ## Flows
 
-### Starten
-1. Lid tikt op zijn tegel (startscherm).
-2. Sheet "Starten" → tik "Start".
-3. Sessie wordt meteen opgeslagen (`status = .running`, `start = now`).
-4. Bevestiging met "Ongedaan maken" gedurende 10 s (verwijdert de sessie volledig).
-- Lid heeft al een lopende sessie → sheet toont in plaats daarvan "Je bent al bezig sinds 09:12" met knop "Stoppen" (leidt naar Stoppen).
+### Starting
+1. The member taps their tile (home screen).
+2. The "Start" sheet appears → tap "Start".
+3. The session is saved immediately (`status = .running`, `start = now`).
+4. A confirmation with "Undo" for 10 s (which deletes the session entirely).
+- The member already has a running session → instead the sheet shows "You have been working since 09:12" with a "Stop" button (which leads to Stopping).
 
-### Stoppen
-1. Iemand tikt op een kaart in "Nu aan het werk" (eigen of andermans timer).
-2. Sheet "Stoppen" toont persoon, starttijd, lopende duur.
-3. Optioneel: taak kiezen uit de takenlijst van de club (standaard: Zweefvliegtuig, Lier, Hangar en werkplaats, Terrein, Clubhuis, Iets anders; instelbaar). Bij taken met `asksForAircraft` verschijnt de toestelkeuze (uit `material.json`, + "Ander").
-4. "Stop en bewaar" → `stop = now`, `status = .completed`, `syncState = .pending`.
-5. Bevestiging met "Ongedaan maken" (10 s, zet sessie terug op running).
-- Stoppen van andermans timer: toegestaan. De sessie krijgt `stoppedByOther = true` en de markering "gestopt door iemand anders" (in scherm 6 en in `description`, zie zweef-api.md).
+### Stopping
+1. Someone taps a card in "Working now" (their own timer or someone else's).
+2. The "Stop" sheet shows the person, the start time and the running duration.
+3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` the aircraft picker appears (from `material.json`, plus "Other").
+4. "Stop and save" → `stop = now`, `status = .completed`, `syncState = .local`.
+5. A confirmation with "Undo" (10 s, which puts the session back to running).
+- Stopping someone else's timer is allowed. The session gets `stoppedByOther = true` and the flag "stopped by someone else" (in screen 6 and in `description`, see zweef-api.md).
 
-### Dag afsluiten
-- Knop altijd zichtbaar rechtsboven op het startscherm.
-- Lopen er timers → knop disabled (glas, grijs, slotje).
-- Geen lopende timers → knop actief, opent scherm 6.
-- Scherm 6 toont per sessie: lid, tijden, taak/toestel, duur, markeringen. Ook sessies van eerdere niet-afgesloten dagen ("Ook mee").
-- "Dag afsluiten" zet alle afgeronde sessies van die dag(en) op `readyForUpload` en triggert een sync. Werkt offline.
-- **Als niemand afsluit**: sessies blijven bewaard. Bij de volgende afsluiting gaan alle openstaande dagen mee. Op het startscherm verschijnt een herinnering "3 dagen niet afgesloten" (badge op de statusknop).
+### Closing the day
+- The button is always visible in the top right of the home screen.
+- Timers running → the button is disabled (glass, grey, with a lock).
+- No running timers → the button is active and opens screen 6.
+- Screen 6 shows, per session: member, times, task/aircraft, duration, flags. Including sessions from earlier days that were never closed ("Also included").
+- "Close day" sets every completed session of that day (or days) to `readyForUpload` and triggers a sync. Works offline.
+- **If nobody closes the day**: sessions are kept. At the next closing, every open day is included. The home screen shows a reminder "3 days not closed" (a badge on the status button).
 
-> Keuze voor de implementatie: synchroniseer alleen sessies die `readyForUpload` zijn (na afsluiten), plus — als vangnet — afgeronde sessies ouder dan 24 u die nooit afgesloten werden. Dit houdt de upload "per dag" zoals gevraagd, zonder dat uren blijven hangen.
+> Implementation choice: only sync sessions that are `readyForUpload` (after closing), plus — as a safety net — completed sessions older than 24 h that were never closed. This keeps uploads "per day" as requested, without hours getting stuck.
 
-### Automatisch stoppen
-- Instelbaar sluitingsuur (standaard 21:00, lokale tijd).
-- Lopende timers worden gestopt met `stop = sluitingsuur` (niet `now`), `autoStopped = true`.
-- Wordt uitgevoerd: bij app actief, bij BG-refresh, en via een timer als de app voorgrond is. Ook bij app-start voor timers van vorige dagen.
+### Stopping automatically
+- A configurable closing time (21:00 by default, local time).
+- Running timers are stopped with `stop = the closing time` (not `now`) and `autoStopped = true`.
+- Runs: when the app becomes active, on background refresh, and from a timer while the app is in the foreground. Also at app launch, for timers from previous days.
 
-### Validatie en markeringen
-| Regel | Gevolg |
+### Validation and flags
+| Rule | Result |
 |---|---|
-| Duur < 5 min | Bevestigingsvraag bij stoppen ("Klopt 4 minuten?"); markering "korte sessie" |
-| Duur > 10 u | Markering "lange sessie" |
-| Automatisch gestopt | Markering "automatisch gestopt" |
-| Overlappende sessies zelfde lid | Kan niet: een lid kan maar één lopende sessie hebben |
+| Duration < 5 min | A confirmation prompt when stopping ("Is 4 minutes right?"); flag "short session" |
+| Duration > 10 h | Flag "long session" |
+| Stopped automatically | Flag "stopped automatically" |
+| Overlapping sessions for the same member | Impossible: a member can only have one running session |
 
-Markeringen gaan mee in `description` naar zweef.app en worden oranje getoond in scherm 6.
+Flags travel along in `description` to zweef.app and are shown in orange on screen 6.
 
-### Clubgegevens
-- De clubnaam komt uit zweef.app (`GET /club.json`): opgehaald bij "Verbinding testen" in de setup en bij elke refresh. Lokaal gecachet zodat hij offline zichtbaar blijft.
-- De app is generiek: geen clubnaam, leden, toestellen of taken in de code.
+### Club data
+- The club name comes from zweef.app (`GET /club.json`): fetched during "Test connection" in the setup and on every refresh. Cached locally so it stays visible offline.
+- The app is generic: no club name, members, aircraft or tasks in the code.
 
-### Ledenlijst en foto's
-- Bij elke succesvolle sync: `GET /accounts.json` → leden upserten (actief/inactief), foto's downloaden en lokaal cachen (bestand op schijf, pad in model).
-- Geen foto → initialen in gekleurde cirkel (kleur deterministisch op basis van id).
-- "Vaak hier": top 5 leden op aantal sessies in de laatste 30 dagen, anders laatst gezien.
-- Zoeken op voornaam en familienaam, diacritics-insensitive.
+### Member list and photos
+- On every successful sync: `GET /accounts.json` → upsert members (active/inactive), download photos and cache them locally (a file on disk, the path in the model).
+- No photo → initials in a coloured circle (the colour derived deterministically from the id).
+- "Often here": the top 5 members by number of sessions in the last 30 days, otherwise by last seen.
+- Search on first and last name, diacritics-insensitive.
 
-## Configuratie (open source)
-- Bij de eerste start: setup-assistent (verbinding, club, beheercode). Zonder volledige configuratie is de rest van de app niet bereikbaar.
-- Achteraf aanpasbaar in de app: lang drukken op de titel → beheercode → Instellingen. Daar kan je proxy-URL, apparaattoken, verbindingsmodus, sluitingsuur, taken en de beheercode wijzigen, de verbinding testen en leden verversen.
-- Een gewijzigde verbinding wordt eerst getest; bij een fout blijven de oude waarden actief tot je bevestigt.
-- Wachtende sessies blijven bewaard bij een wijziging van verbinding; ze gaan naar de nieuwe verbinding.
+## Configuration (open source)
+- On first launch: the setup assistant (connection, club, admin code). Without a complete configuration the rest of the app is unreachable.
+- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the proxy URL, the device token, the connection mode, the closing time, the tasks and the admin code, test the connection and refresh the members.
+- A changed connection is tested first; on failure the old values stay active until you confirm.
+- Pending sessions are kept when the connection changes; they go to the new connection.
 - Details: docs/configuration.md.
 
-## Niet in scope
-Login of pincode voor leden, uren beheren op de iPad, vrije tekst, inspreken, CSV-export, uren achteraf invoeren of wijzigen op de iPad, iPhone-versie.
+## Out of scope
+A login or PIN for members, managing hours on the iPad, free text, voice notes, CSV export, entering or editing hours after the fact on the iPad, an iPhone version.
 
-## Open vragen
-- Foto-URL in accounts-respons?
-- Toegelaten waarden `category` / `project` / `status`, en POST-respons.
-- Sluitingsuur.
-- Vaste wifi of eigen 4G/5G-iPad mogelijk?
+## Open questions
+- Is there a photo URL in the accounts response?
+- Allowed values for `category` / `project` / `status`, and the POST response.
+- The closing time.
+- Is wired wifi or an iPad with its own 4G/5G possible?

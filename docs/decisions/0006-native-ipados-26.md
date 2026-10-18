@@ -1,18 +1,18 @@
-# 0006 — Native SwiftUI-app voor iPadOS 26 met Liquid Glass
+# 0006 — A native SwiftUI app for iPadOS 26 with Liquid Glass
 
-- **Status**: aanvaard
-- **Datum**: 2026-10-18
+- **Status**: accepted
+- **Date**: 2026-10-18
 
 ## Context
-De app draait op één iPad, moet offline werken, betrouwbaar opslaan en in de achtergrond synchroniseren. De maker is iOS-ontwikkelaar.
+The app runs on a single iPad, has to work offline, store reliably and sync in the background. The author is an iOS developer.
 
-## Beslissing
-Native SwiftUI, Swift 6, SwiftData, minimaal iPadOS 26. Design volgens de iOS 26 HIG: Liquid Glass op de controllaag, opake content, systeemfont en -kleuren. Alleen liggende stand op iPad.
+## Decision
+Native SwiftUI, Swift 6, SwiftData, iPadOS 26 as the minimum. The design follows the iOS 26 HIG: Liquid Glass on the control layer, opaque content, the system font and system colours. Landscape only on iPad.
 
-## Gevolgen
-- Toegang tot Keychain, BackgroundTasks, NWPathMonitor, Guided Access en MDM-configuratie.
-- Clubs met oudere iPads (zonder iPadOS 26) kunnen de app niet gebruiken.
+## Consequences
+- Access to the Keychain, BackgroundTasks, NWPathMonitor, Guided Access and MDM configuration.
+- Clubs with older iPads (without iPadOS 26) cannot use the app.
 
-## Overwogen alternatieven
-- Web-app/PWA: zwakkere offline-opslag en geen echte achtergrondsync.
-- Cross-platform framework: geen meerwaarde voor één iPad.
+## Alternatives considered
+- A web app/PWA: weaker offline storage and no real background sync.
+- A cross-platform framework: no added value for a single iPad.

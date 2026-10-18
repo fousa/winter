@@ -1,25 +1,25 @@
 # zweef.app (GlidingApp) API
 
-Bron: https://documenter.getpostman.com/view/25434528/2s8ZDX5PRi (geraadpleegd 18 oktober 2026). Respons-voorbeelden staan niet in de documentatie: verifieer alles met een echte API-sleutel en leg de echte JSON vast als fixtures in de tests.
+Source: https://documenter.getpostman.com/view/25434528/2s8ZDX5PRi (consulted 18 October 2026). The documentation contains no response examples: verify everything with a real API key and capture the real JSON as fixtures in the tests.
 
-- **Base URL**: `https://admin.gliding.app/club/{club}/api` (`{club}` = schema-naam uit de clubinstellingen)
-- **Auth**: header `X-API-KEY: <token>` (aan te maken in de admin-pagina's). De documentatie zegt expliciet: niet client-side gebruiken → enkel in de proxy.
+- **Base URL**: `https://admin.gliding.app/club/{club}/api` (`{club}` = the schema name from the club settings)
+- **Auth**: the header `X-API-KEY: <token>` (created in the admin pages). The documentation says so explicitly: do not use it client-side → only in the proxy.
 
-## Gebruikte endpoints
-De app is generiek: alles wat club-specifiek is (naam, leden, toestellen, periode) komt uit deze endpoints.
+## Endpoints we use
+The app is generic: everything club-specific (name, members, aircraft, period) comes from these endpoints.
 
-| Methode | Pad | Doel in de app |
+| Method | Path | Purpose in the app |
 |---|---|---|
-| GET | `/club.json` | Clubgegevens; de app gebruikt de **clubnaam** (titel op het startscherm, bevestiging in de setup). Ook de eerste call bij "Verbinding testen". Exacte veldnaam te verifiëren. |
-| GET | `/accounts.json` | Actieve leden (`?inactive=1` voor inactieve) |
-| GET | `/material.json` | Toestellen/materiaal voor de toestelkeuze (`material_id`) |
-| GET | `/maintenance-hours/periods.json` | Actieve onderhoudsperiode; `?id=123` voor een specifieke |
-| GET | `/maintenance-hours/{periodId}/hours.json` | Registraties van een periode; `/maintenance-hours/current/hours.json` voor de huidige |
-| POST | `/maintenance-hours.json` | Registratie aanmaken |
-| PUT | `/maintenance-hours.json` | Registratie aanpassen (`id` verplicht in body) |
-| DELETE | `/maintenance-hours.json` | Registratie verwijderen (`id` verplicht in body) |
+| GET | `/club.json` | Club details; the app uses the **club name** (the title on the home screen, the confirmation in the setup). Also the first call during "Test connection". The exact field name still needs verifying. |
+| GET | `/accounts.json` | Active members (`?inactive=1` for inactive ones) |
+| GET | `/material.json` | Aircraft/equipment for the aircraft picker (`material_id`) |
+| GET | `/maintenance-hours/periods.json` | The active maintenance period; `?id=123` for a specific one |
+| GET | `/maintenance-hours/{periodId}/hours.json` | The registrations in a period; `/maintenance-hours/current/hours.json` for the current one |
+| POST | `/maintenance-hours.json` | Create a registration |
+| PUT | `/maintenance-hours.json` | Update a registration (`id` required in the body) |
+| DELETE | `/maintenance-hours.json` | Delete a registration (`id` required in the body) |
 
-## POST /maintenance-hours.json — voorbeeld uit de documentatie
+## POST /maintenance-hours.json — the example from the documentation
 ```json
 {
   "period_id": 123,
@@ -38,27 +38,27 @@ De app is generiek: alles wat club-specifiek is (naam, leden, toestellen, period
 }
 ```
 
-## Mapping vanuit een WorkSession
-| Veld | Waarde |
+## Mapping from a WorkSession
+| Field | Value |
 |---|---|
-| `period_id` | actieve periode op moment van upload (gecachet; bij twijfel opnieuw ophalen) |
-| `user_id`, `user_name` | lid (`zweefId`, volledige naam) |
-| `date` | `yyyy-MM-dd` van `start` in Europe/Brussels |
-| `hours` | duur in uren, 2 decimalen (2u15 → 2.25). Afronding: exacte minuten, tenzij de club anders beslist |
-| `material_id` | gekozen toestel of `null` |
+| `period_id` | The active period at the moment of upload (cached; fetched again when in doubt) |
+| `user_id`, `user_name` | The member (`zweefId`, full name) |
+| `date` | `yyyy-MM-dd` of `start` in Europe/Brussels |
+| `hours` | The duration in hours, two decimals (2h15 → 2.25). Rounding: the exact minutes, unless the club decides otherwise |
+| `material_id` | The chosen aircraft, or `null` |
 | `workorder_id` | `null` |
 | `is_private` | `false` |
-| `category` | `"Maintenance"` (te bevestigen) |
+| `category` | `"Maintenance"` (to be confirmed) |
 | `sub_category` | `""` |
-| `project` | taaklabel (bv. "Hangar en werkplaats"), of `""` |
-| `description` | samengesteld, bv. `"Zweefvliegtuig · ASK 21 · 09:12–11:30 · automatisch gestopt"`; markeringen achteraan; altijd een app-tag `[ou:<uuid-prefix8>]` voor dedup |
+| `project` | The task label (e.g. "Hangar en werkplaats"), or `""` |
+| `description` | Composed, e.g. `"Zweefvliegtuig · ASK 21 · 09:12–11:30 · automatisch gestopt"`; flags at the end; always an app tag `[ou:<uuid-prefix8>]` for dedup |
 | `status` | `"in_aanvraag"` |
 
-## Dedup / idempotentie
-De POST heeft geen client-side sleutel. Strategie:
-1. Na een geslaagde POST: `remoteId` uit de respons bewaren (vorm te verifiëren).
-2. Als de respons onduidelijk is (timeout na versturen): vóór een nieuwe poging `GET /maintenance-hours/current/hours.json` en zoeken naar een registratie met de tag `[ou:xxxxxxxx]` in `description` (fallback: zelfde `user_id` + `date` + `hours`). Gevonden → markeer als geüpload met die `id`.
-3. Correcties na upload gebeuren in zweef.app, niet op de iPad (PUT/DELETE enkel voor toekomstig gebruik).
+## Dedup / idempotency
+The POST has no client-side key. The strategy:
+1. After a successful POST: store the `remoteId` from the response (its shape still needs verifying).
+2. If the response is unclear (a timeout after sending): before trying again, `GET /maintenance-hours/current/hours.json` and look for a registration with the tag `[ou:xxxxxxxx]` in `description` (fallback: the same `user_id` + `date` + `hours`). Found → mark it as uploaded with that `id`.
+3. Corrections after upload happen in zweef.app, not on the iPad (PUT/DELETE are only there for future use).
 
 ## Proxy
-De iPad praat met de proxy (`proxy/`), nooit rechtstreeks met admin.gliding.app. De proxy laat alleen de bovenstaande paden door en vervangt het apparaattoken door de `X-API-KEY`.
+The iPad talks to the proxy (`proxy/`), never directly to admin.gliding.app. The proxy only forwards the paths above and replaces the device token with the `X-API-KEY`.

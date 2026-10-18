@@ -1,46 +1,46 @@
-# Configuratie en installatie (open source)
+# Configuration and installation (open source)
 
-De app is open source en moet door elke club met zweef.app gebruikt kunnen worden. Daarom staat er **niets club-specifieks of geheims in de code of de repo**. Alles wordt ingesteld bij de eerste start van de app (of via MDM) en bewaard op het toestel.
+The app is open source and has to be usable by any club on zweef.app. That is why **nothing club-specific or secret lives in the code or the repository**. Everything is configured on first launch (or through MDM) and stored on the device.
 
-## Wat moet ingesteld worden
-| Instelling | Waar bewaard | Verplicht | Opmerking |
+## What has to be configured
+| Setting | Stored in | Required | Note |
 |---|---|---|---|
-| Verbindingsmodus | UserDefaults | ja | `proxy` (aanbevolen) of `direct` |
-| Proxy-URL | UserDefaults | bij proxy | bv. `https://winter-proxy.<account>.workers.dev` |
-| Apparaattoken | **Keychain** | bij proxy | lange random string, uniek per iPad |
-| Clubschema (`{club}`) | UserDefaults | bij direct | uit de zweef.app-clubinstellingen |
-| zweef.app API-sleutel | **Keychain** | bij direct | `X-API-KEY` |
-| Clubnaam | UserDefaults (cache) | automatisch | opgehaald uit zweef.app (`GET /club.json`) bij "Verbinding testen" en bij elke refresh; niet handmatig in te vullen |
-| Sluitingsuur | SwiftData `AppSettings` | ja | standaard 21:00 |
-| Taken | SwiftData | ja | standaardlijst (Zweefvliegtuig, Lier, Hangar en werkplaats, Terrein, Clubhuis, Iets anders), aanpasbaar |
-| `category` / `status` voor zweef.app | UserDefaults | ja | standaard `Maintenance` / `in_aanvraag` |
-| Beheercode | **Keychain** (hash) | ja | 6 cijfers; beschermt alleen het instellingenscherm, niet het gebruik |
+| Connection mode | UserDefaults | yes | `proxy` (recommended) or `direct` |
+| Proxy URL | UserDefaults | with proxy | e.g. `https://winter-proxy.<account>.workers.dev` |
+| Device token | **Keychain** | with proxy | a long random string, unique per iPad |
+| Club schema (`{club}`) | UserDefaults | with direct | from the zweef.app club settings |
+| zweef.app API key | **Keychain** | with direct | `X-API-KEY` |
+| Club name | UserDefaults (cache) | automatic | fetched from zweef.app (`GET /club.json`) during "Test connection" and on every refresh; cannot be entered by hand |
+| Closing time | SwiftData `AppSettings` | yes | 21:00 by default |
+| Tasks | SwiftData | yes | a default list (Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else), editable |
+| `category` / `status` for zweef.app | UserDefaults | yes | `Maintenance` / `in_aanvraag` by default |
+| Admin code | **Keychain** (hashed) | yes | six digits; protects only the settings screen, not everyday use |
 
-Keychain-items met `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, zodat ze niet in back-ups of naar andere toestellen gaan.
+Keychain items use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, so they stay out of backups and off other devices.
 
-## Verbindingsmodi
-- **Proxy (aanbevolen)**: de club zet de Worker uit `proxy/` op met haar eigen API-sleutel. De iPad kent alleen de proxy-URL en een apparaattoken, dat de club kan intrekken. Volgt het advies van zweef.app om de sleutel niet client-side te bewaren.
-- **Direct**: voor clubs zonder technische mensen. Clubschema en API-sleutel worden in de Keychain van de iPad bewaard. Het instellingenscherm toont een duidelijke waarschuwing: de sleutel geeft toegang tot alle ledengegevens en financiële data, en een iPad in de hangar is fysiek bereikbaar.
+## Connection modes
+- **Proxy (recommended)**: the club deploys the Worker from `proxy/` with its own API key. The iPad only knows the proxy URL and a device token, which the club can revoke. This follows zweef.app's advice not to keep the key client-side.
+- **Direct**: for clubs without technical people. The club schema and the API key are stored in the iPad's Keychain. The settings screen shows a clear warning: the key grants access to all member data and financial data, and an iPad in the hangar is physically reachable.
 
-Beide modi gebruiken dezelfde `ZweefAPI`-interface; alleen de transportlaag verschilt (`ProxyTransport` vs `DirectTransport`).
+Both modes use the same `ZweefAPI` interface; only the transport layer differs (`ProxyTransport` vs `DirectTransport`).
 
-## Eerste start: setup-assistent
-Verschijnt zolang de configuratie onvolledig is. Stappen:
-1. **Welkom** — wat de app doet, wat je nodig hebt (proxy-URL + token, of clubschema + API-sleutel).
-2. **Verbinding** — modus kiezen, velden invullen (sleutelvelden als `SecureField`, plakken toegestaan), knop "Verbinding testen" → `GET /maintenance-hours/periods.json`. Haalt bij succes de clubnaam op (`GET /club.json`) en toont "Verbonden met <clubnaam>" plus de actieve periode, duidelijke fout bij mislukking (401, verkeerde URL, geen internet). Offline overslaan mag: de app werkt, sync volgt later.
-3. **Club** — toont de opgehaalde clubnaam ter bevestiging ("Is dit je club?"); daarna sluitingsuur en takenlijst (standaard ingevuld). Zonder internet bij de setup: de clubnaam verschijnt na de eerste geslaagde verbinding; tot dan toont de app "Winter".
-4. **Beheercode** — 6 cijfers, twee keer invoeren.
-5. **Klaar** — leden worden opgehaald (als er internet is); tip om Begeleide toegang aan te zetten.
+## First launch: the setup assistant
+It appears for as long as the configuration is incomplete. The steps:
+1. **Welcome** — what the app does, what you need (a proxy URL + token, or a club schema + API key).
+2. **Connection** — pick a mode, fill in the fields (key fields as `SecureField`, pasting allowed), tap "Test connection" → `GET /maintenance-hours/periods.json`. On success it fetches the club name (`GET /club.json`) and shows "Connected to <club name>" plus the active period; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
+3. **Club** — shows the fetched club name for confirmation ("Is this your club?"); then the closing time and the task list (pre-filled). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter".
+4. **Admin code** — six digits, entered twice.
+5. **Done** — the members are fetched (if there is internet); a tip to turn on Guided Access.
 
-## Instellingen achteraf
-- Verborgen ingang: lang drukken (3 s) op de titel (de clubnaam) → beheercode → instellingenscherm.
-- Zelfde velden als de setup, plus: "Leden nu verversen", "Token wijzigen", "Alles wissen op deze iPad" (met bevestiging; waarschuwt als er nog niet-geüploade sessies zijn).
-- Beheercode vergeten → app verwijderen en opnieuw installeren (lokale data en Keychain gaan mee weg; waarschuw hiervoor in de README).
+## Changing settings later
+- The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
+- The same fields as the setup, plus: "Refresh members now", "Change token", "Erase everything on this iPad" (with a confirmation; it warns if there are still sessions that have not been uploaded).
+- Admin code forgotten → delete the app and reinstall it (local data and the Keychain go with it; warn about this in the README).
 
-## MDM / Managed App Configuration (optioneel)
-Clubs met Apple Business Manager of een MDM kunnen de setup overslaan. De app leest `UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed")`:
+## MDM / Managed App Configuration (optional)
+Clubs with Apple Business Manager or an MDM can skip the setup. The app reads `UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed")`:
 
-| Sleutel | Type |
+| Key | Type |
 |---|---|
 | `connectionMode` | String (`proxy`/`direct`) |
 | `proxyURL` | String |
@@ -48,17 +48,17 @@ Clubs met Apple Business Manager of een MDM kunnen de setup overslaan. De app le
 | `clubSchema` | String |
 | `closingTime` | String (`HH:mm`) |
 
-Bij aanwezigheid: waarden overnemen (geheimen meteen naar de Keychain), setup-stap 2 overslaan. Managed waarden zijn read-only in het instellingenscherm.
+When present: the values are adopted (secrets go straight into the Keychain) and setup step 2 is skipped. Managed values are read-only in the settings screen.
 
-## Generiek voor elke club
-Winter bevat niets dat aan één club gebonden is:
-- **Clubnaam** en **leden** (met foto's) komen uit zweef.app.
-- **Toestellen** komen uit `material.json`, de **onderhoudsperiode** uit `maintenance-hours/periods.json`.
-- **Takenlijst**, **sluitingsuur** en de zweef.app-waarden voor `category`/`status` zijn instelbaar, met verstandige standaardwaarden.
-- Teksten en voorbeelden in de code en previews gebruiken fictieve clubs en leden.
+## Generic for every club
+Winter contains nothing tied to a single club:
+- The **club name** and the **members** (with photos) come from zweef.app.
+- The **aircraft** come from `material.json`, the **maintenance period** from `maintenance-hours/periods.json`.
+- The **task list**, the **closing time** and the zweef.app values for `category`/`status` are configurable, with sensible defaults.
+- Copy and examples in the code and the previews use fictional clubs and members.
 
-## Repo-hygiëne
-- Geen sleutels, tokens, clubschema's of echte ledendata in de repo, ook niet in previews of tests (fixtures geanonimiseerd).
-- Build-instellingen via `Config/Shared.xcconfig`; persoonlijke waarden (`DEVELOPMENT_TEAM`, `BUNDLE_ID_PREFIX`) in `Config/Local.xcconfig`, dat in `.gitignore` staat. Voorbeeld: `Config/Local.xcconfig.example`.
-- Proxy-secrets enkel via `wrangler secret put`.
-- Elke club deployt haar eigen proxy; er is geen gedeelde centrale server.
+## Repository hygiene
+- No keys, tokens, club schemas or real member data in the repository, not even in previews or tests (fixtures are anonymised).
+- Build settings through `Config/Shared.xcconfig`; personal values (`DEVELOPMENT_TEAM`, `BUNDLE_ID_PREFIX`) in `Config/Local.xcconfig`, which is in `.gitignore`. Example: `Config/Local.xcconfig.example`.
+- Proxy secrets only through `wrangler secret put`.
+- Every club deploys its own proxy; there is no shared central server.

@@ -5,7 +5,7 @@ DerivedData/
 xcuserdata/
 *.xcscmblueprint
 
-# Persoonlijke build-instellingen
+# Personal build settings
 Config/Local.xcconfig
 
 # Secrets

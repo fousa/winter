@@ -1,8 +1,8 @@
 # Proxy
 
-Kleine Cloudflare Worker die de zweef.app API-sleutel bewaart. De iPad stuurt `Authorization: Bearer <apparaattoken>` en mag alleen deze calls doen:
+A small Cloudflare Worker that holds the zweef.app API key. The iPad sends `Authorization: Bearer <device token>` and is only allowed to make these calls:
 
-- `GET /club.json` (clubnaam)
+- `GET /club.json` (the club name)
 - `GET /accounts.json`
 - `GET /material.json`
 - `GET /maintenance-hours/periods.json`
@@ -15,20 +15,20 @@ npm i -g wrangler
 wrangler login
 wrangler secret put ZWEEF_API_KEY
 wrangler secret put CLUB
-wrangler secret put DEVICE_TOKENS   # bv. een lange random string per iPad, komma-gescheiden
+wrangler secret put DEVICE_TOKENS   # e.g. one long random string per iPad, comma-separated
 wrangler deploy
 ```
 
-Elke club deployt haar eigen proxy met haar eigen sleutel; er is geen centrale server.
+Every club deploys its own proxy with its own key; there is no central server.
 
-Een apparaattoken maken:
+Creating a device token:
 ```sh
 openssl rand -hex 32
 ```
-Vul de proxy-URL en dit token in bij de eerste start van de app, of later in Instellingen (lang drukken op de titel → beheercode).
+Enter the proxy URL and this token on the app's first launch, or later in Settings (long-press the title → admin code).
 
-Lokaal testen: kopieer `.dev.vars.example` naar `.dev.vars` en draai `wrangler dev`.
+Testing locally: copy `.dev.vars.example` to `.dev.vars` and run `wrangler dev`.
 
-Een iPad intrekken = zijn token uit `DEVICE_TOKENS` halen en opnieuw deployen.
+Revoking an iPad = removing its token from `DEVICE_TOKENS` and redeploying.
 
-Een kleine Rails-route kan hetzelfde doen als je liever geen Cloudflare gebruikt.
+A small Rails route can do the same thing if you would rather not use Cloudflare.

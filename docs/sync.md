@@ -1,36 +1,36 @@
-# Sync-engine (offline-first)
+# Sync engine (offline-first)
 
-Internet op de club is onstabiel. De app werkt altijd lokaal; synchronisatie is een achtergrondproces dat het vanzelf blijft proberen.
+Internet at the club is unreliable. The app always works locally; syncing is a background process that keeps trying on its own.
 
 ## Triggers
-- `NWPathMonitor`: pad wordt `.satisfied` → sync.
-- App wordt actief (`scenePhase == .active`) → sync.
-- "Dag afsluiten" → sync.
-- "Nu opnieuw proberen" op het syncscherm → sync (negeert backoff).
-- `BGAppRefreshTask` (best effort; iPadOS beslist zelf wanneer).
-- Zolang de app voorgrond is en er iets wacht: retry met exponentiële backoff (30 s, 1 m, 2 m, 5 m, max 15 m) + jitter.
+- `NWPathMonitor`: the path becomes `.satisfied` → sync.
+- The app becomes active (`scenePhase == .active`) → sync.
+- "Close day" → sync.
+- "Try again now" on the sync screen → sync (ignoring backoff).
+- `BGAppRefreshTask` (best effort; iPadOS decides when).
+- While the app is in the foreground and something is waiting: retry with exponential backoff (30 s, 1 m, 2 m, 5 m, max 15 m) plus jitter.
 
-## Volgorde van één sync-run (`SyncEngine` is een `actor`, één run tegelijk)
-1. **Auto-stop** toepassen (lopende timers voorbij sluitingsuur).
-2. **Refresh** (max. 1× per 6 u of bij lege cache): club → clubnaam bijwerken; accounts → leden upserten; foto's downloaden (alleen gewijzigd/ontbrekend); material → toestellen; periods → actieve periode.
-3. **Upload** alle sessies met `syncState == .ready` (en afgeronde `.local` ouder dan 24 u):
-   - Zet `.uploading`, POST, bij succes `.uploaded` + `remoteId` + `uploadedAt`.
-   - Netwerkfout/timeout/5xx → terug naar `.ready`, `attempts += 1`, `lastError`.
-   - Onduidelijk of de POST aankwam (timeout na verzenden) → bij volgende run eerst dedup-check (zie zweef-api.md).
-   - 4xx (validatie, lid inactief, periode gesloten) → `.rejected` met reden; geen automatische retry. Zichtbaar in "Aandacht nodig" met knop "Opnieuw".
-4. `SyncLog` en `AppSettings.last*` bijwerken.
+## The order of one sync run (`SyncEngine` is an `actor`, one run at a time)
+1. **Apply auto-stop** (running timers past the closing time).
+2. **Refresh** (at most once every 6 h, or when the cache is empty): club → update the club name; accounts → upsert members; photos → download (only changed or missing ones); material → aircraft; periods → the active period.
+3. **Upload** every session with `syncState == .ready` (and completed `.local` ones older than 24 h):
+   - Set `.uploading`, POST, and on success `.uploaded` + `remoteId` + `uploadedAt`.
+   - Network error/timeout/5xx → back to `.ready`, `attempts += 1`, `lastError`.
+   - Unclear whether the POST arrived (a timeout after sending) → on the next run, do a dedup check first (see zweef-api.md).
+   - 4xx (validation, member inactive, period closed) → `.rejected` with the reason; no automatic retry. Visible under "Needs attention" with a "Retry" button.
+4. Update `SyncLog` and `AppSettings.last*`.
 
-## Wat het syncscherm toont
-- Verbindingsstatus (online / geen verbinding) en tijdstip laatste poging.
-- Aantal wachtende sessies en totale wachtende uren.
-- Laatste geslaagde upload, laatste refresh van club, leden en foto's, actieve periode.
-- **Aandacht nodig**: `.rejected` sessies met reden.
-- **Wacht op upload**: per dag (`.local`/`.ready`), met aantal sessies, totaal en of de dag afgesloten is.
-- **Recent geüpload**: laatste dagen met `.uploaded`.
-- Knop "Nu opnieuw proberen".
+## What the sync screen shows
+- The connection status (online / no connection) and the time of the last attempt.
+- The number of pending sessions and the total pending hours.
+- The last successful upload, the last refresh of club, members and photos, and the active period.
+- **Needs attention**: `.rejected` sessions with their reason.
+- **Waiting to upload**: per day (`.local`/`.ready`), with the number of sessions, the total, and whether the day is closed.
+- **Recently uploaded**: the most recent days with `.uploaded`.
+- A "Try again now" button.
 
-De statusknop op het startscherm toont het aantal wachtende sessies (oranje zonder verbinding, groen vinkje als alles geüpload is).
+The status button on the home screen shows the number of pending sessions (orange when there is no connection, a green checkmark when everything is uploaded).
 
-## Testen
-- `ZweefAPI` protocol + `FakeZweefAPI` die fouten, timeouts en 4xx kan simuleren.
-- Tests voor: retry/backoff, dedup na timeout, rejected-flow, auto-stop vóór upload, geen dubbele upload bij parallelle triggers.
+## Testing
+- A `ZweefAPI` protocol plus a `FakeZweefAPI` that can simulate errors, timeouts and 4xx.
+- Tests for: retry/backoff, dedup after a timeout, the rejected flow, auto-stop before upload, and no double upload on parallel triggers.

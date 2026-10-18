@@ -1,56 +1,56 @@
 # Design — iPadOS 26, Liquid Glass
 
-Referentie: de mockups in `mockups/*.dc.html` (1194×834 pt, liggend) en het canvas https://claude.ai/artifact/XMfZ6e3Hj5xbwkNHAXixna. De HTML benadert glass met blur; in de app gebruik je de echte SwiftUI-API's.
+Reference: the mockups in `mockups/*.dc.html` (1194×834 pt, landscape) and the canvas https://claude.ai/artifact/XMfZ6e3Hj5xbwkNHAXixna. The HTML approximates glass with a blur; in the app you use the real SwiftUI APIs.
 
-## Principes
-- Liquid Glass enkel voor de laag die boven de content zweeft: toolbar-items, de zwevende balk "Nu aan het werk", sheets, knoppen. Content (ledentegels, lijsten, statkaarten) is opaak wit op `systemGroupedBackground`.
-- SwiftUI: `.glassEffect()` / `GlassEffectContainer` voor eigen glazen vormen, `.buttonStyle(.glass)` voor secundaire en `.buttonStyle(.glassProminent)` voor primaire knoppen. Laat standaard toolbars en sheets hun systeemglas gebruiken in plaats van het na te bouwen.
-- Grote doelen: minimaal 44 pt, primaire knoppen 56–64 pt hoog, capsulevorm. Concentrische hoekstralen (tegels 24, kaarten 24–28, sheets systeem).
-- Systeemfont (SF Pro), Dynamic Type ondersteunen. Tijden met `.monospacedDigit()`.
-- Kleuren: systeemkleuren. Primair `.tint` (blue). Timers in donkergroen (toegankelijke variant van `.green`), markeringen oranje, stop rood (zoals Klok-app).
-- Bevestigingen: haptiek (`.sensoryFeedback(.success, …)`).
+## Principles
+- Liquid Glass only for the layer that floats above the content: toolbar items, the floating "Working now" bar, sheets, buttons. Content (member tiles, lists, stat cards) is opaque white on `systemGroupedBackground`.
+- SwiftUI: `.glassEffect()` / `GlassEffectContainer` for custom glass shapes, `.buttonStyle(.glass)` for secondary buttons and `.buttonStyle(.glassProminent)` for primary ones. Let standard toolbars and sheets use their system glass instead of rebuilding it.
+- Big targets: at least 44 pt, primary buttons 56–64 pt tall, capsule-shaped. Concentric corner radii (tiles 24, cards 24–28, sheets system).
+- System font (SF Pro), support Dynamic Type. Times with `.monospacedDigit()`.
+- Colours: system colours. Primary `.tint` (blue). Timers in dark green (an accessible variant of `.green`), flags orange, stop red (like the Clock app).
+- Confirmations: haptics (`.sensoryFeedback(.success, …)`).
 
-## Schermen
+## Screens
 
-### 1. Startscherm (`Main.dc.html`, `Druk.dc.html`)
-- Navigatiebalk met large title = de clubnaam uit zweef.app (fallback "Winter" zolang die onbekend is), subtitel "Onderhoudsuren · Donderdag 1 oktober · tik op je naam om te starten". In de mockups staat nog "Onderhoudsuren" als titel.
-- Toolbar rechts (glas): statusknop sync ("8 wachten", oranje wolk zonder verbinding) → scherm 7; zoekveld; "Dag afsluiten" (prominent als toegestaan, anders disabled met slotje).
-- Content: sectie "Vaak hier" (5 tegels), sectie "Alle leden" (grid 5 kolommen). Tegel: wit, radius 24, hoogte 84, foto 52 pt rond, voornaam 17 semibold, familienaam 15 secondary.
-- Letterindex rechts (zoals Contacten).
-- Zwevende glazen balk onderaan "Nu aan het werk" (boven de content, content scrolt eronder, extra bottom inset):
-  - links: groene stip + "Nu aan het werk", "2 leden", "Tik om te stoppen"
-  - 1–3 lopend: grote kaarten (foto 52, volledige naam, "sinds 09:12", timer 28 pt groen)
-  - 4+ lopend: compacte kaarten in een grid van 4 kolommen (foto 48, "Jan V.", timer 22 pt); balk groeit in hoogte
-  - 0 lopend: grijze stip, "Niemand", tekst "Als laatste weg? Sluit de dag af rechtsboven."
+### 1. Home (`Main.dc.html`, `Druk.dc.html`)
+- A navigation bar with the large title = the club name from zweef.app (falling back to "Winter" while it is unknown), subtitle "Onderhoudsuren · Donderdag 1 oktober · tik op je naam om te starten". The mockups still show "Onderhoudsuren" as the title.
+- Toolbar on the right (glass): the sync status button ("8 wachten", an orange cloud when there is no connection) → screen 7; a search field; "Dag afsluiten" (prominent when allowed, otherwise disabled with a lock).
+- Content: a "Vaak hier" section (5 tiles) and an "Alle leden" section (a 5-column grid). A tile: white, radius 24, height 84, photo 52 pt round, first name 17 semibold, last name 15 secondary.
+- A letter index on the right (as in Contacts).
+- A floating glass "Nu aan het werk" bar at the bottom (above the content, the content scrolls underneath it, with extra bottom inset):
+  - left: a green dot + "Nu aan het werk", "2 leden", "Tik om te stoppen"
+  - 1–3 running: large cards (photo 52, full name, "sinds 09:12", timer 28 pt green)
+  - 4+ running: compact cards in a 4-column grid (photo 48, "Jan V.", timer 22 pt); the bar grows taller
+  - 0 running: a grey dot, "Niemand", and the text "Als laatste weg? Sluit de dag af rechtsboven."
 
-### 2. Starten (`Start.dc.html`)
-Form sheet (~540×560). Sluitknop links (glas, xmark), titel "Starten". Foto 120, naam 34 bold, "Klaar om te beginnen?". Knoppen: "Start" (glassProminent, play.fill, 64 hoog), "Dat ben ik niet" (glass). Voetnoot: "Waaraan je werkte, kies je bij het stoppen."
+### 2. Start (`Start.dc.html`)
+A form sheet (~540×560). Close button on the left (glass, xmark), title "Starten". Photo 120, name 34 bold, "Klaar om te beginnen?". Buttons: "Start" (glassProminent, play.fill, 64 tall) and "Dat ben ik niet" (glass). Footnote: "Waaraan je werkte, kies je bij het stoppen."
 
-### 3. Bevestiging start (`Gestart.dc.html`)
-Gecentreerde glazen kaart (~480×480, radius 48) boven gedimd startscherm. Blauwe cirkel met checkmark, "Veel werkplezier, Ellen", "Gestart om 14:05". Knoppen "Ongedaan maken" (glass) en "Klaar" (prominent). "Sluit vanzelf na 3 seconden".
+### 3. Start confirmation (`Gestart.dc.html`)
+A centred glass card (~480×480, radius 48) above the dimmed home screen. A blue circle with a checkmark, "Veel werkplezier, Ellen", "Gestart om 14:05". Buttons "Ongedaan maken" (glass) and "Klaar" (prominent). "Sluit vanzelf na 3 seconden".
 
-### 4. Stoppen (`Stop.dc.html`)
-Brede sheet (~920×680), twee kolommen:
-- Links: foto 96, naam, "Bezig sinds 09:12", timer 76 pt light, "uur : minuten", knop "Stop en bewaar" (rood, stop.fill).
-- Rechts: "Waaraan werkte je?" + "Optioneel"; inset grouped lijst met 6 taken (gekleurd icoon in afgeronde vierkant, checkmark bij selectie); bij Zweefvliegtuig een rij toestel-capsules; voetnoot "Wordt op deze iPad bewaard, ook zonder internet."
+### 4. Stop (`Stop.dc.html`)
+A wide sheet (~920×680) in two columns:
+- Left: photo 96, name, "Bezig sinds 09:12", a 76 pt light timer, "uur : minuten", and a "Stop en bewaar" button (red, stop.fill).
+- Right: "Waaraan werkte je?" + "Optioneel"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Zweefvliegtuig a row of aircraft capsules; footnote "Wordt op deze iPad bewaard, ook zonder internet."
 
-### 5. Bevestiging stop (`Gestopt.dc.html`)
-Zoals 3, groene cirkel. "Bedankt, Jan", "2 u 18 min", "09:12 – 11:30 · Zweefvliegtuig · ASK 21", "Bewaard op deze iPad, gaat naar zweef.app zodra er internet is".
+### 5. Stop confirmation (`Gestopt.dc.html`)
+Like 3, with a green circle. "Bedankt, Jan", "2 u 18 min", "09:12 – 11:30 · Zweefvliegtuig · ASK 21", "Bewaard op deze iPad, gaat naar zweef.app zodra er internet is".
 
-### 6. Dag afsluiten (`Dagoverzicht.dc.html`)
-Push-scherm. Toolbar: terug (glas), titel "Dag afsluiten" + subtitel datum, status-capsule "Geen lopende timers". Drie statkaarten (sessies vandaag, totaal, ook mee van eerdere dagen). Inset grouped lijst per sessie (foto, naam, tijden, taak, markering-capsule oranje, duur). Zwevende glazen balk onderaan: wifi.slash-icoon, "Geen internet · 8 sessies klaar", "Gaan vanzelf naar zweef.app zodra de iPad verbinding heeft", knop "Dag afsluiten" (prominent).
+### 6. Close day (`Dagoverzicht.dc.html`)
+A pushed screen. Toolbar: back (glass), the title "Dag afsluiten" + the date as a subtitle, a status capsule "Geen lopende timers". Three stat cards (sessions today, the total, and what is also included from earlier days). An inset grouped list per session (photo, name, times, task, an orange flag capsule, duration). A floating glass bar at the bottom: a wifi.slash icon, "Geen internet · 8 sessies klaar", "Gaan vanzelf naar zweef.app zodra de iPad verbinding heeft", and a "Dag afsluiten" button (prominent).
 
-### 7. Synchronisatie (`Sync.dc.html`)
-Push-scherm, twee kolommen. Links: statuskaart (icoon, "Geen verbinding", laatste poging, 2 tellers, "Nu opnieuw proberen"), lijst met laatste upload / leden en foto's ververst / periode. Rechts: secties "Aandacht nodig", "Wacht op upload" (per dag), "Recent geüpload".
+### 7. Synchronisation (`Sync.dc.html`)
+A pushed screen in two columns. Left: a status card (icon, "Geen verbinding", the last attempt, two counters, "Nu opnieuw proberen") and a list with the last upload / members and photos refreshed / the period. Right: the sections "Aandacht nodig", "Wacht op upload" (per day) and "Recent geüpload".
 
-### 8. Setup-assistent (nog geen mockup)
-Fullscreen, één stap per pagina met voortgang bovenaan (glazen capsule met stappen), grote velden in inset grouped lijsten, primaire knop "Volgende" onderaan (glassProminent). Stappen: Welkom → Verbinding (segmented control Proxy/Direct, velden, "Verbinding testen" met resultaat-rij "Verbonden met <clubnaam>") → Club (opgehaalde clubnaam ter bevestiging, niet bewerkbaar; sluitingsuur met wheel-picker, takenlijst met herschikken) → Beheercode (6-cijferige invoer) → Klaar.
+### 8. Setup assistant (no mockup yet)
+Fullscreen, one step per page with the progress at the top (a glass capsule with the steps), large fields in inset grouped lists, and a primary "Volgende" button at the bottom (glassProminent). The steps: Welkom → Verbinding (a segmented control Proxy/Direct, the fields, "Verbinding testen" with a result row "Verbonden met <clubnaam>") → Club (the fetched club name for confirmation, not editable; the closing time with a wheel picker, the task list with reordering) → Beheercode (a six-digit entry) → Klaar.
 
-### 9. Instellingen (nog geen mockup)
-Bereikbaar via lang drukken (3 s) op de titel (clubnaam) → beheercode-sheet. Standaard iPad-instellingenpatroon: `NavigationSplitView` met secties Verbinding, Club, Taken, Beheercode, Gegevens. Velden met geheimen tonen "••••••• (ingesteld)" met knop "Wijzigen". Directe modus toont een oranje waarschuwingsrij. Waarden uit MDM zijn grijs met "Beheerd door je organisatie". Gevaarlijke actie "Alles wissen op deze iPad" in rood onderaan.
+### 9. Settings (no mockup yet)
+Reachable by long-pressing (3 s) on the title (the club name) → the admin code sheet. The standard iPad settings pattern: a `NavigationSplitView` with the sections Verbinding, Club, Taken, Beheercode and Gegevens. Fields holding secrets show "••••••• (ingesteld)" with a "Wijzigen" button. Direct mode shows an orange warning row. Values from MDM are greyed out with "Beheerd door je organisatie". The destructive action "Alles wissen op deze iPad" sits in red at the bottom.
 
-## Teksten (NL)
-Gebruik de teksten uit de mockups als bron. Centraliseer in een String Catalog (`Localizable.xcstrings`), basistaal `nl-BE`.
+## Copy (NL)
+Use the copy from the mockups as the source. Centralise it in a String Catalog (`Localizable.xcstrings`) with `nl-BE` as the base language.
 
-## Voorbeelddata voor previews
-Leden: Jan Verhoeven, Koen Maes, Ellen Peeters, Sofie Claes, Bart Wouters, Lotte Janssens, Pieter De Smet, … Toestellen: ASK 21, LS4, Discus.
+## Sample data for previews
+Members: Jan Verhoeven, Koen Maes, Ellen Peeters, Sofie Claes, Bart Wouters, Lotte Janssens, Pieter De Smet, … Aircraft: ASK 21, LS4, Discus.

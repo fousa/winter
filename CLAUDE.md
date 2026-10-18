@@ -1,63 +1,63 @@
-# Winter — iPad-app voor onderhoudsuren
+# Winter — iPad app for maintenance hours
 
-**Winter** is generiek: bruikbaar door elke club die zweef.app gebruikt. Een gedeelde iPad in de werkplaats van de club waarop leden zonder login hun onderhoudsuren registreren met start/stop. Alles wordt lokaal bewaard en zodra er internet is gesynchroniseerd naar zweef.app (GlidingApp) als *maintenance hours*.
+**Winter** is generic: usable by any club that uses zweef.app. A shared iPad in the club's workshop where members log their maintenance hours with start/stop, without logging in. Everything is stored locally and, as soon as there is a connection, synced to zweef.app (GlidingApp) as *maintenance hours*.
 
-## Lees eerst
-Volledige index: `docs/README.md`.
-- `docs/architecture.md` — modules, verantwoordelijkheden, concurrency, foutafhandeling, testen
-- `docs/decisions/` — ADR's: waarom de keuzes zo gemaakt zijn (wijzigen = nieuwe ADR)
-- `docs/glossary.md` — Nederlandse UI-termen ↔ Engelse code-namen
-- `docs/configuration.md` — open source: setup-assistent, instellingen in de app, tokens, MDM
-- `docs/spec.md` — functionele specificatie en alle beslissingen
-- `docs/design.md` — schermen, componenten, Liquid Glass, kleuren, teksten
-- `docs/data-model.md` — SwiftData-modellen
-- `docs/sync.md` — sync-engine (offline-first, retries, dedup)
-- `docs/zweef-api.md` — zweef.app endpoints en veldmapping
-- `PLAN.md` — stappenplan; werk het van boven naar onder af en vink af
-- `mockups/*.dc.html` — bronbestanden van de mockups (referentie voor layout, maten en kleuren; ze draaien niet los, ze hebben de runtime van het design-canvas nodig)
+## Read first
+Full index: `docs/README.md`.
+- `docs/architecture.md` — modules, responsibilities, concurrency, error handling, testing
+- `docs/decisions/` — ADRs: why the choices were made the way they were (changing one = a new ADR)
+- `docs/glossary.md` — Dutch UI terms ↔ English code names
+- `docs/configuration.md` — open source: setup assistant, in-app settings, tokens, MDM
+- `docs/spec.md` — functional specification and every decision
+- `docs/design.md` — screens, components, Liquid Glass, colours, copy
+- `docs/data-model.md` — SwiftData models
+- `docs/sync.md` — sync engine (offline-first, retries, dedup)
+- `docs/zweef-api.md` — zweef.app endpoints and field mapping
+- `PLAN.md` — build plan; work through it top to bottom and tick items off
+- `mockups/*.dc.html` — the mockup source files (reference for layout, sizes and colours; they do not run standalone, they need the design-canvas runtime)
 
-## Vaste beslissingen (niet zonder overleg wijzigen)
-- **Platform**: native iPadOS 26, SwiftUI, Swift 6 strict concurrency, SwiftData. Alleen liggende stand, iPad 11" als referentie (1194×834 pt). Geen iPhone-target.
-- **Look & feel**: iOS 26 HIG. Liquid Glass alleen op de navigatie-/controllaag (toolbar, zwevende balk onderaan, sheets, knoppen). Content (ledentegels, lijsten, kaarten) blijft opaak. Systeemfont, systeemkleuren, inset grouped lijsten.
-- **Geen login** voor leden. Leden kiezen hun naam; geen pincode voor gewoon gebruik. Enkel het instellingenscherm zit achter een beheercode. Controle en correcties gebeuren door het bestuur in zweef.app (registraties komen binnen met status `in_aanvraag`).
-- **Volledig offline bruikbaar**. Starten, stoppen en de dag afsluiten werken zonder netwerk. Internet op de club is onstabiel; sync gebeurt automatisch wanneer er verbinding is.
-- **Twee tikken** om te starten (naam → Start) en twee om te stoppen (kaart → Stop en bewaar). Taak en toestel kiezen is optioneel.
-- **Geen** inspreken/dicteren, **geen** vrij tekstveld, **geen** CSV-export.
-- **Dag afsluiten** kan iedereen, maar alleen als er geen lopende timers zijn. Iedereen mag een vergeten timer van een ander stoppen. Op het sluitingsuur (instelbaar, voorstel 21:00) stopt de app lopende timers automatisch en markeert ze "automatisch gestopt".
-- **API-sleutel**: standaard via een proxy (`proxy/`) die elke club zelf deployt; de iPad heeft een eigen, intrekbaar apparaattoken. Een directe modus (API-sleutel in de Keychain, met waarschuwing) bestaat voor clubs zonder proxy.
-- **Open source** (MIT). Niets club-specifieks of geheims in code of repo. Proxy-URL, apparaattoken (of clubschema + API-sleutel in directe modus), sluitingsuur en taken worden ingesteld in een setup-assistent bij de eerste start, en zijn later aan te passen in een instellingenscherm in de app achter een beheercode. De clubnaam, leden en toestellen komen uit zweef.app (`GET /club.json`, `accounts.json`, `material.json`). Geheimen alleen in de Keychain. Optioneel via MDM (Managed App Configuration).
-- **Taal** van de UI: Nederlands (Vlaams). Code, identifiers en commits in het Engels.
+## Settled decisions (do not change without discussion)
+- **Platform**: native iPadOS 26, SwiftUI, Swift 6 strict concurrency, SwiftData. Landscape only, iPad 11" as the reference (1194×834 pt). No iPhone target.
+- **Look & feel**: iOS 26 HIG. Liquid Glass only on the navigation/control layer (toolbar, floating bar at the bottom, sheets, buttons). Content (member tiles, lists, cards) stays opaque. System font, system colours, inset grouped lists.
+- **No login** for members. Members pick their name; no PIN for everyday use. Only the settings screen sits behind an admin code. Checking and corrections happen in zweef.app by the board (registrations arrive with status `in_aanvraag`).
+- **Fully usable offline**. Starting, stopping and closing the day work without a network. Internet at the club is unreliable; syncing happens automatically whenever there is a connection.
+- **Two taps** to start (name → Start) and two to stop (card → Stop and save). Picking a task and an aircraft is optional.
+- **No** voice notes/dictation, **no** free-text field, **no** CSV export.
+- **Closing the day** is open to everyone, but only when no timers are running. Anyone may stop someone else's forgotten timer. At the closing time (configurable, 21:00 suggested) the app stops running timers automatically and flags them "stopped automatically".
+- **API key**: by default through a proxy (`proxy/`) that each club deploys itself; the iPad has its own revocable device token. A direct mode (API key in the Keychain, with a warning) exists for clubs without a proxy.
+- **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The proxy URL, the device token (or club schema + API key in direct mode), the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The club name, members and aircraft come from zweef.app (`GET /club.json`, `accounts.json`, `material.json`). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
+- **UI language**: Dutch (Flemish). Code, identifiers and commits in English.
 
-## Architectuur in het kort
+## Architecture in brief
 ```
 SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
                     │
                     ▼
-            SessionStore (SwiftData)  ◀── AutoStopService (sluitingsuur)
+            SessionStore (SwiftData)  ◀── AutoStopService (closing time)
                     │
                     ▼
-            SyncEngine (actor) ──▶ ZweefAPI ──▶ ProxyTransport ──▶ eigen proxy van de club ──▶ admin.gliding.app/club/{club}/api
-                                     └▶ DirectTransport (X-API-KEY uit Keychain) ──▶ admin.gliding.app/club/{club}/api
+            SyncEngine (actor) ──▶ ZweefAPI ──▶ ProxyTransport ──▶ the club's own proxy ──▶ admin.gliding.app/club/{club}/api
+                                     └▶ DirectTransport (X-API-KEY from the Keychain) ──▶ admin.gliding.app/club/{club}/api
                     ▲
-            NWPathMonitor + BGAppRefreshTask + timer bij app actief
+            NWPathMonitor + BGAppRefreshTask + a timer while the app is active
 ```
 
-## Conventies
-- Mappen: `App/`, `Features/<Scherm>/`, `Domain/` (modellen, regels), `Data/` (SwiftData, ZweefClient, SyncEngine), `DesignSystem/` (glass-componenten, kleuren, Avatar), `Configuration/` (setup, instellingen, Keychain, managed config).
-- Domeinregels (sluitingsuur, korte sessie, duur → decimale uren) als pure functies met unit tests (Swift Testing).
-- Netwerkcode testbaar via een `ZweefAPI`-protocol met een fake.
-- Geen third-party dependencies tenzij echt nodig.
-- Previews voor elk scherm met fake data (zelfde voorbeeldleden als de mockups).
-- Documentatie: publieke types en niet-triviale functies krijgen DocC-commentaar (`///`) dat het *waarom* uitlegt. Werk `docs/` bij in dezelfde wijziging als het gedrag verandert, en voeg een regel toe aan `CHANGELOG.md`.
-- Commits: Conventional Commits in het Engels (zie `CONTRIBUTING.md`).
+## Conventions
+- Folders: `App/`, `Features/<Screen>/`, `Domain/` (models, rules), `Data/` (SwiftData, ZweefClient, SyncEngine), `DesignSystem/` (glass components, colours, Avatar), `Configuration/` (setup, settings, Keychain, managed config).
+- Domain rules (closing time, short session, duration → decimal hours) as pure functions with unit tests (Swift Testing).
+- Network code testable through a `ZweefAPI` protocol with a fake.
+- No third-party dependencies unless genuinely necessary.
+- Previews for every screen with fake data (the same sample members as the mockups).
+- Documentation: public types and non-trivial functions get a DocC comment (`///`) that explains the *why*. Update `docs/` in the same change as the behaviour, and add a line to `CHANGELOG.md`.
+- Commits: Conventional Commits in English (see `CONTRIBUTING.md`).
 
-## Open vragen (zie ook docs/spec.md)
-- Geeft `GET /accounts.json` een foto-URL per lid? Niet gedocumenteerd → testen met API-sleutel.
-- Welke waarden accepteert zweef.app voor `category`, `project`, `status`; wat geeft de POST terug (id?).
-- Exact sluitingsuur; kan de iPad vaste wifi of een eigen 4G/5G-verbinding krijgen?
+## Open questions (see also docs/spec.md)
+- Does `GET /accounts.json` return a photo URL per member? Undocumented → test it with an API key.
+- Which values does zweef.app accept for `category`, `project` and `status`; what does the POST return (an id?).
+- The exact closing time; can the iPad get wired wifi or its own 4G/5G connection?
 
 ## Links
-(De analyse en mockups zijn privélinks van de maker; niet nodig om bij te dragen.)
-- Analyse (Claude Docs): https://claude.ai/code/artifact/25729b6f-a068-4ab4-8073-5bc762c6b3c2
-- Mockups (design-canvas): https://claude.ai/artifact/XMfZ6e3Hj5xbwkNHAXixna
+(The analysis and mockups are the author's private links; they are not needed in order to contribute.)
+- Analysis (Claude Docs): https://claude.ai/code/artifact/25729b6f-a068-4ab4-8073-5bc762c6b3c2
+- Mockups (design canvas): https://claude.ai/artifact/XMfZ6e3Hj5xbwkNHAXixna
 - zweef.app API: https://documenter.getpostman.com/view/25434528/2s8ZDX5PRi

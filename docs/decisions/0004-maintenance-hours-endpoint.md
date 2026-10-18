@@ -1,18 +1,18 @@
-# 0004 — Uren als maintenance hours in zweef.app, goedkeuring daar
+# 0004 — Hours as maintenance hours in zweef.app, approved there
 
-- **Status**: aanvaard
-- **Datum**: 2026-10-18
+- **Status**: accepted
+- **Date**: 2026-10-18
 
 ## Context
-Bij de start van het project had de publieke API geen endpoint voor werkuren. In oktober 2026 kwamen er `maintenance-hours`-endpoints bij, met een `status`-veld (voorbeeld: `in_aanvraag`).
+When the project started, the public API had no endpoint for work hours. In October 2026 `maintenance-hours` endpoints were added, including a `status` field (example: `in_aanvraag`).
 
-## Beslissing
-Elke sessie wordt één registratie via `POST /maintenance-hours.json`, met status `in_aanvraag`. Goedkeuren en corrigeren gebeurt door het bestuur in zweef.app. De iPad laat geen correcties toe na upload.
+## Decision
+Every session becomes one registration through `POST /maintenance-hours.json`, with status `in_aanvraag`. Approving and correcting is done by the board in zweef.app. The iPad allows no corrections after upload.
 
-## Gevolgen
-- De iPad hoeft geen beheerfuncties te hebben.
-- Dedup is nodig omdat de POST geen client-sleutel kent (tag in `description`, zie zweef-api.md).
-- Toegelaten waarden voor `category`, `project` en `status` moeten nog bevestigd worden.
+## Consequences
+- The iPad does not need any admin features.
+- Dedup is necessary because the POST has no client key (a tag in `description`, see zweef-api.md).
+- The allowed values for `category`, `project` and `status` still need confirming.
 
-## Overwogen alternatieven
-- Notities of grootboekregels gebruiken (de vroegere omweg): niet optelbaar of verschijnt op facturen.
+## Alternatives considered
+- Using notes or ledger entries (the earlier workaround): not summable, or it shows up on invoices.

@@ -1,19 +1,19 @@
-# 0001 — Offline-first met lokale opslag als bron van waarheid
+# 0001 — Offline-first, with local storage as the source of truth
 
-- **Status**: aanvaard
-- **Datum**: 2026-10-18
+- **Status**: accepted
+- **Date**: 2026-10-18
 
 ## Context
-Het internet op de club is onstabiel of soms afwezig. Leden moeten altijd uren kunnen registreren, en een uur dat op de iPad geregistreerd is mag nooit verloren gaan.
+Internet at the club is unreliable and sometimes absent. Members have to be able to log hours at all times, and an hour that has been recorded on the iPad must never be lost.
 
-## Beslissing
-De app bewaart elke actie meteen in SwiftData op de iPad. Starten, stoppen en de dag afsluiten werken volledig offline. Synchronisatie naar zweef.app is een achtergrondproces dat het automatisch opnieuw probeert zodra er verbinding is. Een syncscherm toont de status.
+## Decision
+The app stores every action in SwiftData on the iPad immediately. Starting, stopping and closing the day work fully offline. Syncing to zweef.app is a background process that retries automatically as soon as there is a connection. A sync screen shows the status.
 
-## Gevolgen
-- Geen enkele gebruikersactie wacht op het netwerk.
-- Er is een sync-engine nodig met retries, dedup en een zichtbare status.
-- Uren kunnen dagen op de iPad blijven staan als er geen internet is; het syncscherm maakt dat zichtbaar.
+## Consequences
+- No user action ever waits on the network.
+- We need a sync engine with retries, dedup and a visible status.
+- Hours can sit on the iPad for days when there is no internet; the sync screen makes that visible.
 
-## Overwogen alternatieven
-- Online-only app: onbruikbaar bij slecht internet.
-- Direct uploaden na elke stop: zelfde complexiteit, maar minder controle per dag.
+## Alternatives considered
+- An online-only app: unusable with bad internet.
+- Uploading right after every stop: the same complexity, but less control per day.

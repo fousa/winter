@@ -1,6 +1,6 @@
-# Datamodel (SwiftData)
+# Data model (SwiftData)
 
-Elke tik wordt meteen weggeschreven (`modelContext.save()`), zodat een crash, lege batterij of herstart nooit uren kost.
+Every tap is written out immediately (`modelContext.save()`), so a crash, a flat battery or a restart never costs any hours.
 
 ```swift
 @Model final class Member {
@@ -8,15 +8,15 @@ Elke tik wordt meteen weggeschreven (`modelContext.save()`), zodat een crash, le
     var firstName: String
     var lastName: String
     var isActive: Bool
-    var photoURL: URL?          // remote, indien beschikbaar
-    var photoFileName: String?  // lokale cache in Application Support/Photos
+    var photoURL: URL?          // remote, if available
+    var photoFileName: String?  // local cache in Application Support/Photos
     var lastSeenAt: Date?
     var updatedAt: Date
 }
 
-@Model final class Aircraft {     // uit material.json
+@Model final class Aircraft {     // from material.json
     @Attribute(.unique) var zweefId: Int
-    var name: String              // bv. "ASK 21"
+    var name: String              // e.g. "ASK 21"
     var registration: String?
     var isGlider: Bool
 }
@@ -25,11 +25,11 @@ Elke tik wordt meteen weggeschreven (`modelContext.save()`), zodat een crash, le
 enum SessionStatus: String, Codable { case running, completed }
 
 enum SyncState: String, Codable {
-    case local            // afgerond, dag nog niet afgesloten
-    case ready            // dag afgesloten, klaar voor upload
+    case local            // completed, the day is not closed yet
+    case ready            // the day is closed, ready to upload
     case uploading
     case uploaded
-    case rejected         // 4xx van zweef.app, met reden
+    case rejected         // 4xx from zweef.app, with a reason
 }
 
 @Model final class WorkSession {
@@ -50,18 +50,18 @@ enum SyncState: String, Codable {
     var uploadedAt: Date?
 }
 
-@Model final class SyncLog {      // voor het syncscherm
+@Model final class SyncLog {      // for the sync screen
     var at: Date
     var kind: String              // "upload", "refresh", "error"
     var message: String
 }
 
-// Configuratie: zie docs/configuration.md
-// - geheimen (apparaattoken, API-sleutel, hash van beheercode) in de Keychain via een KeychainStore
-// - overige verbindingsinstellingen in UserDefaults via een AppConfiguration-type
-// - managed config (MDM) heeft voorrang en is read-only
+// Configuration: see docs/configuration.md
+// - secrets (device token, API key, the hash of the admin code) in the Keychain through a KeychainStore
+// - the other connection settings in UserDefaults through an AppConfiguration type
+// - managed configuration (MDM) takes precedence and is read-only
 
-@Model final class TaskDefinition {  // instelbare takenlijst
+@Model final class TaskDefinition {  // the configurable task list
     @Attribute(.unique) var key: String
     var label: String
     var symbolName: String
@@ -72,7 +72,7 @@ enum SyncState: String, Codable {
 }
 
 @Model final class AppSettings {  // singleton
-    var clubName: String?          // uit GET /club.json; nil → "Winter" tonen
+    var clubName: String?          // from GET /club.json; nil → show "Winter"
     var clubFetchedAt: Date?
     var closingHour: Int = 21
     var closingMinute: Int = 0
@@ -83,11 +83,11 @@ enum SyncState: String, Codable {
 }
 ```
 
-## Afgeleide regels (pure functies, unit-testen)
+## Derived rules (pure functions, unit-tested)
 - `duration(start:stop:) -> Minutes`
-- `decimalHours(minutes:) -> Double` (2 decimalen)
-- `flags(for:) -> [Flag]` → kort (< 5 min), lang (> 10 u), automatisch gestopt, gestopt door iemand anders
-- `autoStopDate(for start: Date, closing: DateComponents) -> Date`: het sluitingsuur op de startdag; start ná het sluitingsuur → het sluitingsuur van de volgende dag
+- `decimalHours(minutes:) -> Double` (two decimals)
+- `flags(for:) -> [Flag]` → short (< 5 min), long (> 10 h), stopped automatically, stopped by someone else
+- `autoStopDate(for start: Date, closing: DateComponents) -> Date`: the closing time on the day the session started; a session that starts *after* the closing time gets the next day's closing time
 - `canCloseDay(runningCount:) -> Bool`
 - `description(for session:, aircraft:) -> String`
-- Bewaartermijn: geüploade sessies 90 dagen lokaal, daarna opruimen.
+- Retention: uploaded sessions stay on the device for 90 days, then get cleaned up.

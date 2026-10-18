@@ -1,24 +1,24 @@
-# Architectuur
+# Architecture
 
-Dit document beschrijft hoe de app technisch in elkaar zit: welke modules er zijn, wie waarvoor verantwoordelijk is, hoe data stroomt, hoe concurrency en fouten worden behandeld en hoe alles getest wordt. Voor het *wat* en *waarom* zie [spec.md](spec.md) en de [ADR's](decisions/README.md).
+This document describes how the app is put together technically: which modules exist, who is responsible for what, how data flows, how concurrency and errors are handled, and how it is all tested. For the *what* and *why*, see [spec.md](spec.md) and the [ADRs](decisions/README.md).
 
-## Doelen die de architectuur sturen
-1. **Nooit uren verliezen.** Elke actie wordt meteen lokaal bewaard. Netwerk is nooit een voorwaarde om iets te registreren.
-2. **Offline-first.** De lokale database is de bron van waarheid voor de iPad. zweef.app is de bestemming, niet de bron.
-3. **Generiek en zonder geheimen.** Geen club-specifieke waarden of geheimen in de code; clubnaam, leden en toestellen komen uit zweef.app. Alles komt uit de configuratie op het toestel.
-4. **Testbaar zonder netwerk en zonder zweef.app.** Alle externe afhankelijkheden zitten achter protocollen.
-5. **Eenvoud.** Eén app-target, geen third-party dependencies, geen eigen backend behalve de dunne proxy.
+## Goals that drive the architecture
+1. **Never lose hours.** Every action is stored locally straight away. The network is never a precondition for recording something.
+2. **Offline-first.** The local database is the source of truth for the iPad. zweef.app is the destination, not the source.
+3. **Generic and secret-free.** No club-specific values or secrets in the code; the club name, members and aircraft come from zweef.app. Everything else comes from the configuration on the device.
+4. **Testable without a network and without zweef.app.** Every external dependency sits behind a protocol.
+5. **Simplicity.** One app target, no third-party dependencies, no backend of our own beyond the thin proxy.
 
-## Overzicht
+## Overview
 ```
-┌───────────────────────────── iPad-app ─────────────────────────────┐
+┌───────────────────────────── iPad app ─────────────────────────────┐
 │                                                                    │
 │  Features (SwiftUI views + @Observable view models, @MainActor)    │
 │    Home · StartSheet · StopSheet · Confirmation · CloseDay · Sync  │
 │    Setup · Settings                                                │
 │                │                                                   │
 │                ▼                                                   │
-│  Domain (pure Swift, geen UI, geen I/O)                            │
+│  Domain (pure Swift, no UI, no I/O)                                │
 │    SessionRules · ClosingTime · Flags · HoursFormatter             │
 │                │                                                   │
 │                ▼                                                   │
@@ -36,119 +36,119 @@ Dit document beschrijft hoe de app technisch in elkaar zit: welke modules er zij
                      ┌─────────────────────────────────────────┴───┐
                      │ ProxyTransport            DirectTransport   │
                      ▼                                     │       │
-          Proxy van de club (Cloudflare Worker)            │       │
+          The club's proxy (Cloudflare Worker)             │       │
                      │  X-API-KEY                          │       │
                      ▼                                     ▼       │
           admin.gliding.app/club/{club}/api  ◀─────────────┘       │
 ```
 
-## Modules en verantwoordelijkheden
+## Modules and responsibilities
 
 ### `App/`
-- `WinterApp`: entrypoint. Bouwt de `ModelContainer`, de services en injecteert ze via de SwiftUI-environment.
-- Beslist welk root-scherm getoond wordt: **Setup** zolang de configuratie onvolledig is, anders **Home**.
-- Registreert de `BGAppRefreshTask` en koppelt `scenePhase`-wijzigingen aan sync en auto-stop.
+- `WinterApp`: the entry point. Builds the `ModelContainer` and the services, and injects them through the SwiftUI environment.
+- Decides which root screen is shown: **Setup** while the configuration is incomplete, otherwise **Home**.
+- Registers the `BGAppRefreshTask` and wires `scenePhase` changes to sync and auto-stop.
 
 ### `Features/`
-Eén map per scherm, met daarin de view, het view model en previews.
+One folder per screen, containing the view, the view model and the previews.
 
-| Feature | Verantwoordelijkheid |
+| Feature | Responsibility |
 |---|---|
-| `Home` | Ledenlijst, zoeken, letterindex, balk "Nu aan het werk", statusknop sync, knop "Dag afsluiten", verborgen ingang naar Instellingen |
-| `StartSheet` | Bevestigen dat het juiste lid start; al bezig → doorverwijzen naar stoppen |
-| `StopSheet` | Lopende tijd tonen, taak/toestel kiezen, stoppen |
-| `Confirmation` | Bevestiging na start/stop met "Ongedaan maken" en auto-dismiss |
-| `CloseDay` | Overzicht van de dag en afsluiten |
-| `Sync` | Syncstatus, wachtende/geweigerde/geüploade sessies, opnieuw proberen |
-| `Setup` | Setup-assistent bij de eerste start |
-| `Settings` | Instellingen achter de beheercode |
+| `Home` | Member list, search, letter index, the "Working now" bar, the sync status button, the "Close day" button, the hidden entrance to Settings |
+| `StartSheet` | Confirming that the right member is starting; already working → redirect to stopping |
+| `StopSheet` | Showing the running time, picking a task/aircraft, stopping |
+| `Confirmation` | Confirmation after start/stop, with "Undo" and auto-dismiss |
+| `CloseDay` | Overview of the day and closing it |
+| `Sync` | Sync status, pending/rejected/uploaded sessions, retrying |
+| `Setup` | The setup assistant on first launch |
+| `Settings` | Settings behind the admin code |
 
-Regels voor features:
-- Views bevatten geen logica buiten presentatie. Beslissingen ("mag de dag afgesloten worden?") komen uit `Domain`.
-- View models zijn `@Observable` en `@MainActor`, en praten met `SessionStore` en `SyncEngine`, nooit rechtstreeks met het netwerk.
-- Elk scherm heeft previews met voorbeelddata (zie [design.md](design.md)).
+Rules for features:
+- Views contain no logic beyond presentation. Decisions ("may the day be closed?") come from `Domain`.
+- View models are `@Observable` and `@MainActor`, and talk to `SessionStore` and `SyncEngine`, never to the network directly.
+- Every screen has previews with sample data (see [design.md](design.md)).
 
 ### `Domain/`
-Pure functies en waardetypes, zonder SwiftData, SwiftUI of netwerk. Daardoor volledig unit-testbaar.
+Pure functions and value types, without SwiftData, SwiftUI or networking. That makes them fully unit-testable.
 - `SessionRules`: `canCloseDay`, `isShortSession`, `isLongSession`, `flags(for:)`.
-- `ClosingTime`: berekent het automatische stoptijdstip voor een sessie.
-- `HoursFormatter`: duur ↔ "2 u 18 min" ↔ decimale uren (2.3).
-- `RegistrationDescription`: bouwt het `description`-veld voor zweef.app, inclusief de dedup-tag.
+- `ClosingTime`: computes the automatic stop time for a session.
+- `HoursFormatter`: duration ↔ "2 h 18 min" ↔ decimal hours (2.3).
+- `RegistrationDescription`: builds the `description` field for zweef.app, including the dedup tag.
 
 ### `Data/`
-- `SessionStore` (`@MainActor`): enige plek die `WorkSession` aanmaakt of wijzigt. Methodes: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Slaat na elke mutatie meteen op.
-- `SyncEngine` (`actor`): zie [sync.md](sync.md). Gebruikt een eigen `ModelContext` (achtergrond) via een `ModelActor`.
-- `ZweefAPI` (protocol) met `ZweefClient` (echt) en `FakeZweefAPI` (tests, previews).
-- `Transport` (protocol) met `ProxyTransport` en `DirectTransport`: zet de juiste base-URL en headers. `ZweefClient` weet niet welke modus actief is.
-- `PhotoCache`: downloadt en bewaart profielfoto's, geeft lokale URL's terug.
-- `AutoStopService`: roept `SessionStore.applyAutoStop` aan bij app-start, bij actief worden, elke minuut in de voorgrond en in de achtergrondtaak.
-- `ConnectivityMonitor`: wrapper rond `NWPathMonitor` die een `AsyncStream<Bool>` aanbiedt.
+- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
+- `SyncEngine` (`actor`): see [sync.md](sync.md). Uses its own (background) `ModelContext` through a `ModelActor`.
+- `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews).
+- `Transport` (protocol) with `ProxyTransport` and `DirectTransport`: sets the right base URL and headers. `ZweefClient` does not know which mode is active.
+- `PhotoCache`: downloads and stores profile photos, and returns local URLs.
+- `AutoStopService`: calls `SessionStore.applyAutoStop` at app launch, when the app becomes active, every minute in the foreground, and in the background task.
+- `ConnectivityMonitor`: a wrapper around `NWPathMonitor` that exposes an `AsyncStream<Bool>`.
 
 ### `Configuration/`
-- `AppConfiguration`: getypeerde toegang tot niet-geheime instellingen (UserDefaults).
-- `KeychainStore`: lezen/schrijven van geheimen (apparaattoken, API-sleutel, hash van de beheercode).
-- `ManagedConfiguration`: leest MDM-waarden; die hebben voorrang en zijn read-only.
-- `AdminCodeVerifier`: controleert de beheercode (hash + salt, vertraging na foute pogingen).
-- Zie [configuration.md](configuration.md) voor alle sleutels.
+- `AppConfiguration`: typed access to the non-secret settings (UserDefaults).
+- `KeychainStore`: reading/writing secrets (device token, API key, the hash of the admin code).
+- `ManagedConfiguration`: reads MDM values; those take precedence and are read-only.
+- `AdminCodeVerifier`: checks the admin code (hash + salt, with a delay after failed attempts).
+- See [configuration.md](configuration.md) for every key.
 
 ### `DesignSystem/`
-Herbruikbare componenten met de Liquid Glass-stijl: `MemberAvatar`, `GlassBar`, `StatCard`, `FlagBadge`, `PrimaryActionButton`. Zie [design.md](design.md).
+Reusable components in the Liquid Glass style: `MemberAvatar`, `GlassBar`, `StatCard`, `FlagBadge`, `PrimaryActionButton`. See [design.md](design.md).
 
-## Belangrijke flows
+## Key flows
 
 ### Start
 ```
-Home (tik op lid) → StartSheet → SessionStore.start(member)
-   → WorkSession(status: .running) opgeslagen
-   → Confirmation (Ongedaan maken 10 s) → Home
+Home (tap a member) → StartSheet → SessionStore.start(member)
+   → WorkSession(status: .running) saved
+   → Confirmation (Undo, 10 s) → Home
 ```
 
 ### Stop
 ```
-Home (tik op kaart in balk) → StopSheet → SessionStore.stop(session, task, aircraft, by: .self/.other)
+Home (tap a card in the bar) → StopSheet → SessionStore.stop(session, task, aircraft, by: .self/.other)
    → status .completed, syncState .local
-   → Confirmation (Ongedaan maken 10 s) → Home
+   → Confirmation (Undo, 10 s) → Home
 ```
 
-### Dag afsluiten en sync
+### Closing the day and syncing
 ```
-Home → CloseDay (enkel als SessionRules.canCloseDay) → SessionStore.closeDay
-   → syncState .ready voor alle afgeronde sessies van die dag(en)
+Home → CloseDay (only if SessionRules.canCloseDay) → SessionStore.closeDay
+   → syncState .ready for every completed session of that day (or days)
    → SyncEngine.requestSync(reason: .dayClosed)
-   → (online) POST per sessie → .uploaded   |   (offline) blijft .ready, retry later
+   → (online) POST per session → .uploaded   |   (offline) stays .ready, retried later
 ```
 
 ## Concurrency
-- Swift 6 strict concurrency staat aan; geen `@unchecked Sendable` zonder commentaar waarom.
-- UI en `SessionStore` draaien op de `MainActor`. Mutaties zijn klein en snel.
-- `SyncEngine` is een `actor` met een eigen `ModelContext`; hij laadt sessies op id, nooit modelobjecten over actor-grenzen heen.
-- Eén sync-run tegelijk: nieuwe triggers tijdens een run worden samengevoegd tot één vervolg-run.
-- Timers (lopende duur in de UI) gebruiken `TimelineView(.periodic(from:by: 1))`, niet een eigen `Timer`.
+- Swift 6 strict concurrency is on; no `@unchecked Sendable` without a comment explaining why.
+- The UI and `SessionStore` run on the `MainActor`. Mutations are small and fast.
+- `SyncEngine` is an `actor` with its own `ModelContext`; it loads sessions by id and never passes model objects across actor boundaries.
+- One sync run at a time: new triggers during a run are merged into a single follow-up run.
+- Timers (the running duration in the UI) use `TimelineView(.periodic(from:by: 1))`, not a `Timer` of their own.
 
-## Foutafhandeling
-| Soort fout | Gedrag |
+## Error handling
+| Kind of error | Behaviour |
 |---|---|
-| Opslaan in SwiftData mislukt | Assertie in debug; in release een duidelijke melding en de actie niet als gelukt tonen. Mag in de praktijk niet voorkomen. |
-| Geen netwerk | Geen melding; status zichtbaar via de statusknop en het syncscherm |
-| 401/403 van proxy of zweef.app | Sync stopt, syncscherm toont "Verbinding geweigerd: controleer het token in Instellingen" |
-| 4xx op een registratie | Sessie wordt `.rejected` met de reden, geen automatische retry |
-| 5xx of timeout | Retry met backoff |
-| Configuratie onvolledig | App toont de setup-assistent |
+| Saving to SwiftData fails | An assertion in debug; in release a clear message and the action is not shown as succeeded. Should not happen in practice. |
+| No network | No message; the status is visible through the status button and the sync screen |
+| 401/403 from the proxy or zweef.app | Syncing stops, the sync screen shows "Connection refused: check the token in Settings" |
+| 4xx on a registration | The session becomes `.rejected` with the reason, with no automatic retry |
+| 5xx or a timeout | Retry with backoff |
+| Incomplete configuration | The app shows the setup assistant |
 
-Fouten worden gelogd met `os.Logger` (subsystem = bundle id, categorieën `sync`, `store`, `config`). Nooit tokens, sleutels of persoonsgegevens loggen; gebruik `privacy: .private` voor namen.
+Errors are logged with `os.Logger` (subsystem = the bundle id, categories `sync`, `store`, `config`). Never log tokens, keys or personal data; use `privacy: .private` for names.
 
-## Testen
-| Laag | Hoe |
+## Testing
+| Layer | How |
 |---|---|
-| Domain | Swift Testing, pure functies, parametrized tests voor randgevallen (middernacht, sluitingsuur, zomertijd) |
-| SessionStore | In-memory `ModelContainer` |
-| SyncEngine | `FakeZweefAPI` die succes, timeouts, 4xx en 5xx simuleert; gecontroleerde klok |
-| ZweefClient | `URLProtocol`-stub met JSON-fixtures (geanonimiseerd) |
-| UI | Previews voor elk scherm; enkele UI-tests voor start → stop → afsluiten |
+| Domain | Swift Testing, pure functions, parametrised tests for edge cases (midnight, the closing time, daylight saving) |
+| SessionStore | An in-memory `ModelContainer` |
+| SyncEngine | A `FakeZweefAPI` that simulates success, timeouts, 4xx and 5xx; a controlled clock |
+| ZweefClient | A `URLProtocol` stub with JSON fixtures (anonymised) |
+| UI | Previews for every screen; a few UI tests for start → stop → close |
 
-Tijd is altijd injecteerbaar (`Clock`/`now: () -> Date`), zodat sluitingsuur en undo-vensters testbaar zijn.
+Time is always injectable (`Clock`/`now: () -> Date`), so that the closing time and the undo windows are testable.
 
-## Wat bewust niet gebruikt wordt
-- Geen eigen backend of database buiten de proxy.
-- Geen CloudKit-sync tussen iPads (één iPad per club is het uitgangspunt).
-- Geen third-party networking- of DI-libraries.
+## Deliberately not used
+- No backend or database of our own beyond the proxy.
+- No CloudKit sync between iPads (one iPad per club is the assumption).
+- No third-party networking or DI libraries.

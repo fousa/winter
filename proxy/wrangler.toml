@@ -2,7 +2,7 @@ name = "winter-proxy"
 main = "src/index.js"
 compatibility_date = "2026-10-01"
 
-# Secrets (niet in dit bestand zetten):
+# Secrets (do not put them in this file):
 #   wrangler secret put ZWEEF_API_KEY
 #   wrangler secret put CLUB
 #   wrangler secret put DEVICE_TOKENS

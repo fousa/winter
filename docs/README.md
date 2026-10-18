@@ -1,35 +1,35 @@
-# Documentatie
+# Documentation
 
-Overzicht van alle documentatie in deze repository. Begin bovenaan als je nieuw bent.
+An overview of all documentation in this repository. If you are new, start at the top.
 
-## Voor clubs (installeren en gebruiken)
-| Document | Inhoud |
+## For clubs (installing and using)
+| Document | Contents |
 |---|---|
-| [Installatiegids voor clubs](installatiegids.md) | Stap voor stap: proxy, app, eerste start, Begeleide toegang, problemen oplossen |
-| [Configuratie](configuration.md) | Alle instellingen, waar ze bewaard worden, MDM-sleutels |
-| [Proxy](../proxy/README.md) | De Cloudflare Worker die de zweef.app-sleutel bewaart |
+| [Installation guide for clubs](installation-guide.md) | Step by step: proxy, app, first launch, Guided Access, troubleshooting |
+| [Configuration](configuration.md) | Every setting, where it is stored, MDM keys |
+| [Proxy](../proxy/README.md) | The Cloudflare Worker that holds the zweef.app key |
 
-## Voor ontwikkelaars
-| Document | Inhoud |
+## For developers
+| Document | Contents |
 |---|---|
-| [CLAUDE.md](../CLAUDE.md) | Korte samenvatting van alle vaste beslissingen; ook de instructies voor Claude Code |
-| [PLAN.md](../PLAN.md) | Stappenplan in fases |
-| [Functionele specificatie](spec.md) | Flows, regels, randgevallen |
-| [Architectuur](architecture.md) | Modules, verantwoordelijkheden, concurrency, foutafhandeling, testen |
-| [Datamodel](data-model.md) | SwiftData-modellen en afgeleide regels |
-| [Synchronisatie](sync.md) | Offline-first sync-engine |
-| [zweef.app API](zweef-api.md) | Endpoints, veldmapping, dedup |
-| [Design](design.md) | Schermen, Liquid Glass, kleuren, teksten |
-| [Woordenlijst](glossary.md) | Nederlandse UI-termen ↔ Engelse code-namen |
-| [Beslissingen (ADR's)](decisions/README.md) | Waarom de belangrijkste keuzes zo gemaakt zijn |
-| [Mockups](../mockups/README.md) | Bronbestanden van de schermontwerpen |
+| [CLAUDE.md](../CLAUDE.md) | A short summary of every settled decision; also the instructions for Claude Code |
+| [PLAN.md](../PLAN.md) | Build plan in phases |
+| [Functional specification](spec.md) | Flows, rules, edge cases |
+| [Architecture](architecture.md) | Modules, responsibilities, concurrency, error handling, testing |
+| [Data model](data-model.md) | SwiftData models and derived rules |
+| [Synchronisation](sync.md) | The offline-first sync engine |
+| [zweef.app API](zweef-api.md) | Endpoints, field mapping, dedup |
+| [Design](design.md) | Screens, Liquid Glass, colours, copy |
+| [Glossary](glossary.md) | Dutch UI terms ↔ English code names |
+| [Decisions (ADRs)](decisions/README.md) | Why the main choices were made the way they were |
+| [Mockups](../mockups/README.md) | Source files of the screen designs |
 
-## Voor bijdragers
-| Document | Inhoud |
+## For contributors
+| Document | Contents |
 |---|---|
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Hoe je bijdraagt: branches, commits, tests, review |
-| [SECURITY.md](../SECURITY.md) | Geheimen, privacy van ledendata, kwetsbaarheden melden |
-| [CHANGELOG.md](../CHANGELOG.md) | Wijzigingen per versie |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | How to contribute: branches, commits, tests, review |
+| [SECURITY.md](../SECURITY.md) | Secrets, member data privacy, reporting vulnerabilities |
+| [CHANGELOG.md](../CHANGELOG.md) | Changes per version |
 
-## Taal
-De app en de documentatie zijn in het Nederlands (de doelgroep zijn Vlaamse en Nederlandse clubs met zweef.app). Code, identifiers, commits en codecommentaar zijn in het Engels. Zie de [woordenlijst](glossary.md) voor de vertaling tussen beide.
+## Language
+The app's UI is in Dutch (the target audience is Flemish and Dutch clubs using zweef.app). This documentation, the code, identifiers, commits and code comments are in English. See the [glossary](glossary.md) for the translation between the two.

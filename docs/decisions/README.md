@@ -1,27 +1,27 @@
-# Architectuurbeslissingen (ADR's)
+# Architecture decisions (ADRs)
 
-Elke belangrijke keuze staat in een kort document: context, beslissing, gevolgen en overwogen alternatieven. Wil je een beslissing wijzigen, voeg dan een nieuwe ADR toe die de oude vervangt, in plaats van de oude te herschrijven.
+Every significant choice is recorded in a short document: context, decision, consequences and the alternatives considered. If you want to change a decision, add a new ADR that supersedes the old one instead of rewriting the old one.
 
-| Nr | Beslissing | Status |
+| No | Decision | Status |
 |---|---|---|
-| 0001 | [Offline-first met lokale opslag als bron van waarheid](0001-offline-first.md) | aanvaard |
-| 0002 | [Geen login voor leden; beheercode alleen voor instellingen](0002-geen-login.md) | aanvaard |
-| 0003 | [API-sleutel via een proxy, directe modus als uitzondering](0003-proxy-voor-api-sleutel.md) | aanvaard |
-| 0004 | [Uren als maintenance hours in zweef.app, goedkeuring daar](0004-maintenance-hours-endpoint.md) | aanvaard |
-| 0005 | [Iedereen sluit de dag af, alleen zonder lopende timers](0005-dag-afsluiten.md) | aanvaard |
-| 0006 | [Native SwiftUI-app voor iPadOS 26 met Liquid Glass](0006-native-ipados-26.md) | aanvaard |
-| 0007 | [Geen inspreken, vrij tekstveld of CSV-export](0007-geen-vrije-invoer.md) | aanvaard |
-| 0008 | [Open source, configuratie op het toestel](0008-open-source-configuratie.md) | aanvaard |
+| 0001 | [Offline-first, with local storage as the source of truth](0001-offline-first.md) | accepted |
+| 0002 | [No login for members; an admin code for the settings only](0002-no-member-login.md) | accepted |
+| 0003 | [The API key through a proxy, direct mode as the exception](0003-proxy-for-the-api-key.md) | accepted |
+| 0004 | [Hours as maintenance hours in zweef.app, approved there](0004-maintenance-hours-endpoint.md) | accepted |
+| 0005 | [Anyone closes the day, only when no timers are running](0005-closing-the-day.md) | accepted |
+| 0006 | [A native SwiftUI app for iPadOS 26 with Liquid Glass](0006-native-ipados-26.md) | accepted |
+| 0007 | [No voice notes, free-text field or CSV export](0007-no-free-form-input.md) | accepted |
+| 0008 | [Open source, configured on the device](0008-open-source-configuration.md) | accepted |
 
-## Sjabloon
+## Template
 ```markdown
-# NNNN — Titel
+# NNNN — Title
 
-- **Status**: voorgesteld | aanvaard | vervangen door NNNN
-- **Datum**: JJJJ-MM-DD
+- **Status**: proposed | accepted | superseded by NNNN
+- **Date**: YYYY-MM-DD
 
 ## Context
-## Beslissing
-## Gevolgen
-## Overwogen alternatieven
+## Decision
+## Consequences
+## Alternatives considered
 ```

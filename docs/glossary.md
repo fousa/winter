@@ -1,29 +1,29 @@
-# Woordenlijst
+# Glossary
 
-De UI en documentatie zijn Nederlands, de code is Engels. Gebruik deze namen consequent.
+The UI is in Dutch and the code is in English. Use these names consistently.
 
-| Nederlands (UI/docs) | Engels (code) | Betekenis |
+| Dutch (UI) | English (code/docs) | Meaning |
 |---|---|---|
-| Winter | `Winter` (app, bundle `<prefix>.winter`) | Naam van de app |
-| Club | `club` | De zweefvliegclub; naam komt uit zweef.app |
-| Lid | `Member` | Clublid uit zweef.app |
-| Sessie | `WorkSession` | Eén periode van werken tussen start en stop |
-| Lopende sessie / timer | `status == .running` | Sessie zonder stoptijd |
-| Taak | `TaskDefinition` | Waaraan gewerkt werd (instelbaar per club) |
-| Toestel | `Aircraft` | Vliegtuig of materiaal uit zweef.app `material.json` |
-| Dag afsluiten | `closeDay` | Alle afgeronde sessies van de dag klaarzetten voor upload |
-| Sluitingsuur | `closingTime` | Tijdstip waarop lopende timers automatisch stoppen |
-| Automatisch gestopt | `autoStopped` | Sessie gestopt door het sluitingsuur |
-| Gestopt door iemand anders | `stoppedByOther` | Iemand stopte de timer van een ander lid |
-| Markering | `Flag` | Opvallend kenmerk van een sessie (kort, lang, automatisch gestopt, …) |
-| Synchronisatie / sync | `SyncEngine` | Uploaden naar en ophalen uit zweef.app |
-| Wacht op upload | `syncState == .ready` | Afgesloten, nog niet in zweef.app |
-| Geweigerd | `syncState == .rejected` | zweef.app weigerde de registratie |
-| Registratie | maintenance-hours record | Een onderhoudsuren-regel in zweef.app |
-| Onderhoudsperiode | `period` | Periode in zweef.app waaronder registraties vallen |
-| Proxy | proxy | Cloudflare Worker van de club die de API-sleutel bewaart |
-| Apparaattoken | `deviceToken` | Geheim waarmee de iPad zich bij de proxy aanmeldt |
-| Beheercode | `adminCode` | Code die het instellingenscherm beschermt |
-| Setup-assistent | `Setup` | Configuratie bij de eerste start |
-| Begeleide toegang | Guided Access | iPadOS-functie die de iPad in één app houdt |
-| Bestuur | — | Keurt registraties goed in zweef.app; geen rol in de app |
+| Winter | `Winter` (app, bundle `<prefix>.winter`) | The name of the app |
+| Club | `club` | The gliding club; its name comes from zweef.app |
+| Lid | `Member` | A club member from zweef.app |
+| Sessie | `WorkSession` | One period of work between start and stop |
+| Lopende sessie / timer | `status == .running` | A session without a stop time |
+| Taak | `TaskDefinition` | What was worked on (configurable per club) |
+| Toestel | `Aircraft` | An aircraft or piece of equipment from zweef.app `material.json` |
+| Dag afsluiten | `closeDay` | Mark all completed sessions of the day as ready to upload |
+| Sluitingsuur | `closingTime` | The time at which running timers stop automatically |
+| Automatisch gestopt | `autoStopped` | A session stopped by the closing time |
+| Gestopt door iemand anders | `stoppedByOther` | Someone stopped another member's timer |
+| Markering | `Flag` | A notable property of a session (short, long, stopped automatically, …) |
+| Synchronisatie / sync | `SyncEngine` | Uploading to and fetching from zweef.app |
+| Wacht op upload | `syncState == .ready` | Closed, not yet in zweef.app |
+| Geweigerd | `syncState == .rejected` | zweef.app refused the registration |
+| Registratie | maintenance-hours record | A maintenance-hours row in zweef.app |
+| Onderhoudsperiode | `period` | The period in zweef.app that registrations belong to |
+| Proxy | proxy | The club's Cloudflare Worker that holds the API key |
+| Apparaattoken | `deviceToken` | The secret the iPad uses to authenticate with the proxy |
+| Beheercode | `adminCode` | The code that protects the settings screen |
+| Setup-assistent | `Setup` | Configuration on first launch |
+| Begeleide toegang | Guided Access | The iPadOS feature that keeps the iPad in one app |
+| Bestuur | the board | Approves registrations in zweef.app; has no role in the app |

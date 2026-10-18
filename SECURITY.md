@@ -1,24 +1,24 @@
-# Beveiliging en privacy
+# Security and privacy
 
-## Wat er beschermd moet worden
-- **zweef.app API-sleutel**: geeft toegang tot alle ledengegevens en financiële data van een club.
-- **Apparaattokens**: geven een iPad toegang tot de proxy van de club.
-- **Ledendata**: namen, foto's en gewerkte uren van clubleden.
+## What needs protecting
+- **The zweef.app API key**: it grants access to all of a club's member data and financial data.
+- **Device tokens**: they give an iPad access to the club's proxy.
+- **Member data**: names, photos and hours worked by club members.
 
-## Hoe de app dat doet
-- Geen geheimen in de code of repo. Alles wordt op het toestel ingesteld ([docs/configuration.md](docs/configuration.md)).
-- Geheimen staan in de Keychain met `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` (niet in back-ups, niet overdraagbaar).
-- Aanbevolen opzet met een proxy: de API-sleutel komt nooit op de iPad ([ADR 0003](docs/decisions/0003-proxy-voor-api-sleutel.md)). De proxy laat alleen de nodige endpoints door.
-- Het instellingenscherm zit achter een beheercode (gehasht met salt, vertraging na foute pogingen).
-- Logs bevatten nooit tokens, sleutels of persoonsgegevens.
-- Ledendata blijft op de iPad en in zweef.app; er is geen andere server.
+## How the app protects it
+- No secrets in the code or the repository. Everything is configured on the device ([docs/configuration.md](docs/configuration.md)).
+- Secrets live in the Keychain with `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` (not in backups, not transferable).
+- In the recommended proxy setup the API key never reaches the iPad ([ADR 0003](docs/decisions/0003-proxy-for-the-api-key.md)). The proxy only forwards the endpoints the app needs.
+- The settings screen sits behind an admin code (hashed with a salt, with a delay after failed attempts).
+- Logs never contain tokens, keys or personal data.
+- Member data stays on the iPad and in zweef.app; there is no other server.
 
-## Als er iets gelekt is
-| Wat | Doe meteen |
+## If something leaks
+| What | Do this right away |
 |---|---|
-| API-sleutel | Trek hem in via de zweef.app-beheerpagina's, maak een nieuwe, zet die in de proxy (`wrangler secret put ZWEEF_API_KEY`) of in de app-instellingen |
-| Apparaattoken | Verwijder het uit `DEVICE_TOKENS`, deploy de proxy opnieuw, zet een nieuw token in de app |
-| Geheim in een commit | Intrekken zoals hierboven. Het uit de geschiedenis verwijderen is niet genoeg: beschouw het als gelekt. |
+| API key | Revoke it in the zweef.app admin pages, create a new one, and put it in the proxy (`wrangler secret put ZWEEF_API_KEY`) or in the app's settings |
+| Device token | Remove it from `DEVICE_TOKENS`, redeploy the proxy, and set a new token in the app |
+| A secret in a commit | Revoke it as above. Removing it from history is not enough: treat it as leaked. |
 
-## Een kwetsbaarheid melden
-Meld beveiligingsproblemen **niet** in een publiek issue. Gebruik GitHub *Private vulnerability reporting* (tab "Security" van de repository). Je krijgt binnen een week een reactie.
+## Reporting a vulnerability
+Please do **not** report security problems in a public issue. Use GitHub *Private vulnerability reporting* (the repository's "Security" tab). You will get a response within a week.

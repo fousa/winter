@@ -1,53 +1,53 @@
-# Stappenplan
+# Build plan
 
-Werk per fase; laat na elke fase de app bouwen en de tests draaien.
+Work phase by phase; after each phase, make sure the app builds and the tests pass.
 
-## Fase 0 — Project
-- [ ] Xcode-project "Winter" (iPadOS 26, SwiftUI, Swift 6, alleen iPad, alleen liggend). Bij voorkeur gegenereerd met XcodeGen (`project.yml`) zodat Claude Code het kan beheren.
-- [ ] Mappenstructuur volgens CLAUDE.md; String Catalog met `nl-BE`.
-- [ ] Testtarget met Swift Testing.
+## Phase 0 — Project
+- [ ] Xcode project "Winter" (iPadOS 26, SwiftUI, Swift 6, iPad only, landscape only). Preferably generated with XcodeGen (`project.yml`) so Claude Code can manage it.
+- [ ] Folder structure as described in CLAUDE.md; String Catalog with `nl-BE`.
+- [ ] Test target with Swift Testing.
 
-## Fase 0b — Open source
-- [ ] Git-repo met README, LICENSE, .gitignore, `Config/*.xcconfig` (geen secrets).
-- [ ] Controle in CI of pre-commit dat er geen tokens/sleutels in commits zitten (bv. gitleaks).
+## Phase 0b — Open source
+- [ ] Git repository with README, LICENSE, .gitignore, `Config/*.xcconfig` (no secrets).
+- [ ] A check in CI or pre-commit that no tokens or keys end up in commits (e.g. gitleaks).
 
-## Fase 1 — Domein en opslag
-- [ ] SwiftData-modellen uit `docs/data-model.md`.
-- [ ] Domeinregels als pure functies + tests (duur, decimale uren, markeringen, sluitingsuur, canCloseDay, description).
-- [ ] `SessionStore`: start, stop (ook andermans timer), undo binnen 10 s, dag afsluiten, auto-stop.
-- [ ] Seed met voorbeeldleden voor previews en eerste testen.
+## Phase 1 — Domain and storage
+- [ ] SwiftData models from `docs/data-model.md`.
+- [ ] Domain rules as pure functions + tests (duration, decimal hours, flags, closing time, canCloseDay, description).
+- [ ] `SessionStore`: start, stop (including someone else's timer), undo within 10 s, close the day, auto-stop.
+- [ ] Seed with sample members for previews and first tests.
 
-## Fase 2 — UI met fake data
-- [ ] DesignSystem: `Avatar` (foto of initialen), glass-balk, statkaart, markering-capsule.
-- [ ] Startscherm incl. zoeken, letterindex, "Vaak hier", balk "Nu aan het werk" (1–3 groot, 4+ compact).
-- [ ] Sheets Starten en Stoppen, bevestigingen met auto-dismiss en undo, haptiek.
-- [ ] Dag afsluiten.
-- [ ] Synchronisatie-scherm.
-- [ ] Scherm-aan-logica (`isIdleTimerDisabled`) en Guided Access-vriendelijk (geen links naar buiten de app).
+## Phase 2 — UI with fake data
+- [ ] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge.
+- [ ] Home screen including search, letter index, "Often here", and the "Working now" bar (1–3 large, 4+ compact).
+- [ ] Start and Stop sheets, confirmations with auto-dismiss and undo, haptics.
+- [ ] Close day.
+- [ ] Sync screen.
+- [ ] Screen-stays-on logic (`isIdleTimerDisabled`) and Guided Access friendliness (no links that leave the app).
 
-## Fase 3 — zweef.app
+## Phase 3 — zweef.app
 - [ ] `ZweefAPI` protocol + `ZweefClient` (URLSession, async/await, Codable) + `FakeZweefAPI`.
-- [ ] Echte JSON van accounts, material, periods en een POST-respons vastleggen als fixtures (met test-API-sleutel).
-- [ ] Mapping WorkSession → POST-body (`docs/zweef-api.md`).
+- [ ] Capture real JSON from accounts, material, periods and a POST response as fixtures (using a test API key).
+- [ ] Mapping WorkSession → POST body (`docs/zweef-api.md`).
 
-## Fase 4 — Sync
-- [ ] `SyncEngine` actor volgens `docs/sync.md` (triggers, backoff, dedup, rejected).
-- [ ] Foto-cache (download, opslaan in Application Support, opruimen).
-- [ ] BGAppRefreshTask registreren.
-- [ ] Tests met FakeZweefAPI (timeouts, 4xx, dubbele triggers).
+## Phase 4 — Sync
+- [ ] `SyncEngine` actor as described in `docs/sync.md` (triggers, backoff, dedup, rejected).
+- [ ] Photo cache (download, store in Application Support, clean up).
+- [ ] Register the BGAppRefreshTask.
+- [ ] Tests with FakeZweefAPI (timeouts, 4xx, duplicate triggers).
 
-## Fase 4b — Configuratie
-- [ ] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-config-lezer.
-- [ ] Setup-assistent (docs/configuration.md), met "Verbinding testen".
-- [ ] Instellingenscherm achter beheercode (lang drukken op titel), alle waarden aanpasbaar, verbinding testen vóór opslaan.
-- [ ] `ProxyTransport` en `DirectTransport` achter `ZweefAPI`.
-- [ ] Instelbare takenlijst (TaskDefinition) met standaardwaarden.
+## Phase 4b — Configuration
+- [ ] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-configuration reader.
+- [ ] Setup assistant (docs/configuration.md), including "Test connection".
+- [ ] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
+- [ ] `ProxyTransport` and `DirectTransport` behind `ZweefAPI`.
+- [ ] Configurable task list (TaskDefinition) with sensible defaults.
 
-## Fase 5 — Proxy
-- [ ] Cloudflare Worker uit `proxy/` deployen; secrets `ZWEEF_API_KEY`, `CLUB`, `DEVICE_TOKENS`.
-- [ ] Documentatie voor clubs: proxy deployen en tokens aanmaken (proxy/README.md).
+## Phase 5 — Proxy
+- [ ] Deploy the Cloudflare Worker from `proxy/`; secrets `ZWEEF_API_KEY`, `CLUB`, `DEVICE_TOKENS`.
+- [ ] Documentation for clubs: deploying the proxy and creating tokens (proxy/README.md).
 
-## Fase 6 — Afwerking
-- [ ] VoiceOver-labels, Dynamic Type, contrast.
-- [ ] TestFlight / Apple Business Manager-uitrol.
-- [ ] Test op de club: 3 leden van verschillende leeftijden, een dag zonder internet.
+## Phase 6 — Finishing touches
+- [ ] VoiceOver labels, Dynamic Type, contrast.
+- [ ] TestFlight / Apple Business Manager rollout.
+- [ ] Test at the club: three members of different ages, one day without internet.

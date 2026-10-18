@@ -1,10 +1,10 @@
-// Cloudflare Worker: proxy tussen de iPad en de zweef.app (GlidingApp) API.
-// De zweef.app API-sleutel blijft hier; de iPad stuurt enkel een eigen apparaattoken.
+// Cloudflare Worker: a proxy between the iPad and the zweef.app (GlidingApp) API.
+// The zweef.app API key stays here; the iPad only ever sends a device token of its own.
 //
 // Secrets / vars (wrangler secret put ...):
-//   ZWEEF_API_KEY  — X-API-KEY uit de zweef.app admin
-//   CLUB           — schema-naam van de club
-//   DEVICE_TOKENS  — komma-gescheiden lijst van geldige apparaattokens (intrekbaar)
+//   ZWEEF_API_KEY  — the X-API-KEY from the zweef.app admin
+//   CLUB           — the club's schema name
+//   DEVICE_TOKENS  — a comma-separated list of valid device tokens (revocable)
 
 const ALLOWED = [
   { method: "GET", path: /^\/club\.json$/ },
@@ -15,7 +15,7 @@ const ALLOWED = [
   { method: "POST", path: /^\/maintenance-hours\.json$/ },
 ];
 
-// Alleen deze query-parameters worden doorgegeven.
+// Only these query parameters are forwarded.
 const ALLOWED_QUERY = new Set(["id", "inactive"]);
 
 export default {
