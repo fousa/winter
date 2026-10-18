@@ -13,15 +13,16 @@
 ## Requirements
 - An iPhone or iPad running iOS/iPadOS 26 or later
 - A zweef.app account with admin rights, to create an API key
-- Recommended: a (free) Cloudflare account for the proxy
 
 ## Installing it for your club
 The full step-by-step guide is in [docs/installation-guide.md](docs/installation-guide.md). In short:
 
-1. **Set up the proxy** (recommended): see [`proxy/README.md`](proxy/README.md). You get a proxy URL and create one device token per device.
+1. **Create an API key** in zweef.app's admin pages, and find your club's schema name in its settings.
 2. **Install the app** on the device (TestFlight, Apple Business Manager, or build it yourself — see below).
-3. **First launch**: the setup assistant asks for the proxy URL and the device token (or, without a proxy, the club schema and the API key), the closing time and an admin code. The app fetches your club's name from zweef.app itself.
+3. **First launch**: the setup assistant asks for the schema and the key, your club's name, the closing time and an admin code.
 4. **Turn on Guided Access** on the shared workshop device (Settings › Accessibility › Guided Access).
+
+The API key is stored in the device's Keychain and opens your club's whole zweef.app account, so keep the device secured and read [SECURITY.md](SECURITY.md) before you mount it on a wall.
 
 Each device keeps its own hours and uploads them itself. A timer that is running on the workshop iPad can only be stopped on that iPad — zweef.app has no notion of a running timer, so there is nothing to sync it through ([ADR 0009](docs/decisions/0009-universal-app-iphone-and-ipad.md)).
 
@@ -39,7 +40,7 @@ Everything lives in [`docs/`](docs/README.md): the installation guide for clubs,
 Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first. Report security problems as described in [SECURITY.md](SECURITY.md). Never put keys, tokens or real member data in the repository.
 
 ## Status
-In design: the documentation, mockups and proxy are ready; the app itself is being built according to [PLAN.md](PLAN.md).
+In development. The domain, storage, screens, zweef.app client, sync engine and configuration are built and tested; see [PLAN.md](PLAN.md) for what is left.
 
 ## License
 [MIT](LICENSE)

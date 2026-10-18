@@ -94,7 +94,7 @@ struct SetupView: View {
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 10) {
-                Label("A proxy URL and a device token, or your club schema and an API key", systemImage: "key")
+                Label("Your club's schema name and an API key from zweef.app", systemImage: "key")
                 Label("The time forgotten timers should stop", systemImage: "moon.stars")
                 Label("A six-digit code to protect these settings", systemImage: "lock")
             }
@@ -106,35 +106,22 @@ struct SetupView: View {
     private var connection: some View {
         VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
             header(
-                "How does this device reach zweef.app?",
-                detail: "The proxy keeps your club's API key off this device. zweef.app's own documentation advises against putting it here, so pick the proxy if you can."
+                "Connect to zweef.app",
+                detail: "The schema name is in your club settings in zweef.app, and the API key is created on its admin pages."
             )
 
-            Picker("Connection", selection: $model.mode) {
-                Text("Proxy").tag(ConnectionMode.proxy)
-                Text("Direct").tag(ConnectionMode.direct)
-            }
-            .pickerStyle(.segmented)
-            .disabled(model.isManaged(.connectionMode))
-
             VStack(spacing: 0) {
-                if model.mode == .proxy {
-                    field("Proxy URL", text: $model.proxyURL, managed: model.isManaged(.proxyURL))
-                    Divider()
-                    secureField("Device token", text: $model.deviceToken, managed: model.isManaged(.deviceToken))
-                } else {
-                    field("Club schema", text: $model.clubSchema, managed: model.isManaged(.clubSchema))
-                    Divider()
-                    secureField("API key", text: $model.apiKey, managed: false)
-                }
+                field("Club schema", text: $model.clubSchema, managed: model.isManaged(.clubSchema))
+                Divider()
+                secureField("API key", text: $model.apiKey, managed: false)
             }
             .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
 
-            if model.mode == .direct {
-                Label("The key gives access to all of your club's member and financial data, and this device is physically reachable.", systemImage: "exclamationmark.triangle")
-                    .font(.footnote)
-                    .foregroundStyle(Color.flag)
-            }
+            // Said plainly and unconditionally: this is the one real risk the
+            // app asks a club to accept (ADR 0013).
+            Label("This key opens your club's whole zweef.app account — member data and finances included — and it is stored on this device. Keep the device somewhere safe, and if you lose it, create a new key in zweef.app straight away.", systemImage: "exclamationmark.triangle")
+                .font(.footnote)
+                .foregroundStyle(Color.flag)
 
             testRow
         }
@@ -359,9 +346,9 @@ struct SetupView: View {
     private func message(for error: ZweefError) -> String {
         switch error {
         case .notAuthorised:
-            String(localized: "Refused: check the token or the API key.")
+            String(localized: "Refused: check the API key.")
         case .invalidConfiguration:
-            String(localized: "That URL or club schema cannot be used.")
+            String(localized: "That club schema cannot be used.")
         case .unreachable:
             String(localized: "No connection. You can continue and test again later.")
         case .server(let status):

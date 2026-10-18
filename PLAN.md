@@ -44,13 +44,9 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-configuration reader.
 - [x] Setup assistant (docs/configuration.md), including "Test connection" and the club-name field (ADR 0012).
 - [x] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
-- [x] `ProxyTransport` and `DirectTransport` behind `ZweefAPI`.
+- [x] `ZweefTransport` behind `ZweefAPI` (one connection path; the proxy was dropped by ADR 0013).
 - [x] Configurable task list (TaskDefinition), seeded from the catalog in the setup language.
 - [x] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`.
-
-## Phase 5 — Proxy
-- [ ] Deploy the Cloudflare Worker from `proxy/`; secrets `ZWEEF_API_KEY`, `CLUB`, `DEVICE_TOKENS`.
-- [ ] Documentation for clubs: deploying the proxy and creating tokens (proxy/README.md).
 
 ## Phase 6 — Finishing touches
 - [ ] VoiceOver labels, Dynamic Type, contrast.

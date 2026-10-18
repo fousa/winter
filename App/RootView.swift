@@ -110,12 +110,11 @@ extension View {
     let container = try! SampleData.container(runningSessionCount: 2)
     let defaults = UserDefaults(suiteName: "preview-root-ready") ?? .standard
     let configuration = AppConfiguration(defaults: defaults)
-    configuration.connectionMode = .proxy
-    configuration.proxyURL = "https://winter-proxy.example.workers.dev"
+    configuration.clubSchema = "exampleclub"
 
     return RootView(
         configuration: configuration,
-        secrets: InMemorySecretStore([.deviceToken: "token", .adminCode: "salt:hash"]),
+        secrets: InMemorySecretStore([.apiKey: "key", .adminCode: "salt:hash"]),
         connection: ConnectionProvider()
     )
     .modelContainer(container)

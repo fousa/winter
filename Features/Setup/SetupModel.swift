@@ -32,10 +32,7 @@ final class SetupModel {
     var step: Step = .welcome
 
     // Connection
-    var mode: ConnectionMode
-    var proxyURL: String
     var clubSchema: String
-    var deviceToken = ""
     var apiKey = ""
     var testState: TestState = .untested
 
@@ -69,12 +66,9 @@ final class SetupModel {
         self.settings = settings
         self.managed = managed
 
-        // Prefilled from the MDM when a club pushed one, so the person at the
-        // device has nothing to type.
-        self.mode = configuration.connectionMode
-        self.proxyURL = configuration.proxyURL
+        // Prefilled from the MDM when a club pushed the schema, so there is
+        // less to type on a device mounted on a wall. The key is never pushed.
         self.clubSchema = configuration.clubSchema
-        self.deviceToken = managed.deviceToken ?? ""
         self.clubName = settings.clubName ?? ""
         self.closingHour = settings.closingHour
         self.closingMinute = settings.closingMinute
@@ -100,12 +94,7 @@ final class SetupModel {
     }
 
     var hasConnectionFields: Bool {
-        switch mode {
-        case .proxy:
-            return ConnectionSettings.isUsableProxyURL(proxyURL) && !deviceToken.trimmed.isEmpty
-        case .direct:
-            return !clubSchema.trimmed.isEmpty && !apiKey.trimmed.isEmpty
-        }
+        !clubSchema.trimmed.isEmpty && !apiKey.trimmed.isEmpty
     }
 
     func isManaged(_ field: ManagedConfiguration.Field) -> Bool {
@@ -139,13 +128,7 @@ final class SetupModel {
     func testConnection() async {
         testState = .testing
 
-        let snapshot = ConnectionSettings(
-            mode: mode,
-            proxyURL: proxyURL.trimmed,
-            clubSchema: clubSchema.trimmed,
-            deviceToken: deviceToken.trimmed,
-            apiKey: apiKey.trimmed
-        )
+        let snapshot = ConnectionSettings(clubSchema: clubSchema.trimmed, apiKey: apiKey.trimmed)
 
         guard snapshot.makeTransport() != nil else {
             testState = .failed(.invalidConfiguration)
@@ -166,16 +149,12 @@ final class SetupModel {
     }
 
     private func saveConnection() {
-        configuration.connectionMode = mode
-        configuration.proxyURL = proxyURL.trimmed
         configuration.clubSchema = clubSchema.trimmed
 
-        // Secrets go to the Keychain and are dropped from memory: the fields
-        // are cleared so the values do not sit in a view model for the rest of
-        // the session.
-        try? secrets.setSecret(mode == .proxy ? deviceToken.trimmed : nil, for: .deviceToken)
-        try? secrets.setSecret(mode == .direct ? apiKey.trimmed : nil, for: .apiKey)
-        deviceToken = ""
+        // The key goes to the Keychain and is dropped from memory: the field is
+        // cleared so it does not sit in a view model for the rest of the
+        // session.
+        try? secrets.setSecret(apiKey.trimmed, for: .apiKey)
         apiKey = ""
 
         connection.update(ConnectionSettings(configuration: configuration, secrets: secrets))

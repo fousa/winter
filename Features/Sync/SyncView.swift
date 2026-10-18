@@ -185,7 +185,7 @@ struct SyncView: View {
         if let error = sync.lastOutcome?.error {
             switch error {
             case .notAuthorised:
-                return Text("Connection refused: check the token in Settings")
+                return Text("Connection refused: check the API key in Settings")
             case .rejected:
                 return Text("zweef.app refused one of the registrations")
             default:

@@ -17,7 +17,7 @@ The app is one universal app for iPhone and iPad, in any orientation ([ADR 0009]
 - Internet is unreliable or absent. The app must work fully offline.
 
 ### Several devices
-Each device has its own local database and its own device token, and uploads its own sessions.
+Each device has its own local database and uploads its own sessions.
 
 - A running timer is only visible — and can only be stopped — on the device it was started on. zweef.app has no concept of a running timer, so there is nothing to sync it through.
 - Closing the day closes the sessions on *that* device. Another device can still have open sessions of its own; it closes them itself.
@@ -97,7 +97,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 
 ## Configuration (open source)
 - On first launch: the setup assistant (connection, club, admin code). Without a complete configuration the rest of the app is unreachable.
-- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the proxy URL, the device token, the connection mode, the closing time, the tasks and the admin code, test the connection and refresh the members.
+- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the club schema, the API key, the club name, the closing time, the reporting language, the tasks and the admin code, test the connection and refresh the members.
 - A changed connection is tested first; on failure the old values stay active until you confirm.
 - Pending sessions are kept when the connection changes; they go to the new connection.
 - Details: docs/configuration.md.

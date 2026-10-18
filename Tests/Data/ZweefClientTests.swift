@@ -6,7 +6,7 @@ import Testing
 @Suite("zweef.app client")
 struct ZweefClientTests {
     /// A fictional schema: no real club's name belongs in the repository.
-    private let transport = DirectTransport(clubSchema: "exampleclub", apiKey: "test-key")
+    private let transport = ZweefTransport(clubSchema: "exampleclub", apiKey: "test-key")
 
     /// A client wired to its own stub, so parallel tests cannot answer each
     /// other's requests.
@@ -16,7 +16,7 @@ struct ZweefClientTests {
         body: Data = Data(),
         headers: [String: String] = ["Content-Type": "application/json"],
         error: (any Error)? = nil,
-        transport: (any Transport)? = nil
+        transport: ZweefTransport? = nil
     ) throws -> (client: ZweefClient, stub: StubURLProtocol.Stub) {
         let payload = try fixture.map { try Fixture.data($0) } ?? body
         let stub = StubURLProtocol.stub { _ in
@@ -105,8 +105,8 @@ struct ZweefClientTests {
 
     // MARK: - Requests
 
-    @Test("Direct mode sends the API key to the club's own API root")
-    func directTransportSendsApiKey() async throws {
+    @Test("Requests go to the club's own API root, with the key attached")
+    func transportSendsApiKey() async throws {
         let (client, stub) = try makeClient(fixture: "material.json")
 
         _ = try await client.material()
@@ -114,23 +114,6 @@ struct ZweefClientTests {
         let request = try #require(stub.requests.first)
         #expect(request.url?.absoluteString == "https://admin.gliding.app/club/exampleclub/api/material.json")
         #expect(request.value(forHTTPHeaderField: "X-API-KEY") == "test-key")
-        #expect(request.value(forHTTPHeaderField: "Authorization") == nil)
-    }
-
-    @Test("Proxy mode sends the device token and never the API key")
-    func proxyTransportSendsDeviceToken() async throws {
-        let proxy = ProxyTransport(
-            baseURL: URL(string: "https://winter-proxy.example.workers.dev")!,
-            deviceToken: "device-token"
-        )
-        let (client, stub) = try makeClient(fixture: "material.json", transport: proxy)
-
-        _ = try await client.material()
-
-        let request = try #require(stub.requests.first)
-        #expect(request.url?.absoluteString == "https://winter-proxy.example.workers.dev/material.json")
-        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer device-token")
-        #expect(request.value(forHTTPHeaderField: "X-API-KEY") == nil)
     }
 
     @Test("Creating a registration posts the fields zweef.app expects, in snake_case")

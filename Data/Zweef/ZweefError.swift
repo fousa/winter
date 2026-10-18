@@ -5,11 +5,12 @@ import Foundation
 /// Split by what the app should *do*, not by status code: retry, stop and ask a
 /// human, or give up on this one registration (`docs/architecture.md`).
 enum ZweefError: Error, Equatable {
-    /// The proxy URL or club schema is unusable. Needs the settings screen.
+    /// The club schema or API key is missing or unusable. Needs the settings
+    /// screen.
     case invalidConfiguration
 
-    /// 401/403. The device token or API key is wrong or was revoked. Retrying
-    /// will not help, and the sync screen says so.
+    /// 401/403. The API key is wrong or was revoked in zweef.app. Retrying will
+    /// not help, and the sync screen says so.
     case notAuthorised
 
     /// Any other 4xx: zweef.app refuses this registration on its merits — an

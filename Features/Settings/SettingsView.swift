@@ -18,7 +18,6 @@ struct SettingsView: View {
     let settings: AppSettings
 
     @State private var clubName = ""
-    @State private var proxyURL = ""
     @State private var clubSchema = ""
     @State private var newSecret = ""
     @State private var isChangingSecret = false
@@ -49,7 +48,6 @@ struct SettingsView: View {
             }
             .onAppear {
                 clubName = settings.clubName ?? ""
-                proxyURL = configuration.proxyURL
                 clubSchema = configuration.clubSchema
             }
             .sensoryFeedback(.success, trigger: feedback)
@@ -61,41 +59,19 @@ struct SettingsView: View {
     @ViewBuilder
     private var connectionSection: some View {
         Section {
-            Picker("Connection", selection: Binding(
-                get: { configuration.connectionMode },
-                set: { configuration.connectionMode = $0 }
-            )) {
-                Text("Proxy").tag(ConnectionMode.proxy)
-                Text("Direct").tag(ConnectionMode.direct)
+            managedRow(.clubSchema) {
+                TextField("Club schema", text: $clubSchema)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
             }
-            .disabled(configuration.managedKeys.contains(.connectionMode))
-
-            if configuration.connectionMode == .proxy {
-                managedRow(.proxyURL) {
-                    TextField("Proxy URL", text: $proxyURL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                }
-                secretRow(
-                    title: String(localized: "Device token"),
-                    isSet: secrets.hasSecret(for: .deviceToken),
-                    managed: configuration.managedKeys.contains(.deviceToken)
-                )
-            } else {
-                managedRow(.clubSchema) {
-                    TextField("Club schema", text: $clubSchema)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                }
-                secretRow(
-                    title: String(localized: "API key"),
-                    isSet: secrets.hasSecret(for: .apiKey),
-                    managed: false
-                )
-                Label("The key gives access to all of your club's member and financial data.", systemImage: "exclamationmark.triangle")
-                    .font(.footnote)
-                    .foregroundStyle(Color.flag)
-            }
+            secretRow(
+                title: String(localized: "API key"),
+                isSet: secrets.hasSecret(for: .apiKey),
+                managed: false
+            )
+            Label("This key opens your club's whole zweef.app account. If this device is lost, create a new key in zweef.app.", systemImage: "exclamationmark.triangle")
+                .font(.footnote)
+                .foregroundStyle(Color.flag)
 
             Button {
                 Task { await test() }
@@ -166,7 +142,7 @@ struct SettingsView: View {
             Button("Save") { saveSecret() }
             Button("Cancel", role: .cancel) { newSecret = "" }
         } message: {
-            Text("Paste the token or key. It goes straight into the Keychain.")
+            Text("Paste the key. It goes straight into the Keychain.")
         }
     }
 
@@ -281,7 +257,6 @@ struct SettingsView: View {
     }
 
     private func save() {
-        configuration.proxyURL = proxyURL
         configuration.clubSchema = clubSchema
         settings.setClubName(typed: clubName)
         try? context.save()
@@ -289,8 +264,7 @@ struct SettingsView: View {
     }
 
     private func saveSecret() {
-        let key: SecretKey = configuration.connectionMode == .proxy ? .deviceToken : .apiKey
-        try? secrets.setSecret(newSecret.trimmed, for: key)
+        try? secrets.setSecret(newSecret.trimmed, for: .apiKey)
         newSecret = ""
         connection.update(ConnectionSettings(configuration: configuration, secrets: secrets))
         feedback += 1
@@ -340,11 +314,7 @@ struct SettingsView: View {
 }
 
 #Preview("iPhone · managed by MDM") {
-    SettingsPreview(managed: [
-        "connectionMode": "proxy",
-        "proxyURL": "https://winter-proxy.example.workers.dev",
-        "deviceToken": "managed-token",
-    ])
+    SettingsPreview(managed: ["clubSchema": "managedclub", "closingTime": "20:00"])
 }
 
 private struct SettingsPreview: View {
@@ -360,7 +330,7 @@ private struct SettingsPreview: View {
 
         return SettingsView(
             configuration: configuration,
-            secrets: InMemorySecretStore([.deviceToken: "token", .adminCode: "salt:hash"]),
+            secrets: InMemorySecretStore([.apiKey: "key", .adminCode: "salt:hash"]),
             connection: ConnectionProvider(),
             settings: settings
         )

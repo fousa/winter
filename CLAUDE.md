@@ -25,8 +25,8 @@ Full index: `docs/README.md`.
 - **Two taps** to start (name → Start) and two to stop (card → Stop and save). Picking a task and an aircraft is optional.
 - **No** voice notes/dictation, **no** free-text field, **no** CSV export.
 - **Closing the day** is open to everyone, but only when no timers are running. Anyone may stop someone else's forgotten timer. At the closing time (configurable, 21:00 suggested) the app stops running timers automatically and flags them "stopped automatically".
-- **API key**: by default through a proxy (`proxy/`) that each club deploys itself; every device has its own revocable device token. A direct mode (API key in the Keychain, with a warning) exists for clubs without a proxy.
-- **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The proxy URL, the device token (or club schema + API key in direct mode), the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The members and aircraft come from zweef.app (`accounts.json`, `material.json`); the club name too when `GET /club.json` works, and typed in the setup when it does not (ADR 0012). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
+- **API key**: the app talks to zweef.app directly, with the club's API key in the Keychain (ADR 0013). There is no proxy and no device token. The key opens the club's whole account, so the setup and settings warn about it and a lost device means rotating the key — see `SECURITY.md`.
+- **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The club schema, the API key, the club name, the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The members and aircraft come from zweef.app (`accounts.json`, `material.json`); the club name too when `GET /club.json` works, and typed in the setup when it does not (ADR 0012). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
 - **Languages**: the app ships in English, Dutch and French only. `en` is the String Catalog's source language (literals in the code are English), `nl` and `fr` are translations. The app follows the system language; no language picker. Text sent to zweef.app uses the club's reporting language, not the member's. Code, identifiers, commits and all documentation in English.
 
 ## Architecture in brief
@@ -37,8 +37,7 @@ SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
             SessionStore (SwiftData)  ◀── AutoStopService (closing time)
                     │
                     ▼
-            SyncEngine (actor) ──▶ ZweefAPI ──▶ ProxyTransport ──▶ the club's own proxy ──▶ admin.gliding.app/club/{club}/api
-                                     └▶ DirectTransport (X-API-KEY from the Keychain) ──▶ admin.gliding.app/club/{club}/api
+            SyncEngine (actor) ──▶ ZweefAPI ──▶ ZweefTransport (X-API-KEY from the Keychain) ──▶ admin.gliding.app/club/{club}/api
                     ▲
             NWPathMonitor + BGAppRefreshTask + a timer while the app is active
 ```

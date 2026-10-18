@@ -1,14 +1,5 @@
 import Foundation
 
-/// How this device reaches zweef.app.
-enum ConnectionMode: String, CaseIterable, Sendable {
-    /// Through the club's own Cloudflare Worker, which holds the API key.
-    case proxy
-    /// Straight to zweef.app with the key on the device, for clubs without
-    /// anyone to run a worker (ADR 0003).
-    case direct
-}
-
 /// The non-secret settings that belong to this device rather than to the club.
 ///
 /// UserDefaults, not SwiftData: these describe the device's connection, they
@@ -27,20 +18,6 @@ final class AppConfiguration {
     }
 
     // MARK: - Connection
-
-    var connectionMode: ConnectionMode {
-        get {
-            if let value = managed.connectionMode { return value }
-            return ConnectionMode(rawValue: defaults.string(forKey: Key.connectionMode) ?? "") ?? .proxy
-        }
-        set { defaults.set(newValue.rawValue, forKey: Key.connectionMode) }
-    }
-
-    /// e.g. `https://winter-proxy.<account>.workers.dev`
-    var proxyURL: String {
-        get { managed.proxyURL ?? defaults.string(forKey: Key.proxyURL) ?? "" }
-        set { defaults.set(newValue.trimmed, forKey: Key.proxyURL) }
-    }
 
     /// The club's schema name in zweef.app, which is part of the API's URL.
     var clubSchema: String {
@@ -93,12 +70,7 @@ final class AppConfiguration {
     /// it the app could record hours it can never deliver — and nobody would
     /// find out until the board asked where they were.
     func isConnectionConfigured(secrets: some SecretStore) -> Bool {
-        switch connectionMode {
-        case .proxy:
-            return ConnectionSettings.isUsableProxyURL(proxyURL) && secrets.hasSecret(for: .deviceToken)
-        case .direct:
-            return !clubSchema.isEmpty && secrets.hasSecret(for: .apiKey)
-        }
+        !clubSchema.trimmed.isEmpty && secrets.hasSecret(for: .apiKey)
     }
 
     /// Whether setup has been completed, connection and admin code both.
@@ -112,8 +84,6 @@ final class AppConfiguration {
     }
 
     private enum Key {
-        static let connectionMode = "connectionMode"
-        static let proxyURL = "proxyURL"
         static let clubSchema = "clubSchema"
         static let category = "zweefCategory"
         static let status = "zweefStatus"
@@ -121,8 +91,7 @@ final class AppConfiguration {
         static let adminLockedUntil = "adminLockedUntil"
 
         static let all = [
-            connectionMode, proxyURL, clubSchema, category, status,
-            failedAdminAttempts, adminLockedUntil,
+            clubSchema, category, status, failedAdminAttempts, adminLockedUntil,
         ]
     }
 }

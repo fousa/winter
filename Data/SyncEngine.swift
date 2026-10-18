@@ -361,11 +361,11 @@ actor SyncEngine {
                     // rather than burning through every session.
                     session.syncState = .ready
                     session.attempts += 1
-                    session.lastError = "Connection refused: check the token in Settings"
+                    session.lastError = "Connection refused: check the API key in Settings"
                     result.failed += 1
                     result.error = error
                     try? context.save()
-                    log(.error, "Upload refused: the device token or API key is not accepted", in: context)
+                    log(.error, "Upload refused: the API key is not accepted", in: context)
                     return result
 
                 default:

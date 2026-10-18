@@ -3,7 +3,7 @@
 Source: https://documenter.getpostman.com/view/25434528/2s8ZDX5PRi (consulted 18 October 2026). The published documentation lists the endpoints but contains **no response examples at all**, so every shape below was read off live responses from a real club on 18 October 2026 and captured — anonymised — as fixtures in [`Tests/Fixtures`](../Tests/Fixtures/README.md).
 
 - **Base URL**: `https://admin.gliding.app/club/{club}/api` (`{club}` = the schema name from the club settings). There is no endpoint that works without it.
-- **Auth**: the header `X-API-KEY: <token>` (created in the admin pages). The documentation says so explicitly: do not use it client-side → only in the proxy.
+- **Auth**: the header `X-API-KEY: <token>`, created in the admin pages and stored in the device's Keychain. zweef.app's documentation says explicitly not to use it client-side; the app does anyway, deliberately and with warnings ([ADR 0013](decisions/0013-no-proxy.md), [SECURITY.md](../SECURITY.md)).
 
 ## Endpoints we use
 The app is generic: everything club-specific (name, members, aircraft, period) comes from these endpoints.
@@ -146,8 +146,8 @@ The POST has no client-side key. The strategy:
 
 The decoder reads the full record zweef.app returns, and keeps a fallback for a bare id, `{"id": …}`, `{"data": {"id": …}}` or `{"maintenance_hour": {"id": …}}` — not as speculation but because PUT is undocumented too, and an id we can still read beats an upload we cannot confirm. A missing id is not a failure: dedup works off the tag, not off the id.
 
-## Proxy
-The app talks to the proxy (`proxy/`), never directly to admin.gliding.app. The proxy only forwards the paths above and replaces the device token with the `X-API-KEY`.
+## What the app never calls
+The same key reaches `/financial/ledgers.json`, `/financial/ledgers/balance.json`, `POST`/`PUT` on accounts, flights and ledgers, and more. The app calls the nine endpoints above and nothing else, and decodes four fields of an account. That is a self-imposed limit, not an enforced one — there is no proxy to enforce it ([ADR 0013](decisions/0013-no-proxy.md)).
 
 ## Still open
 - Why `periods.json` 404s, and how to find the period of a brand-new maintenance period that has no registrations to read one from.

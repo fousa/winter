@@ -14,45 +14,19 @@ struct Endpoint: Sendable {
     var body: Data?
 }
 
-/// Turns an ``Endpoint`` into a request that will be accepted.
+/// Builds the requests the app sends to zweef.app.
 ///
-/// Two implementations, because a club either runs the proxy (recommended) or
-/// talks to zweef.app directly (ADR 0003). ``ZweefClient`` does not know which:
-/// that way the choice is a configuration detail and not a branch in every
-/// call.
-protocol Transport: Sendable {
-    func request(for endpoint: Endpoint) throws -> URLRequest
-}
-
-/// Through the club's own Cloudflare Worker, which holds the API key.
-///
-/// The device sends only its own revocable token, so a stolen device is
-/// disarmed by removing that token from the proxy — no new API key, no
-/// reconfiguring the other devices (ADR 0009).
-struct ProxyTransport: Transport {
-    /// e.g. `https://winter-proxy.<account>.workers.dev`
-    let baseURL: URL
-    /// From the Keychain. Never logged.
-    let deviceToken: String
-
-    func request(for endpoint: Endpoint) throws -> URLRequest {
-        var request = try URLRequest.winter(baseURL: baseURL, endpoint: endpoint)
-        request.setValue("Bearer \(deviceToken)", forHTTPHeaderField: "Authorization")
-        return request
-    }
-}
-
-/// Straight to zweef.app with the club's API key on the device.
-///
-/// zweef.app's own documentation says not to keep the key client-side, so this
-/// exists for clubs without anyone to run a worker, and the settings screen
-/// warns about it.
-struct DirectTransport: Transport {
+/// The app talks to zweef.app directly, with the club's API key from the
+/// Keychain ([ADR 0013](../../docs/decisions/0013-no-proxy.md)). There is no
+/// proxy and no second mode, so this is one concrete type rather than a
+/// protocol with implementations — indirection that only ever has one answer
+/// is harder to read, not more flexible.
+struct ZweefTransport: Sendable {
     static let host = URL(string: "https://admin.gliding.app")!
 
-    /// The club's schema name, from its zweef.app settings.
+    /// The club's schema name, from its zweef.app settings. Part of the URL.
     let clubSchema: String
-    /// From the Keychain. Never logged.
+    /// From the Keychain. Never logged, never shown, never in the repository.
     let apiKey: String
 
     var baseURL: URL {
@@ -62,19 +36,11 @@ struct DirectTransport: Transport {
             .appending(path: "api")
     }
 
-    func request(for endpoint: Endpoint) throws -> URLRequest {
-        var request = try URLRequest.winter(baseURL: baseURL, endpoint: endpoint)
-        request.setValue(apiKey, forHTTPHeaderField: "X-API-KEY")
-        return request
-    }
-}
-
-extension URLRequest {
-    /// The parts both transports share.
+    /// The request for an endpoint, with the key attached.
     ///
     /// A short timeout on purpose: on a flaky club connection, failing quickly
     /// and retrying later beats a request that hangs while someone waits.
-    static func winter(baseURL: URL, endpoint: Endpoint) throws -> URLRequest {
+    func request(for endpoint: Endpoint) throws -> URLRequest {
         let path = endpoint.path.hasPrefix("/") ? String(endpoint.path.dropFirst()) : endpoint.path
 
         guard var components = URLComponents(
@@ -96,6 +62,7 @@ extension URLRequest {
         request.httpMethod = endpoint.method.rawValue
         request.timeoutInterval = 20
         request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(apiKey, forHTTPHeaderField: "X-API-KEY")
         if let body = endpoint.body {
             request.httpBody = body
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")

@@ -16,20 +16,17 @@ struct AppConfigurationTests {
         return (AppConfiguration(defaults: defaults, managed: ManagedConfiguration(values: managed)), defaults)
     }
 
-    @Test("A fresh device defaults to the proxy, which is the recommended mode")
-    func defaultsToProxy() {
+    @Test("A fresh device has no connection")
+    func startsUnconfigured() {
         let (configuration, _) = makeConfiguration()
-        #expect(configuration.connectionMode == .proxy)
-        #expect(configuration.proxyURL.isEmpty)
+        #expect(configuration.clubSchema.isEmpty)
+        #expect(!configuration.isConnectionConfigured(secrets: InMemorySecretStore()))
     }
 
     @Test("Values survive a round trip, trimmed")
     func storesValues() {
         let (configuration, _) = makeConfiguration()
-        configuration.proxyURL = "  https://winter-proxy.example.workers.dev  "
         configuration.clubSchema = " exampleclub "
-
-        #expect(configuration.proxyURL == "https://winter-proxy.example.workers.dev")
         #expect(configuration.clubSchema == "exampleclub")
     }
 
@@ -40,17 +37,15 @@ struct AppConfigurationTests {
         #expect(configuration.status == "in_aanvraag")
     }
 
-    @Test("A proxy device is configured once it has a URL and a token")
-    func proxyCompleteness() {
+    @Test("A device is configured once it has a schema and a key")
+    func completeness() {
         let (configuration, _) = makeConfiguration()
         let secrets = InMemorySecretStore()
 
+        configuration.clubSchema = "exampleclub"
         #expect(!configuration.isConnectionConfigured(secrets: secrets))
 
-        configuration.proxyURL = "https://winter-proxy.example.workers.dev"
-        #expect(!configuration.isConnectionConfigured(secrets: secrets))
-
-        try? secrets.setSecret("token", for: .deviceToken)
+        try? secrets.setSecret("key", for: .apiKey)
         #expect(configuration.isConnectionConfigured(secrets: secrets))
 
         // Setup is not finished until the settings are protected too.
@@ -59,38 +54,19 @@ struct AppConfigurationTests {
         #expect(configuration.isComplete(secrets: secrets))
     }
 
-    @Test("A direct device needs a schema and a key, not a proxy URL")
-    func directCompleteness() {
+    @Test("A schema of only whitespace is not a schema")
+    func rejectsBlankSchema() {
         let (configuration, _) = makeConfiguration()
-        let secrets = InMemorySecretStore()
-        configuration.connectionMode = .direct
-        configuration.clubSchema = "exampleclub"
-
-        #expect(!configuration.isConnectionConfigured(secrets: secrets))
-        try? secrets.setSecret("key", for: .apiKey)
-        #expect(configuration.isConnectionConfigured(secrets: secrets))
-    }
-
-    @Test("A proxy URL that is not a URL does not count as configured")
-    func rejectsRubbishProxyURL() {
-        let (configuration, _) = makeConfiguration()
-        let secrets = InMemorySecretStore([.deviceToken: "token"])
-        configuration.proxyURL = "not a url at all"
+        let secrets = InMemorySecretStore([.apiKey: "key"])
+        configuration.clubSchema = "   "
         #expect(!configuration.isConnectionConfigured(secrets: secrets))
     }
 
     @Test("MDM values win over anything stored on the device")
     func managedValuesWin() {
-        let (configuration, _) = makeConfiguration(managed: [
-            "connectionMode": "direct",
-            "proxyURL": "https://managed.example.workers.dev",
-            "clubSchema": "managedclub",
-        ])
-        configuration.connectionMode = .proxy
+        let (configuration, _) = makeConfiguration(managed: ["clubSchema": "managedclub"])
         configuration.clubSchema = "typedclub"
 
-        #expect(configuration.connectionMode == .direct)
-        #expect(configuration.proxyURL == "https://managed.example.workers.dev")
         #expect(configuration.clubSchema == "managedclub")
         #expect(configuration.managedKeys.contains(.clubSchema))
     }
@@ -98,12 +74,12 @@ struct AppConfigurationTests {
     @Test("Erasing clears every stored value")
     func resetClearsEverything() {
         let (configuration, _) = makeConfiguration()
-        configuration.proxyURL = "https://winter-proxy.example.workers.dev"
+        configuration.clubSchema = "exampleclub"
         configuration.failedAdminAttempts = 4
 
         configuration.reset()
 
-        #expect(configuration.proxyURL.isEmpty)
+        #expect(configuration.clubSchema.isEmpty)
         #expect(configuration.failedAdminAttempts == 0)
     }
 }
@@ -133,10 +109,17 @@ struct ManagedConfigurationTests {
 
     @Test("Blank strings count as absent, so an empty MDM field is not a value")
     func blankValuesAreAbsent() {
-        let managed = ManagedConfiguration(values: ["proxyURL": "   ", "deviceToken": ""])
-        #expect(managed.proxyURL == nil)
-        #expect(managed.deviceToken == nil)
+        let managed = ManagedConfiguration(values: ["clubSchema": "   ", "closingTime": ""])
+        #expect(managed.clubSchema == nil)
+        #expect(managed.closingTime == nil)
         #expect(managed.isEmpty)
+    }
+
+    @Test("The API key is not an MDM field: a payload on the device is no place for it")
+    func keyIsNeverManaged() {
+        let managed = ManagedConfiguration(values: ["apiKey": "should-be-ignored"])
+        #expect(managed.isEmpty)
+        #expect(!ManagedConfiguration.Field.allCases.contains { $0.rawValue == "apiKey" })
     }
 }
 
@@ -269,60 +252,25 @@ struct AdminCodeVerifierTests {
 
 @Suite("Connection settings")
 struct ConnectionSettingsTests {
-    @Test("Proxy settings build a proxy transport that sends the device token")
-    func buildsProxyTransport() throws {
-        let settings = ConnectionSettings(
-            mode: .proxy,
-            proxyURL: "https://winter-proxy.example.workers.dev",
-            clubSchema: "",
-            deviceToken: "device-token",
-            apiKey: nil
-        )
+    @Test("Settings build a transport that sends the key to the club's API root")
+    func buildsTransport() throws {
+        let settings = ConnectionSettings(clubSchema: "exampleclub", apiKey: "api-key")
 
-        let transport = try #require(settings.makeTransport() as? ProxyTransport)
-        #expect(transport.deviceToken == "device-token")
-
+        let transport = try #require(settings.makeTransport())
         let request = try transport.request(for: Endpoint(path: "/material.json"))
-        #expect(request.value(forHTTPHeaderField: "Authorization") == "Bearer device-token")
-    }
 
-    @Test("Direct settings build a direct transport with the club's own API root")
-    func buildsDirectTransport() throws {
-        let settings = ConnectionSettings(
-            mode: .direct,
-            proxyURL: "",
-            clubSchema: "exampleclub",
-            deviceToken: nil,
-            apiKey: "api-key"
-        )
-
-        let transport = try #require(settings.makeTransport() as? DirectTransport)
-        let request = try transport.request(for: Endpoint(path: "/material.json"))
         #expect(request.url?.absoluteString == "https://admin.gliding.app/club/exampleclub/api/material.json")
         #expect(request.value(forHTTPHeaderField: "X-API-KEY") == "api-key")
     }
 
-    @Test("A proxy URL needs a scheme and a host; prose is not a URL", arguments: [
-        ("https://winter-proxy.example.workers.dev", true),
-        ("http://localhost:8787", true),
-        ("not a url at all", false),
-        ("winter-proxy.example.workers.dev", false),
-        ("", false),
-        ("ftp://example.com", false),
-        ("https://", false),
-    ])
-    func validatesProxyURLs(input: (String, Bool)) {
-        #expect(ConnectionSettings.isUsableProxyURL(input.0) == input.1)
-    }
-
     @Test("Incomplete settings build nothing rather than something broken", arguments: [
-        ConnectionSettings(mode: .proxy, proxyURL: "", clubSchema: "", deviceToken: "t", apiKey: nil),
-        ConnectionSettings(mode: .proxy, proxyURL: "https://example.com", clubSchema: "", deviceToken: nil, apiKey: nil),
-        ConnectionSettings(mode: .proxy, proxyURL: "nonsense", clubSchema: "", deviceToken: "t", apiKey: nil),
-        ConnectionSettings(mode: .direct, proxyURL: "", clubSchema: "", deviceToken: nil, apiKey: "k"),
-        ConnectionSettings(mode: .direct, proxyURL: "", clubSchema: "club", deviceToken: nil, apiKey: nil),
+        ConnectionSettings(clubSchema: "", apiKey: "key"),
+        ConnectionSettings(clubSchema: "club", apiKey: nil),
+        ConnectionSettings(clubSchema: "club", apiKey: ""),
+        ConnectionSettings(clubSchema: "   ", apiKey: "key"),
     ])
     func refusesIncompleteSettings(settings: ConnectionSettings) {
+        #expect(!settings.isUsable)
         #expect(settings.makeTransport() == nil)
     }
 
@@ -335,26 +283,14 @@ struct ConnectionSettingsTests {
         }
     }
 
-    @Test("A token changed in settings is used by the next call")
-    func providerPicksUpNewSettings() throws {
+    @Test("A key changed in settings is used by the next call")
+    func providerPicksUpNewSettings() {
         let provider = ConnectionProvider()
-        provider.update(ConnectionSettings(
-            mode: .proxy,
-            proxyURL: "https://winter-proxy.example.workers.dev",
-            clubSchema: "",
-            deviceToken: "first",
-            apiKey: nil
-        ))
-        #expect(provider.current?.deviceToken == "first")
+        provider.update(ConnectionSettings(clubSchema: "exampleclub", apiKey: "first"))
+        #expect(provider.current?.apiKey == "first")
 
-        provider.update(ConnectionSettings(
-            mode: .proxy,
-            proxyURL: "https://winter-proxy.example.workers.dev",
-            clubSchema: "",
-            deviceToken: "second",
-            apiKey: nil
-        ))
-        #expect(provider.current?.deviceToken == "second")
+        provider.update(ConnectionSettings(clubSchema: "exampleclub", apiKey: "second"))
+        #expect(provider.current?.apiKey == "second")
     }
 
     @Test("Testing a connection reports the period, and survives a broken club.json")
@@ -369,8 +305,8 @@ struct ConnectionSettingsTests {
         #expect(result.clubName == nil)
     }
 
-    @Test("A refused token makes the test fail, so nobody saves a dead connection")
-    func connectionTestFailsOnRefusedToken() async {
+    @Test("A refused key makes the test fail, so nobody saves a dead connection")
+    func connectionTestFailsOnRefusedKey() async {
         let api = FakeZweefAPI(hours: .failure(.notAuthorised))
 
         await #expect(throws: ZweefError.notAuthorised) {
@@ -384,23 +320,19 @@ struct SecretStoreTests {
     @Test("A secret round-trips, and an empty value removes it")
     func roundTrip() throws {
         let store = InMemorySecretStore()
-        #expect(!store.hasSecret(for: .deviceToken))
+        #expect(!store.hasSecret(for: .apiKey))
 
-        try store.setSecret("token", for: .deviceToken)
-        #expect(store.secret(for: .deviceToken) == "token")
-        #expect(store.hasSecret(for: .deviceToken))
+        try store.setSecret("key", for: .apiKey)
+        #expect(store.secret(for: .apiKey) == "key")
+        #expect(store.hasSecret(for: .apiKey))
 
-        try store.setSecret("", for: .deviceToken)
-        #expect(store.secret(for: .deviceToken) == nil)
+        try store.setSecret("", for: .apiKey)
+        #expect(store.secret(for: .apiKey) == nil)
     }
 
     @Test("Erasing removes every secret, for a device leaving the club")
     func removeAll() throws {
-        let store = InMemorySecretStore([
-            .deviceToken: "token",
-            .apiKey: "key",
-            .adminCode: "salt:hash",
-        ])
+        let store = InMemorySecretStore([.apiKey: "key", .adminCode: "salt:hash"])
 
         try store.removeAll()
 

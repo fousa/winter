@@ -13,12 +13,13 @@ protocol SecretStore: Sendable {
     func removeAll() throws
 }
 
-/// The three secrets this app has, named once.
+/// The two secrets this app has, named once.
 enum SecretKey: String, CaseIterable, Sendable {
-    /// The revocable token this device uses with the club's proxy.
-    case deviceToken
-    /// The club's zweef.app API key, in direct mode only — against zweef.app's
-    /// own advice, which is why the settings screen warns about it (ADR 0003).
+    /// The club's zweef.app API key.
+    ///
+    /// It opens the club's whole API, which is why the setup and the settings
+    /// screen warn about it and why it never leaves the Keychain
+    /// ([ADR 0013](../docs/decisions/0013-no-proxy.md)).
     case apiKey
     /// Salt and hash of the admin code, never the code itself.
     case adminCode
@@ -38,11 +39,12 @@ extension SecretStore {
 ///
 /// `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` on purpose:
 /// *AfterFirstUnlock* because a wall-mounted device reboots and has to sync
-/// again before anyone touches it, and *ThisDeviceOnly* so a token cannot
-/// travel to another device in a backup (SECURITY.md).
+/// again before anyone touches it, and *ThisDeviceOnly* so the key cannot
+/// travel to another device in a backup. With no proxy in front of it, this is
+/// the main protection the app can offer the key (SECURITY.md).
 struct KeychainSecretStore: SecretStore {
     /// Namespaced per bundle id, so a debug build and a release build on the
-    /// same device do not fight over one token.
+    /// same device do not fight over one key.
     private let service: String
 
     init(service: String = Bundle.main.bundleIdentifier ?? "app.winter") {

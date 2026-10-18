@@ -1,16 +1,14 @@
 import Foundation
 
-/// Talks to zweef.app over HTTPS, through whichever ``Transport`` the club
-/// configured.
+/// Talks to zweef.app over HTTPS.
 ///
-/// It knows nothing about proxy versus direct mode, nothing about SwiftData,
-/// and holds no state: handed a transport and a session, it turns endpoints
-/// into typed values or a ``ZweefError``.
+/// It knows nothing about SwiftData and holds no state: handed a transport and
+/// a session, it turns endpoints into typed values or a ``ZweefError``.
 struct ZweefClient: ZweefAPI {
-    private let transport: any Transport
+    private let transport: ZweefTransport
     private let session: URLSession
 
-    init(transport: any Transport, session: URLSession = .shared) {
+    init(transport: ZweefTransport, session: URLSession = .shared) {
         self.transport = transport
         self.session = session
     }

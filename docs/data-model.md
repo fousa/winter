@@ -61,7 +61,7 @@ enum SyncState: String, Codable {
 }
 
 // Configuration: see docs/configuration.md
-// - secrets (device token, API key, the hash of the admin code) in the Keychain through a KeychainStore
+// - secrets (the API key and the admin code's salted hash) in the Keychain through a SecretStore
 // - the other connection settings in UserDefaults through an AppConfiguration type
 // - managed configuration (MDM) takes precedence and is read-only
 

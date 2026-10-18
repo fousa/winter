@@ -22,8 +22,7 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 | Rejected | `syncState == .rejected` | Geweigerd | Refusée | zweef.app refused the registration |
 | Registration | maintenance-hours record | Registratie | Enregistrement | A maintenance-hours row in zweef.app |
 | Maintenance period | `period` | Onderhoudsperiode | Période d'entretien | The period in zweef.app that registrations belong to |
-| Proxy | proxy | Proxy | Proxy | The club's Cloudflare Worker that holds the API key |
-| Device token | `deviceToken` | Apparaattoken | Jeton d'appareil | The secret a device uses to authenticate with the proxy; one per device |
+| API key | `apiKey` | API-sleutel | Clé API | The club's zweef.app key, in the Keychain; opens the whole account |
 | Admin code | `adminCode` | Beheercode | Code d'administration | The code that protects the settings screen |
 | Setup assistant | `Setup` | Setup-assistent | Assistant de configuration | Configuration on first launch |
 | Guided Access | Guided Access | Begeleide toegang | Accès guidé | The iOS/iPadOS feature that keeps the shared device in one app; use Apple's own translation |

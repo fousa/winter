@@ -1,4 +1,0 @@
-# Copy to .dev.vars to test locally with `wrangler dev` (it is in .gitignore).
-ZWEEF_API_KEY=
-CLUB=
-DEVICE_TOKENS=

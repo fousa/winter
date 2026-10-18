@@ -5,9 +5,8 @@ An overview of all documentation in this repository. If you are new, start at th
 ## For clubs (installing and using)
 | Document | Contents |
 |---|---|
-| [Installation guide for clubs](installation-guide.md) | Step by step: proxy, app, first launch, Guided Access, troubleshooting |
+| [Installation guide for clubs](installation-guide.md) | Step by step: API key, app, first launch, Guided Access, troubleshooting |
 | [Configuration](configuration.md) | Every setting, where it is stored, MDM keys |
-| [Proxy](../proxy/README.md) | The Cloudflare Worker that holds the zweef.app key |
 
 ## For developers
 | Document | Contents |
