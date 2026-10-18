@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Starten</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1194px; height: 834px; position: relative; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif; color: #000000; -webkit-font-smoothing: antialiased">
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 1194px; height: 834px; pointer-events: none">
+<dc-import name="Main" hint-size="1194px,834px"></dc-import>
+</div>
+<div style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.22)"></div>
+
+<div role="dialog" aria-label="Starten" style="position: absolute; left: 327px; top: 137px; width: 540px; height: 560px; box-sizing: border-box; padding: 16px 24px 28px; border-radius: 40px; display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.7); -webkit-backdrop-filter: blur(40px) saturate(190%); backdrop-filter: blur(40px) saturate(190%); border: 1px solid rgba(255,255,255,0.85); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 24px 80px rgba(0,0,0,0.25)">
+<div style="width: 100%; height: 48px; display: flex; align-items: center; justify-content: space-between">
+<a href="Main.dc.html" aria-label="Sluiten" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.9); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 2px 8px rgba(0,0,0,0.08)">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3C3C43" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+</a>
+<div style="font-size: 17px; font-weight: 600">Starten</div>
+<div style="width: 44px"></div>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px">
+<div style="width: 120px; height: 120px; border-radius: 999px; overflow: hidden; margin-bottom: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12)">
+<svg viewBox="0 0 64 64" width="120" height="120" role="img" aria-label="Foto van Ellen Peeters" style="display: block"><rect width="64" height="64" fill="#E3ECF7"></rect><path d="M18 27c0 11 2 19 6 21h16c4-2 6-10 6-21z" fill="#6B4226"></path><path d="M8 66c2-14 12-21 24-21s22 7 24 21z" fill="#5146D8"></path><rect x="28" y="34" width="8" height="11" rx="3" fill="#F2C9A5"></rect><circle cx="32" cy="27" r="12" fill="#F2C9A5"></circle><path d="M19.5 26c0-8.5 5.5-14 12.5-14s12.5 5.5 12.5 14c-2.5-4.5-7-6.5-12.5-6.5S22 21.5 19.5 26z" fill="#6B4226"></path></svg>
+</div>
+<div style="font-size: 34px; font-weight: 700; letter-spacing: -0.6px">Ellen Peeters</div>
+<div style="font-size: 17px; color: #3C3C43">Klaar om te beginnen?</div>
+</div>
+<div style="width: 100%; display: flex; flex-direction: column; gap: 12px">
+<a href="Gestart.dc.html" style="height: 64px; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none; font-size: 22px; font-weight: 600; color: #FFFFFF; background: #0088FF; box-shadow: inset 0 1px 1px rgba(255,255,255,0.45), 0 10px 24px rgba(0,136,255,0.32)">
+<svg width="20" height="22" viewBox="0 0 20 22" fill="#FFFFFF" aria-hidden="true"><path d="M3 2.6v16.8a1.5 1.5 0 0 0 2.3 1.3l13.4-8.4a1.5 1.5 0 0 0 0-2.6L5.3 1.3A1.5 1.5 0 0 0 3 2.6Z"></path></svg>
+<span>Start</span>
+</a>
+<a href="Main.dc.html" style="height: 56px; border-radius: 999px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 17px; font-weight: 600; color: #0071E3; background: rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.9); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 2px 8px rgba(0,0,0,0.06)">Dat ben ik niet</a>
+<div style="font-size: 15px; color: #6C6C70; text-align: center; padding-top: 4px">Waaraan je werkte, kies je bij het stoppen.</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1194,"height":834}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
