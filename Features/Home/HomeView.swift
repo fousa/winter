@@ -298,7 +298,9 @@ struct HomeView: View {
     }
 
     private var clubName: String {
-        settings.first?.clubName ?? String(localized: "Winter")
+        // Typed during setup or fetched from zweef.app, falling back to the
+        // app's own name (ADR 0012).
+        ClubName.display(stored: settings.first?.clubName)
     }
 
     private var subtitle: String {

@@ -42,7 +42,7 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 4b — Configuration
 - [ ] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-configuration reader.
-- [ ] Setup assistant (docs/configuration.md), including "Test connection".
+- [ ] Setup assistant (docs/configuration.md), including "Test connection" and the club-name field (ADR 0012; the policy and storage are done, the screen is not).
 - [ ] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
 - [ ] `ProxyTransport` and `DirectTransport` behind `ZweefAPI`.
 - [ ] Configurable task list (TaskDefinition), seeded from the catalog in the setup language.

@@ -103,7 +103,7 @@ So the app sends an **empty** `category`, not `"Maintenance"`: matching what the
 That leaves one hole: a brand-new period with no registrations yet has no `period_id` to read. The app then has nothing to upload against and keeps the sessions local — they are not lost, but they do not move either. Worth asking zweef.app about, together with why `periods.json` 404s.
 
 ## The club name
-`GET /club.json` answers `500` for a real club, so the app cannot count on learning the club's name. It caches whatever it last received and falls back to showing "Winter". Whether the setup assistant should let someone type the club name instead is an open decision (it currently contradicts ADR 0008's "nothing club-specific is typed in").
+`GET /club.json` answers `500` for a real club, so the app cannot count on learning the club's name. The setup assistant therefore asks for it, prefilled from this endpoint when it answers ([ADR 0012](decisions/0012-club-name-may-be-typed.md)). A typed name is kept even once `club.json` recovers; a fetched one is refreshed freely.
 
 ## Dedup / idempotency
 The POST has no client-side key. The strategy:

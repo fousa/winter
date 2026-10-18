@@ -26,7 +26,7 @@ Full index: `docs/README.md`.
 - **No** voice notes/dictation, **no** free-text field, **no** CSV export.
 - **Closing the day** is open to everyone, but only when no timers are running. Anyone may stop someone else's forgotten timer. At the closing time (configurable, 21:00 suggested) the app stops running timers automatically and flags them "stopped automatically".
 - **API key**: by default through a proxy (`proxy/`) that each club deploys itself; every device has its own revocable device token. A direct mode (API key in the Keychain, with a warning) exists for clubs without a proxy.
-- **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The proxy URL, the device token (or club schema + API key in direct mode), the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The club name, members and aircraft come from zweef.app (`GET /club.json`, `accounts.json`, `material.json`). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
+- **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The proxy URL, the device token (or club schema + API key in direct mode), the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The members and aircraft come from zweef.app (`accounts.json`, `material.json`); the club name too when `GET /club.json` works, and typed in the setup when it does not (ADR 0012). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
 - **Languages**: the app ships in English, Dutch and French only. `en` is the String Catalog's source language (literals in the code are English), `nl` and `fr` are translations. The app follows the system language; no language picker. Text sent to zweef.app uses the club's reporting language, not the member's. Code, identifiers, commits and all documentation in English.
 
 ## Architecture in brief
@@ -55,7 +55,6 @@ SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
 ## Open questions (see also docs/spec.md)
 - What does `POST /maintenance-hours.json` return? Verifying it means creating a real registration in a live club.
 - Why does `GET /club.json` answer 500 and `GET /maintenance-hours/periods.json` answer 404? And how is the period found for a brand-new maintenance period?
-- May someone type the club name in the setup while `club.json` is broken? (Today that contradicts ADR 0008.)
 - The exact closing time; can the workshop device get wired wifi or its own 4G/5G connection?
 
 Answered on 18 October 2026 by checking a real club (`docs/zweef-api.md`): `accounts.json` has **no** photo field, so avatars are always initials; `category` is `""`, not `"Maintenance"`; `status` goes `in_aanvraag` → `geaccepteerd`.

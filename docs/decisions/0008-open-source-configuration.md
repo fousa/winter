@@ -1,6 +1,6 @@
 # 0008 — Open source, configured on the device
 
-- **Status**: accepted (UI language superseded by [0010](0010-three-languages-en-nl-fr.md), CI secret scanning by [0011](0011-no-continuous-integration.md))
+- **Status**: accepted (UI language superseded by [0010](0010-three-languages-en-nl-fr.md), CI secret scanning by [0011](0011-no-continuous-integration.md), the un-typeable club name by [0012](0012-club-name-may-be-typed.md))
 - **Date**: 2026-10-18
 
 ## Context

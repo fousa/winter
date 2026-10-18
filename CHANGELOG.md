@@ -21,6 +21,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The screens, in both size classes: home (member grid, search, letter index, "Often here", the "Working now" bar), the start and stop sheets, the confirmations with undo, closing the day, and the sync overview. Design system components (`MemberAvatar`, glass bar and card, stat card, flag badge) and `LayoutMetrics`, which resolves the mockups' sizes from the size classes.
 - Member list rules in `Domain` with tests: diacritics-insensitive search, letter sections, and the "often here" ranking.
 - All 84 UI strings in the String Catalog, translated into Dutch and French.
+- The club name can be typed in the setup, because `GET /club.json` answers 500 for a real club (ADR 0012). A typed name is never overwritten by a later refresh.
 - zweef.app client: `ZweefAPI` with `ZweefClient` (URLSession, async/await) and `FakeZweefAPI`, `ProxyTransport` and `DirectTransport`, typed errors that say whether to retry, and the `WorkSession` → registration mapping. Anonymised fixtures captured from a real club.
 
 ### Changed

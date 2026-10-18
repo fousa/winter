@@ -11,10 +11,11 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0005 | [Anyone closes the day, only when no timers are running](0005-closing-the-day.md) | accepted |
 | 0006 | [A native SwiftUI app for iPadOS 26 with Liquid Glass](0006-native-ipados-26.md) | accepted (device and orientation superseded by 0009) |
 | 0007 | [No voice notes, free-text field or CSV export](0007-no-free-form-input.md) | accepted |
-| 0008 | [Open source, configured on the device](0008-open-source-configuration.md) | accepted (UI language superseded by 0010, CI by 0011) |
+| 0008 | [Open source, configured on the device](0008-open-source-configuration.md) | accepted (UI language superseded by 0010, CI by 0011, club name by 0012) |
 | 0009 | [One universal app for iPhone and iPad, fully adaptive](0009-universal-app-iphone-and-ipad.md) | accepted |
 | 0010 | [The app ships in English, Dutch and French only](0010-three-languages-en-nl-fr.md) | accepted |
 | 0011 | [No continuous integration](0011-no-continuous-integration.md) | accepted |
+| 0012 | [The club name may be entered by hand](0012-club-name-may-be-typed.md) | accepted |
 
 ## Template
 ```markdown

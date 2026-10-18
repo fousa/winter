@@ -85,9 +85,9 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - Text that goes *to* zweef.app (the task label in `project`, the flags in `description`) uses the club's reporting language, not the language of the member who stopped the timer, so the board reads one consistent list.
 
 ### Club data
-- The club name should come from zweef.app (`GET /club.json`), fetched during "Test connection" and on every refresh, and cached locally so it stays visible offline.
-- **That endpoint answers 500 for a real club.** Until it works, the app shows "Winter" as its title. Whether someone may type the club name in the setup instead is an open decision ([zweef-api.md](zweef-api.md)).
-- The app is generic: no club name, members, aircraft or tasks in the code.
+- The club name comes from zweef.app (`GET /club.json`) when that endpoint answers, fetched during "Test connection" and on every refresh, and cached locally so it stays visible offline.
+- **It answers 500 for a real club**, so the setup assistant asks for the name as well ([ADR 0012](decisions/0012-club-name-may-be-typed.md)). A typed name wins and is never overwritten by a later refresh; a fetched one is refreshed freely; neither → the app shows "Winter".
+- The app is generic: no club name, members, aircraft or tasks in the code — the name is configured on the device like everything else.
 
 ### Member list and avatars
 - On every successful sync: `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
@@ -108,7 +108,6 @@ A login or PIN for members, managing hours on the device, free text, voice notes
 ## Open questions
 - The POST response shape: does creating a registration return its id? Finding out means writing to a live club.
 - Why `GET /club.json` answers 500 and `GET /maintenance-hours/periods.json` answers 404, and how to find the period of a brand-new maintenance period.
-- May someone type the club name in the setup while `club.json` is broken?
 - The closing time.
 - Is wired wifi or a device with its own 4G/5G possible for the workshop?
 

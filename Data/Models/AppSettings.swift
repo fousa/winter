@@ -9,9 +9,16 @@ import SwiftData
 /// (`docs/configuration.md`).
 @Model
 final class AppSettings {
-    /// Fetched from zweef.app `GET /club.json`; nil until the first successful
-    /// connection, when the app shows "Winter" instead.
+    /// Fetched from zweef.app `GET /club.json`, or typed during setup; nil
+    /// until one of the two happens, when the app shows "Winter" instead.
     var clubName: String?
+    /// Set when a person typed the name rather than zweef.app supplying it.
+    ///
+    /// A typed name is never overwritten by a later refresh: `club.json`
+    /// answers 500 for a real club, so someone had to type it, and a recovery
+    /// of that endpoint should not rename their club behind their back
+    /// (ADR 0012).
+    var clubNameIsManual: Bool
     var clubFetchedAt: Date?
     var closingHour: Int
     var closingMinute: Int
@@ -26,6 +33,7 @@ final class AppSettings {
 
     init(
         clubName: String? = nil,
+        clubNameIsManual: Bool = false,
         clubFetchedAt: Date? = nil,
         closingHour: Int = 21,
         closingMinute: Int = 0,
@@ -36,6 +44,7 @@ final class AppSettings {
         lastAttemptAt: Date? = nil
     ) {
         self.clubName = clubName
+        self.clubNameIsManual = clubNameIsManual
         self.clubFetchedAt = clubFetchedAt
         self.closingHour = closingHour
         self.closingMinute = closingMinute
@@ -49,5 +58,23 @@ final class AppSettings {
     /// The closing time as calendar components, for ``ClosingTime``.
     var closingComponents: DateComponents {
         DateComponents(hour: closingHour, minute: closingMinute)
+    }
+
+    /// The club name to show, falling back to the app's own name.
+    var displayName: String {
+        ClubName.display(stored: clubName)
+    }
+
+    /// Stores a name typed by a person, and remembers that they typed it.
+    func setClubName(typed: String) {
+        clubName = ClubName.sanitised(typed: typed)
+        clubNameIsManual = clubName != nil
+    }
+
+    /// Stores a name fetched from zweef.app, unless someone typed one.
+    func applyFetchedClubName(_ fetched: String?, at date: Date = .now) {
+        clubFetchedAt = date
+        guard ClubName.shouldAdopt(fetched: fetched, isManual: clubNameIsManual) else { return }
+        clubName = fetched?.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

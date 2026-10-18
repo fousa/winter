@@ -77,7 +77,8 @@ enum SyncState: String, Codable {
 }
 
 @Model final class AppSettings {  // singleton
-    var clubName: String?          // from GET /club.json; nil → show "Winter"
+    var clubName: String?          // from GET /club.json or typed; nil → show "Winter"
+    var clubNameIsManual: Bool     // typed names survive a refresh (ADR 0012)
     var clubFetchedAt: Date?
     var closingHour: Int = 21
     var closingMinute: Int = 0
