@@ -23,8 +23,17 @@ Thanks for wanting to help! This app is built by and for gliding clubs. Contribu
 - Swift 6 with strict concurrency; follow the structure in [docs/architecture.md](docs/architecture.md).
 - No third-party dependencies without discussing it in an issue first.
 - Public types and non-trivial functions get a DocC comment (`///`) that explains *why*, not just *what*.
-- UI strings go in the String Catalog (`nl-BE`), never hard-coded in views.
+- UI strings go in the String Catalog, never hard-coded in views. Write them in English (the source language) and do not build sentences by concatenation.
 - Domain rules are pure functions with tests.
+
+## Translations
+The app ships in **English, Dutch and French**, and only those three ([ADR 0010](docs/decisions/0010-three-languages-en-nl-fr.md)).
+
+- English (`en`) is the source language: new strings are added in English and the other two follow.
+- Dutch (`nl`) and French (`fr`) corrections are very welcome — open a PR with just the catalog change. Keep the terms consistent with the [glossary](docs/glossary.md) and add any new term to it.
+- A fourth language needs a new ADR first, not just a catalog: it is a promise to keep it reviewed every release. Please open an issue to discuss it, ideally offering to review that language.
+- No machine translation without a speaker of the language reading it.
+- Check your change at the largest Dynamic Type size; French is the longest language and is where labels break first.
 
 ## Testing
 - All tests must pass before a PR is merged.

@@ -76,6 +76,14 @@ Each device has its own local database and its own device token, and uploads its
 
 Flags travel along in `description` to zweef.app and are shown in orange on screen 6.
 
+### Language
+- The app ships in English, Dutch and French, and nothing else ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)).
+- It follows the system language. There is no language picker in the app; iOS's per-app language setting is the override.
+- On a device set to any other language, the app falls back to English.
+- Dates, times, durations and decimal hours follow the device locale.
+- What the club typed itself (task labels) and what comes from zweef.app (club name, member names, aircraft) is shown as-is and never translated.
+- Text that goes *to* zweef.app (the task label in `project`, the flags in `description`) uses the club's reporting language, not the language of the member who stopped the timer, so the board reads one consistent list.
+
 ### Club data
 - The club name comes from zweef.app (`GET /club.json`): fetched during "Test connection" in the setup and on every refresh. Cached locally so it stays visible offline.
 - The app is generic: no club name, members, aircraft or tasks in the code.

@@ -8,6 +8,7 @@
 - Anyone can close the day once no timers are running; forgotten timers stop automatically at the closing time
 - Registrations arrive in zweef.app as "pending approval", so the board approves them
 - One universal app for iPhone and iPad, in any orientation, designed for iOS 26 with Liquid Glass
+- Available in English, Dutch and French, following the device's language
 
 ## Requirements
 - An iPhone or iPad running iOS/iPadOS 26 or later

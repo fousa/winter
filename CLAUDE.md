@@ -6,7 +6,7 @@
 Full index: `docs/README.md`.
 - `docs/architecture.md` — modules, responsibilities, concurrency, error handling, testing
 - `docs/decisions/` — ADRs: why the choices were made the way they were (changing one = a new ADR)
-- `docs/glossary.md` — Dutch UI terms ↔ English code names
+- `docs/glossary.md` — terms in English, Dutch and French ↔ the code names
 - `docs/configuration.md` — open source: setup assistant, in-app settings, tokens, MDM
 - `docs/spec.md` — functional specification and every decision
 - `docs/design.md` — screens, components, Liquid Glass, colours, copy
@@ -27,7 +27,7 @@ Full index: `docs/README.md`.
 - **Closing the day** is open to everyone, but only when no timers are running. Anyone may stop someone else's forgotten timer. At the closing time (configurable, 21:00 suggested) the app stops running timers automatically and flags them "stopped automatically".
 - **API key**: by default through a proxy (`proxy/`) that each club deploys itself; every device has its own revocable device token. A direct mode (API key in the Keychain, with a warning) exists for clubs without a proxy.
 - **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The proxy URL, the device token (or club schema + API key in direct mode), the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The club name, members and aircraft come from zweef.app (`GET /club.json`, `accounts.json`, `material.json`). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
-- **UI language**: Dutch (Flemish). Code, identifiers and commits in English.
+- **Languages**: the app ships in English, Dutch and French only. `en` is the String Catalog's source language (literals in the code are English), `nl` and `fr` are translations. The app follows the system language; no language picker. Text sent to zweef.app uses the club's reporting language, not the member's. Code, identifiers, commits and all documentation in English.
 
 ## Architecture in brief
 ```

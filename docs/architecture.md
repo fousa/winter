@@ -73,7 +73,7 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 - `SessionRules`: `canCloseDay`, `isShortSession`, `isLongSession`, `flags(for:)`.
 - `ClosingTime`: computes the automatic stop time for a session.
 - `HoursFormatter`: duration ↔ "2 h 18 min" ↔ decimal hours (2.3).
-- `RegistrationDescription`: builds the `description` field for zweef.app, including the dedup tag.
+- `RegistrationDescription`: builds the `description` field for zweef.app, including the dedup tag. It takes the reporting language as a parameter, so it does not depend on the device's current locale.
 
 ### `Data/`
 - `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
@@ -93,6 +93,15 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 
 ### `DesignSystem/`
 Reusable components in the Liquid Glass style: `MemberAvatar`, `GlassBar`, `StatCard`, `FlagBadge`, `PrimaryActionButton`. See [design.md](design.md).
+
+### Localisation
+The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)).
+
+- One String Catalog (`Localizable.xcstrings`) with `en` as the source language and `nl` and `fr` as translations. Literals in the code are English.
+- Views use `LocalizedStringResource`/`Text` with placeholders; `Domain` never returns a user-facing sentence, only values (minutes, flags as an enum) that the view formats.
+- `HoursFormatter` and anything date-related take a `Locale`, so the formatting is testable per language instead of depending on the simulator's region.
+- `RegistrationDescription` is the one place that formats text for zweef.app, and it uses the club's reporting language rather than the device locale (see [zweef-api.md](zweef-api.md)).
+- Search stays diacritics- and case-insensitive through `String.compare` with the right options, not by stripping characters by hand.
 
 ## Key flows
 
@@ -144,7 +153,8 @@ Errors are logged with `os.Logger` (subsystem = the bundle id, categories `sync`
 | SessionStore | An in-memory `ModelContainer` |
 | SyncEngine | A `FakeZweefAPI` that simulates success, timeouts, 4xx and 5xx; a controlled clock |
 | ZweefClient | A `URLProtocol` stub with JSON fixtures (anonymised) |
-| UI | Previews for every screen; a few UI tests for start → stop → close |
+| UI | Previews for every screen, in both size classes and in French; a few UI tests for start → stop → close |
+| Localisation | Every language has the same set of keys (a test that fails on a missing or stale translation); formatting tests per locale for durations, dates and decimal hours |
 
 Time is always injectable (`Clock`/`now: () -> Date`), so that the closing time and the undo windows are testable.
 

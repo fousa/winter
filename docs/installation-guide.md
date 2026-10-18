@@ -44,7 +44,7 @@ Through TestFlight, Apple Business Manager, or by building it yourself with Xcod
 ## Step 5 — First launch
 The app opens with the setup assistant:
 1. **Connection**: choose Proxy and fill in the proxy URL and the device token, or choose Direct and fill in the schema name and the API key. Tap **Test connection**; you should see the active maintenance period.
-2. **Club**: the app shows your club's name as it appears in zweef.app; check that it is the right one. After that, set the closing time (when forgotten timers stop automatically) and the task list.
+2. **Club**: the app shows your club's name as it appears in zweef.app; check that it is the right one. After that, set the closing time (when forgotten timers stop automatically), the task list, and the language the hours are written in when they go to zweef.app.
 3. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings.
 4. **Done**: the members and their photos are fetched as soon as there is internet.
 
@@ -56,8 +56,13 @@ Only for the shared workshop device; skip this on a personal phone.
 3. Set Settings › Display & Brightness › Auto-Lock to "Never" (the app dims itself).
 4. Keep the device on its charger.
 
+## Language
+The app is available in English, Dutch and French and follows the device's language — so set the device to the language your members read. You can change it per app in Settings › Winter › Language. On a device in any other language, the app shows English.
+
+The task list is created in the language of the setup, and you can rename the tasks to whatever your club calls them. What goes to zweef.app is written in the language you picked in step 5, so the board always reads one consistent list.
+
 ## Changing settings later
-Press and hold the title (your club's name) for 3 seconds and enter the admin code. You can then change the connection, the token, the closing time, the tasks and the admin code, and test the connection again.
+Press and hold the title (your club's name) for 3 seconds and enter the admin code. You can then change the connection, the token, the closing time, the tasks, the reporting language and the admin code, and test the connection again.
 
 ## Troubleshooting
 | Problem | Solution |

@@ -7,7 +7,8 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The project name **Winter**; the app is generic and works for any club on zweef.app.
 - The club name is fetched from zweef.app (`GET /club.json`) when connecting and on every refresh.
 - Functional specification, architecture, data model, sync and API documentation.
-- Design decisions as ADRs (0001–0009).
+- Design decisions as ADRs (0001–0010).
+- The app ships in English, Dutch and French, following the device's language (ADR 0010). English is the source language; text sent to zweef.app uses the club's reporting language.
 - Support for iPhone as well as iPad: one universal app, all orientations, layouts driven by size classes (ADR 0009). Running timers stay on the device they were started on.
 - Installation guide for clubs and configuration documentation.
 - Mockups of eight screens.

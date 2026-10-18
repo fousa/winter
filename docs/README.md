@@ -20,7 +20,7 @@ An overview of all documentation in this repository. If you are new, start at th
 | [Synchronisation](sync.md) | The offline-first sync engine |
 | [zweef.app API](zweef-api.md) | Endpoints, field mapping, dedup |
 | [Design](design.md) | Screens, adaptive layout per size class, Liquid Glass, colours, copy |
-| [Glossary](glossary.md) | Dutch UI terms ↔ English code names |
+| [Glossary](glossary.md) | Terms in English, Dutch and French ↔ the code names |
 | [Decisions (ADRs)](decisions/README.md) | Why the main choices were made the way they were |
 | [Mockups](../mockups/README.md) | Source files of the screen designs |
 
@@ -32,4 +32,4 @@ An overview of all documentation in this repository. If you are new, start at th
 | [CHANGELOG.md](../CHANGELOG.md) | Changes per version |
 
 ## Language
-The app's UI is in Dutch (the target audience is Flemish and Dutch clubs using zweef.app). This documentation, the code, identifiers, commits and code comments are in English. See the [glossary](glossary.md) for the translation between the two.
+The app ships in **English, Dutch and French**, and nothing else ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)). English is the source language: the code, identifiers, commits, comments, this documentation and the String Catalog's base are all English, with `nl` and `fr` as translations. See the [glossary](glossary.md) for the terms in all three languages.

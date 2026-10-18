@@ -50,9 +50,17 @@ The app is generic: everything club-specific (name, members, aircraft, period) c
 | `is_private` | `false` |
 | `category` | `"Maintenance"` (to be confirmed) |
 | `sub_category` | `""` |
-| `project` | The task label (e.g. "Hangar en werkplaats"), or `""` |
-| `description` | Composed, e.g. `"Zweefvliegtuig · ASK 21 · 09:12–11:30 · automatisch gestopt"`; flags at the end; always an app tag `[ou:<uuid-prefix8>]` for dedup |
+| `project` | The task label as the club has it, or `""` |
+| `description` | Composed, e.g. `"Glider · ASK 21 · 09:12–11:30 · stopped automatically"`; flags at the end; always an app tag `[ou:<uuid-prefix8>]` for dedup |
 | `status` | `"in_aanvraag"` |
+
+### Which language goes to zweef.app
+The app's UI is English, Dutch or French, but a club's maintenance-hours list in zweef.app should not be a mix of all three. So the uploaded text uses the club's **reporting language** (`AppSettings.reportingLanguage`, default: the device language during setup), not the language of the member who stopped the timer:
+
+- `description` is built from the catalog in that language (the flags, and words like "stopped automatically").
+- `project` is the task label as the club stores it, in whatever language the club typed. It is data, so it is not translated.
+- `hours` is a JSON number, so it always uses a dot as its decimal separator, whatever the locale shows on screen.
+- The tag `[ou:<uuid-prefix8>]` is a machine key: never translated, never reformatted.
 
 ## Dedup / idempotency
 The POST has no client-side key. The strategy:

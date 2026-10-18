@@ -49,46 +49,54 @@ Running timers belong to the device they were started on. The "Working now" bar 
 ## Screens
 
 ### 1. Home (`Main.dc.html`, `Druk.dc.html`)
-- A navigation bar with the large title = the club name from zweef.app (falling back to "Winter" while it is unknown), subtitle "Onderhoudsuren · Donderdag 1 oktober · tik op je naam om te starten". The mockups still show "Onderhoudsuren" as the title.
-- Toolbar on the right (glass): the sync status button ("8 wachten", an orange cloud when there is no connection) → screen 7; a search field; "Dag afsluiten" (prominent when allowed, otherwise disabled with a lock).
-- Content: a "Vaak hier" section (5 tiles) and an "Alle leden" section (a 5-column grid). A tile: white, radius 24, height 84, photo 52 pt round, first name 17 semibold, last name 15 secondary.
+- A navigation bar with the large title = the club name from zweef.app (falling back to "Winter" while it is unknown), subtitle "Maintenance hours · Thursday 1 October · tap your name to start". The mockups still show "Onderhoudsuren" as the title.
+- Toolbar on the right (glass): the sync status button ("8 waiting", an orange cloud when there is no connection) → screen 7; a search field; "Close day" (prominent when allowed, otherwise disabled with a lock).
+- Content: an "Often here" section (5 tiles) and an "All members" section (a 5-column grid). A tile: white, radius 24, height 84, photo 52 pt round, first name 17 semibold, last name 15 secondary.
 - A letter index on the right (as in Contacts).
-- A floating glass "Nu aan het werk" bar at the bottom (above the content, the content scrolls underneath it, with extra bottom inset):
-  - left: a green dot + "Nu aan het werk", "2 leden", "Tik om te stoppen"
-  - 1–3 running: large cards (photo 52, full name, "sinds 09:12", timer 28 pt green)
+- A floating glass "Working now" bar at the bottom (above the content, the content scrolls underneath it, with extra bottom inset):
+  - left: a green dot + "Working now", "2 members", "Tap to stop"
+  - 1–3 running: large cards (photo 52, full name, "since 09:12", timer 28 pt green)
   - 4+ running: compact cards in a 4-column grid (photo 48, "Jan V.", timer 22 pt); the bar grows taller
-  - 0 running: a grey dot, "Niemand op dit toestel", and the text "Als laatste weg? Sluit de dag af rechtsboven."
+  - 0 running: a grey dot, "Nobody on this device", and the text "Last one out? Close the day, top right."
 
 ### 2. Start (`Start.dc.html`)
-A form sheet (~540×560). Close button on the left (glass, xmark), title "Starten". Photo 120, name 34 bold, "Klaar om te beginnen?". Buttons: "Start" (glassProminent, play.fill, 64 tall) and "Dat ben ik niet" (glass). Footnote: "Waaraan je werkte, kies je bij het stoppen."
+A form sheet (~540×560). Close button on the left (glass, xmark), title "Start". Photo 120, name 34 bold, "Ready to get going?". Buttons: "Start" (glassProminent, play.fill, 64 tall) and "That's not me" (glass). Footnote: "You pick what you worked on when you stop."
 
 ### 3. Start confirmation (`Gestart.dc.html`)
-A centred glass card (~480×480, radius 48) above the dimmed home screen. A blue circle with a checkmark, "Veel werkplezier, Ellen", "Gestart om 14:05". Buttons "Ongedaan maken" (glass) and "Klaar" (prominent). "Sluit vanzelf na 3 seconden".
+A centred glass card (~480×480, radius 48) above the dimmed home screen. A blue circle with a checkmark, "Enjoy the work, Ellen", "Started at 14:05". Buttons "Undo" (glass) and "Done" (prominent). "Closes by itself after 3 seconds".
 
 ### 4. Stop (`Stop.dc.html`)
 A wide sheet (~920×680) in two columns:
-- Left: photo 96, name, "Bezig sinds 09:12", a 76 pt light timer, "uur : minuten", and a "Stop en bewaar" button (red, stop.fill).
-- Right: "Waaraan werkte je?" + "Optioneel"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Zweefvliegtuig a row of aircraft capsules; footnote "Wordt op dit toestel bewaard, ook zonder internet."
+- Left: photo 96, name, "Working since 09:12", a 76 pt light timer, "hours : minutes", and a "Stop and save" button (red, stop.fill).
+- Right: "What were you working on?" + "Optional"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Glider a row of aircraft capsules; footnote "Saved on this device, with or without internet."
 
 ### 5. Stop confirmation (`Gestopt.dc.html`)
-Like 3, with a green circle. "Bedankt, Jan", "2 u 18 min", "09:12 – 11:30 · Zweefvliegtuig · ASK 21", "Bewaard op dit toestel, gaat naar zweef.app zodra er internet is".
+Like 3, with a green circle. "Thanks, Jan", "2 h 18 min", "09:12 – 11:30 · Glider · ASK 21", "Saved on this device, and sent to zweef.app as soon as there is internet".
 
 ### 6. Close day (`Dagoverzicht.dc.html`)
-A pushed screen. Toolbar: back (glass), the title "Dag afsluiten" + the date as a subtitle, a status capsule "Geen lopende timers". Three stat cards (sessions today, the total, and what is also included from earlier days). An inset grouped list per session (photo, name, times, task, an orange flag capsule, duration). A floating glass bar at the bottom: a wifi.slash icon, "Geen internet · 8 sessies klaar", "Gaan vanzelf naar zweef.app zodra dit toestel verbinding heeft", and a "Dag afsluiten" button (prominent).
+A pushed screen. Toolbar: back (glass), the title "Close day" + the date as a subtitle, a status capsule "No running timers". Three stat cards (sessions today, the total, and what is also included from earlier days). An inset grouped list per session (photo, name, times, task, an orange flag capsule, duration). A floating glass bar at the bottom: a wifi.slash icon, "No internet · 8 sessions ready", "They go to zweef.app by themselves once this device has a connection", and a "Close day" button (prominent).
 
 ### 7. Synchronisation (`Sync.dc.html`)
-A pushed screen in two columns. Left: a status card (icon, "Geen verbinding", the last attempt, two counters, "Nu opnieuw proberen") and a list with the last upload / members and photos refreshed / the period. Right: the sections "Aandacht nodig", "Wacht op upload" (per day) and "Recent geüpload".
+A pushed screen in two columns. Left: a status card (icon, "No connection", the last attempt, two counters, "Try again now") and a list with the last upload / members and photos refreshed / the period. Right: the sections "Needs attention", "Waiting to upload" (per day) and "Recently uploaded".
 
 ### 8. Setup assistant (no mockup yet)
-Fullscreen, one step per page with the progress at the top (a glass capsule with the steps), large fields in inset grouped lists, and a primary "Volgende" button at the bottom (glassProminent). The steps: Welkom → Verbinding (a segmented control Proxy/Direct, the fields, "Verbinding testen" with a result row "Verbonden met <clubnaam>") → Club (the fetched club name for confirmation, not editable; the closing time with a wheel picker, the task list with reordering) → Beheercode (a six-digit entry) → Klaar.
+Fullscreen, one step per page with the progress at the top (a glass capsule with the steps), large fields in inset grouped lists, and a primary "Next" button at the bottom (glassProminent). The steps: Welcome → Connection (a segmented control Proxy/Direct, the fields, "Test connection" with a result row "Connected to <club name>") → Club (the fetched club name for confirmation, not editable; the closing time with a wheel picker, the task list with reordering) → Admin code (a six-digit entry) → Done.
 
 ### 9. Settings (no mockup yet)
-Reachable by long-pressing (3 s) on the title (the club name) → the admin code sheet. The standard settings pattern: a `NavigationSplitView` in regular width, a `NavigationStack` with one `Form` in compact width, with the sections Verbinding, Club, Taken, Beheercode and Gegevens. Fields holding secrets show "••••••• (ingesteld)" with a "Wijzigen" button. Direct mode shows an orange warning row. Values from MDM are greyed out with "Beheerd door je organisatie". The destructive action "Alles wissen op dit toestel" sits in red at the bottom.
+Reachable by long-pressing (3 s) on the title (the club name) → the admin code sheet. The standard settings pattern: a `NavigationSplitView` in regular width, a `NavigationStack` with one `Form` in compact width, with the sections Connection, Club, Tasks, Admin code and Data. Fields holding secrets show "••••••• (set)" with a "Change" button. Direct mode shows an orange warning row. Values from MDM are greyed out with "Managed by your organisation". The destructive action "Erase everything on this device" sits in red at the bottom.
 
-## Copy (NL)
-Use the copy from the mockups as the source. Centralise it in a String Catalog (`Localizable.xcstrings`) with `nl-BE` as the base language.
+## Copy and localisation
+The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)). The strings quoted above are the **English source text**: that is what goes in the code and in the base of the String Catalog (`Localizable.xcstrings`), with `nl` and `fr` as translations. The mockups hold the original Dutch copy and stay the reference for tone; the [glossary](glossary.md) lists the terms in all three languages.
+
+- Every visible string goes through the catalog. No string is built by concatenation, because word order differs per language; use one string with placeholders per sentence.
+- Durations, times, dates and decimal hours are formatted with `Date.FormatStyle`, `Duration.UnitsFormatStyle` and `NumberFormatter`, never by hand — "2 h 18 min" is "2 u 18 min" in Dutch, "2 h 18 min" in French, and the decimal separator is a comma in both.
+- Counts use the catalog's plural variants ("8 waiting", "1 waiting"), including Dutch and French plural rules.
+- Weekdays and month names come from the locale, so the home subtitle is not a hand-built string.
+- Member names, the club name, aircraft and club-edited task labels are data, not copy: they are shown as they come from zweef.app or as the club typed them, never translated.
+- French labels run roughly 20–30% longer than English. Buttons, capsules and the floating bar grow with their label; nothing truncates a primary action. Check the longest language together with the largest Dynamic Type size.
+- VoiceOver labels are translated too, including the ones that differ from the visible text (the sync status button, the timer).
 
 ## Sample data for previews
 Members: Jan Verhoeven, Koen Maes, Ellen Peeters, Sofie Claes, Bart Wouters, Lotte Janssens, Pieter De Smet, … Aircraft: ASK 21, LS4, Discus.
 
-Every screen gets at least two previews: an iPad in landscape (the reference) and an iPhone in portrait. Add an iPhone landscape preview for the screens with a compact-height variant (the floating bar, the Stop sheet, the confirmations), and one preview at the largest accessibility text size.
+Every screen gets at least two previews: an iPad in landscape (the reference) and an iPhone in portrait. Add an iPhone landscape preview for the screens with a compact-height variant (the floating bar, the Stop sheet, the confirmations), one preview at the largest accessibility text size, and one in French (`.environment(\.locale, Locale(identifier: "fr"))`) as the longest language.

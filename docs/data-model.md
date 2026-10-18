@@ -63,7 +63,8 @@ enum SyncState: String, Codable {
 
 @Model final class TaskDefinition {  // the configurable task list
     @Attribute(.unique) var key: String
-    var label: String
+    var label: String             // seeded from the catalog in the setup language;
+                                  // once the club edits it, it is club data and is shown as typed
     var symbolName: String
     var colorName: String
     var sortOrder: Int
@@ -76,6 +77,7 @@ enum SyncState: String, Codable {
     var clubFetchedAt: Date?
     var closingHour: Int = 21
     var closingMinute: Int = 0
+    var reportingLanguage: String  // "en"/"nl"/"fr": the language of the text sent to zweef.app
     var activePeriodId: Int?
     var lastSuccessfulUploadAt: Date?
     var lastRefreshAt: Date?

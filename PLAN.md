@@ -4,7 +4,7 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 0 — Project
 - [ ] Xcode project "Winter" (iOS/iPadOS 26, SwiftUI, Swift 6, universal iPhone + iPad, all orientations). Preferably generated with XcodeGen (`project.yml`) so Claude Code can manage it.
-- [ ] Folder structure as described in CLAUDE.md; String Catalog with `nl-BE`.
+- [ ] Folder structure as described in CLAUDE.md; String Catalog with `en` as the source language plus `nl` and `fr`.
 - [ ] Test target with Swift Testing.
 
 ## Phase 0b — Open source
@@ -43,7 +43,8 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [ ] Setup assistant (docs/configuration.md), including "Test connection".
 - [ ] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
 - [ ] `ProxyTransport` and `DirectTransport` behind `ZweefAPI`.
-- [ ] Configurable task list (TaskDefinition) with sensible defaults.
+- [ ] Configurable task list (TaskDefinition), seeded from the catalog in the setup language.
+- [ ] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`.
 
 ## Phase 5 — Proxy
 - [ ] Deploy the Cloudflare Worker from `proxy/`; secrets `ZWEEF_API_KEY`, `CLUB`, `DEVICE_TOKENS`.
@@ -51,6 +52,8 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 6 — Finishing touches
 - [ ] VoiceOver labels, Dynamic Type, contrast.
+- [ ] Translations: fill `nl` and `fr` in the catalog, have a native speaker read each, and check that no key is missing or stale.
+- [ ] Localisation pass in French (the longest language) at the largest text size: no truncated buttons, no clipped capsules.
 - [ ] Rotation pass on both devices: no clipping, no layout jumps, nothing hidden behind the floating bar or a safe area.
 - [ ] TestFlight / Apple Business Manager rollout.
 - [ ] Test at the club: three members of different ages, one day without internet, on the workshop iPad and on a phone.

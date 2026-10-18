@@ -18,3 +18,5 @@ The mockups show the iPad in landscape, which is the reference design. The app i
 | `Druk.dc.html` | 8 · Home with 8 members working |
 
 The avatars in the mockups are drawn placeholders; the app shows the real profile photo from zweef.app, or initials.
+
+The copy in the mockups is Dutch. The app ships in English, Dutch and French with English as the source language, so the mockup text is the Dutch translation and `docs/design.md` holds the English source strings ([ADR 0010](../docs/decisions/0010-three-languages-en-nl-fr.md)).

@@ -11,6 +11,7 @@ The code is open source (MIT). Nothing club-specific or secret lives in the repo
 
 ## Consequences
 - The app is called Winter and is generic: the club name, members, aircraft and period come from zweef.app; the task list, the closing time and the zweef.app values are configurable.
+- Being generic now also covers language: the app ships in English, Dutch and French ([ADR 0010](0010-three-languages-en-nl-fr.md)).
 - Secret scanning (gitleaks) in CI.
 - Test data and fixtures are anonymised.
 
