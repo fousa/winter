@@ -58,4 +58,62 @@ enum SampleData {
         try context.save()
         return container
     }
+
+    /// A club that worked today and forgot to close up on an earlier day, with
+    /// one flagged session.
+    ///
+    /// This is the state the close-day and sync screens are actually
+    /// interesting in: an empty database tells you nothing about the layout.
+    @MainActor
+    static func closedDayContainer(now: Date = .now) throws -> ModelContainer {
+        let container = try container(now: now)
+        let context = container.mainContext
+        let calendar = Calendar.club
+        let today = calendar.startOfDay(for: now)
+        guard let yesterday = calendar.date(byAdding: .day, value: -2, to: today) else {
+            return container
+        }
+
+        func session(
+            memberIndex: Int,
+            day: Date,
+            fromHour: Int,
+            minutes: Int,
+            taskKey: String? = "glider",
+            autoStopped: Bool = false,
+            syncState: SyncState = .local
+        ) -> WorkSession {
+            let start = calendar.date(byAdding: .hour, value: fromHour, to: day) ?? day
+            return WorkSession(
+                memberId: members[memberIndex].id,
+                start: start,
+                stop: start.addingTimeInterval(Double(minutes) * 60),
+                status: .completed,
+                taskKey: taskKey,
+                aircraftId: taskKey == "glider" ? aircraft[0].id : nil,
+                autoStopped: autoStopped,
+                syncState: syncState
+            )
+        }
+
+        context.insert(session(memberIndex: 0, day: today, fromHour: 9, minutes: 138))
+        context.insert(session(memberIndex: 1, day: today, fromHour: 10, minutes: 45, taskKey: "workshop"))
+        context.insert(session(memberIndex: 2, day: today, fromHour: 13, minutes: 3, taskKey: nil))
+        context.insert(
+            session(
+                memberIndex: 3,
+                day: yesterday,
+                fromHour: 14,
+                minutes: 420,
+                taskKey: "winch",
+                autoStopped: true
+            )
+        )
+        context.insert(
+            session(memberIndex: 4, day: yesterday, fromHour: 9, minutes: 90, syncState: .uploaded)
+        )
+
+        try context.save()
+        return container
+    }
 }

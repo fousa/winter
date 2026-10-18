@@ -20,14 +20,14 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Seed with sample members for previews and first tests.
 
 ## Phase 2 — UI with fake data
-- [ ] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.
-- [ ] Home screen including search, letter index, "Often here", and the "Working now" bar (1–3 large, 4+ compact).
-- [ ] Start and Stop sheets, confirmations with auto-dismiss and undo, haptics.
-- [ ] Close day.
-- [ ] Sync screen.
-- [ ] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets, the collapsed floating bar, Settings as one `Form`. No `userInterfaceIdiom` or `UIScreen.main` anywhere.
-- [ ] Previews per screen for iPad landscape, iPhone portrait, iPhone landscape (compact height) and the largest accessibility text size.
-- [ ] Screen-stays-on logic (`isIdleTimerDisabled`) and Guided Access friendliness (no links that leave the app), only for the shared device.
+- [x] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.
+- [x] Home screen including search, letter index, "Often here", and the "Working now" bar (1–3 large, 4+ compact).
+- [x] Start and Stop sheets, confirmations with auto-dismiss and undo, haptics.
+- [x] Close day.
+- [x] Sync screen (shows the stored sync state; the engine behind it lands in phase 4).
+- [x] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets, the collapsed floating bar. No `userInterfaceIdiom` or `UIScreen.main` anywhere. (Settings as one `Form` comes with the screen itself in phase 4b.)
+- [x] Previews per screen for iPad landscape, iPhone portrait, iPhone landscape (compact height) and the largest accessibility text size.
+- [x] Screen-stays-on logic (`isIdleTimerDisabled`) while a timer runs, and Guided Access friendliness (no links that leave the app). Limiting it to the shared device needs the configuration from phase 4b.
 
 ## Phase 3 — zweef.app
 - [ ] `ZweefAPI` protocol + `ZweefClient` (URLSession, async/await, Codable) + `FakeZweefAPI`.

@@ -18,6 +18,9 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - Domain rules as pure functions with tests: session duration and flags, decimal hours, duration text per language, the closing time (including both daylight-saving nights), and the zweef.app registration description with its dedup tag.
 - SwiftData models and `SessionStore`: start, stop (also someone else's timer), undo, close the day including earlier unclosed days, and automatic stop at the closing time.
 - Sample club data for previews and tests.
+- The screens, in both size classes: home (member grid, search, letter index, "Often here", the "Working now" bar), the start and stop sheets, the confirmations with undo, closing the day, and the sync overview. Design system components (`MemberAvatar`, glass bar and card, stat card, flag badge) and `LayoutMetrics`, which resolves the mockups' sizes from the size classes.
+- Member list rules in `Domain` with tests: diacritics-insensitive search, letter sections, and the "often here" ranking.
+- All 84 UI strings in the String Catalog, translated into Dutch and French.
 
 ### Changed
 - All repository documentation is written in English.

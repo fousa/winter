@@ -1,41 +1,41 @@
 import SwiftData
 import SwiftUI
 
-/// Temporary scaffold while the screens are being built.
+/// Decides what the app opens on.
 ///
-/// It shows that the store is wired up and working. The real root — the setup
-/// assistant while the configuration is incomplete, otherwise the home screen —
-/// replaces this in phase 2 of `PLAN.md`, together with the copy in the string
-/// catalog. Nothing here is localised, because none of it ships.
+/// It will show the setup assistant while the configuration is incomplete and
+/// the home screen afterwards; the assistant and the configuration it checks
+/// arrive in phase 4b of `PLAN.md`. Until then it seeds the club's default task
+/// list on first launch, so the stop sheet has something to offer, and opens
+/// the home screen.
 struct RootView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.locale) private var locale
 
-    @Query private var members: [Member]
-    @Query(filter: #Predicate<WorkSession> { $0.stop == nil }) private var running: [WorkSession]
+    @Query private var tasks: [TaskDefinition]
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Store") {
-                    LabeledContent("Members", value: members.count.formatted())
-                    LabeledContent("Running sessions", value: running.count.formatted())
-                }
-                Section("Next") {
-                    Text("Screens are built in phase 2 of PLAN.md.")
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .navigationTitle("Winter")
+        HomeView()
+            .task { seedTasksIfNeeded() }
+    }
+
+    /// The default list is seeded in the language the app is running in, after
+    /// which the labels are the club's own and are never translated (ADR 0010).
+    private func seedTasksIfNeeded() {
+        guard tasks.isEmpty else { return }
+        for task in DefaultTasks.seed(locale: locale) {
+            context.insert(task)
         }
+        try? context.save()
     }
 }
 
-#Preview("Nobody working") {
+#Preview("Nobody working", traits: .landscapeLeft) {
     RootView()
         .modelContainer(try! SampleData.container())
 }
 
-#Preview("Two working") {
+#Preview("A day's work", traits: .landscapeLeft) {
     RootView()
-        .modelContainer(try! SampleData.container(runningSessionCount: 2))
+        .modelContainer(try! SampleData.closedDayContainer())
 }

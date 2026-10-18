@@ -68,13 +68,27 @@ One folder per screen, containing the view, the view model and the previews.
 | `Settings` | Settings behind the admin code |
 
 Rules for features:
-- Views contain no logic beyond presentation. Decisions ("may the day be closed?") come from `Domain`.
+- Views contain no logic beyond presentation. Decisions ("may the day be closed?", "who is often here?") come from `Domain`.
 - View models are `@Observable` and `@MainActor`, and talk to `SessionStore` and `SyncEngine`, never to the network directly.
 - Every screen has previews with sample data (see [design.md](design.md)).
+
+How that splits in practice, now that the screens exist:
+
+| Concern | Where | Why |
+|---|---|---|
+| Reading stored data | `@Query` in the view | SwiftData already pushes a started or stopped session into the view; a view model holding a copy would only add a way to be stale |
+| Deriving lists (search, letter sections, "often here") | `Domain` (`MemberDirectory`) | Pure functions on a `MemberListItem` protocol, so the ranking is unit-tested instead of eyeballed, and `Domain` still does not import SwiftData |
+| Screen state (search text, which sheet, the undo offer) | `@Observable` model (`HomeModel`) | The part `@Query` cannot hold |
+| Writing | `SessionStore` | One audited door in front of the sessions (ADR 0001) |
+
+`SessionStore` holds no state beyond its dependencies, so a view makes one from
+its `modelContext` where it needs to write. That keeps the model types free of
+"which context am I on" questions and out of initialisation order.
 
 ### `Domain/`
 Pure functions and value types, without SwiftData, SwiftUI or networking. That makes them fully unit-testable.
 - `SessionRules`: `canCloseDay`, `isShortSession`, `isLongSession`, `flags(for:)`.
+- `MemberDirectory`: search (diacritics-insensitive), letter sections, and the "often here" ranking.
 - `ClosingTime`: computes the automatic stop time for a session.
 - `HoursFormatter`: duration ↔ "2 h 18 min" ↔ decimal hours (2.3).
 - `RegistrationDescription`: builds the `description` field for zweef.app, including the dedup tag. It takes the reporting language as a parameter, so it does not depend on the device's current locale.
@@ -96,7 +110,7 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 - See [configuration.md](configuration.md) for every key.
 
 ### `DesignSystem/`
-Reusable components in the Liquid Glass style: `MemberAvatar`, `GlassBar`, `StatCard`, `FlagBadge`, `PrimaryActionButton`. See [design.md](design.md).
+Reusable components in the Liquid Glass style: `MemberAvatar`, `GlassBar`, `GlassCard`, `StatCard`, `FlagBadge`. Plus `LayoutMetrics`, the sizes resolved from the size classes and put in the environment — the one place that knows the numbers from the mockups, so no view reaches for `UIScreen` or the device idiom. See [design.md](design.md).
 
 ### Localisation
 The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)).

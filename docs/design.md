@@ -27,7 +27,7 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 | Home grid | 5-column grid, member tiles with first and last name | `.adaptive(minimum: 150)`, roughly 2 columns in portrait; the letter index stays on the trailing edge |
 | Search | A search field in the toolbar | `.searchable` on the navigation stack, so it collapses into the title area |
 | Toolbar | Sync status, search and "Close day" side by side | Sync status stays visible; "Close day" moves into the bottom bar, where the primary action belongs on a phone |
-| "Working now" bar | Floating glass bar, 1–3 large cards or a 4-column grid of compact cards | A single floating glass row ("2 members working · tap to stop") that opens a sheet with the list; it never covers more than a third of the height |
+| "Working now" bar | Floating glass bar, 1–3 large cards or a 4-column grid of compact cards | A single floating glass row ("2 members · tap to stop"). One timer running → straight to the stop sheet; more than one → a sheet asking which, because guessing the first would stop the wrong member's hours |
 | Start sheet | Form sheet, ~540×560 | A full-height sheet; the photo shrinks and the buttons go to the bottom |
 | Stop sheet | Two columns: person and timer left, task list right | One scrolling column: person, timer, then the task list; "Stop and save" pinned at the bottom in a glass bar |
 | Confirmations | A centred glass card above the dimmed screen | The same card as a sheet with `.presentationDetents([.medium])` |
@@ -69,6 +69,10 @@ A centred glass card (~480×480, radius 48) above the dimmed home screen. A blue
 A wide sheet (~920×680) in two columns:
 - Left: photo 96, name, "Working since 09:12", a 76 pt light timer, "hours : minutes", and a "Stop and save" button (red, stop.fill).
 - Right: "What were you working on?" + "Optional"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Glider a row of aircraft capsules; footnote "Saved on this device, with or without internet."
+
+#### Two things the mockups left open
+- **The card closes after 3 seconds, but undo is promised for 10** (`spec.md`). Both are kept: the card auto-dismisses after 3 s, and the rest of the window lives on as a small "Undo" chip above the floating bar on the home screen, which disappears by itself. Undoing a start deletes the session; undoing a stop sets it running again.
+- **Who stopped the timer?** On a device with no login the app cannot tell whether Jan stopped his own timer or Koen stopped it for him, and `stoppedByOther` has to come from somewhere. The stop sheet therefore has one switch, off by default — "I'm stopping this for someone else" — so the normal path is still two taps and the flag is only set when someone says so.
 
 ### 5. Stop confirmation (`Gestopt.dc.html`)
 Like 3, with a green circle. "Thanks, Jan", "2 h 18 min", "09:12 – 11:30 · Glider · ASK 21", "Saved on this device, and sent to zweef.app as soon as there is internet".
