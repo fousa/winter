@@ -58,6 +58,9 @@ targets:
     platform: iOS
     sources:
       - path: Tests
+        # Fixtures are read from disk through #filePath, not from a bundle, so
+        # the same test code works in Xcode and from the command line.
+        excludes: ["Fixtures/**"]
     dependencies:
       - target: Winter
     settings:

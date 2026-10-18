@@ -9,8 +9,8 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
     var firstName: String
     var lastName: String
     var isActive: Bool
-    var photoURL: URL?          // remote, if available
-    var photoFileName: String?  // local cache in Application Support/Photos
+    var photoURL: URL?          // unused: accounts.json carries no photo (zweef-api.md)
+    var photoFileName: String?  // unused, kept for the day zweef.app adds photos
     var lastSeenAt: Date?
     var updatedAt: Date
 }

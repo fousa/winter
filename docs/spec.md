@@ -27,7 +27,7 @@ Each device has its own local database and its own device token, and uploads its
 ## Screens (see docs/design.md for the layouts per size class)
 0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
 1. **Home** — member list (often here + all members, search, letter index), sync status button, "Close day" button, floating "Working now" bar.
-2. **Start** (sheet) — photo + name, "Start", "That's not me".
+2. **Start** (sheet) — avatar + name, "Start", "That's not me".
 3. **Start confirmation** — glass card, "Undo" (10 s), dismisses itself after 3 s.
 4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save".
 5. **Stop confirmation** — duration, task/aircraft, "Undo", dismisses itself after 3 s.
@@ -85,12 +85,13 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - Text that goes *to* zweef.app (the task label in `project`, the flags in `description`) uses the club's reporting language, not the language of the member who stopped the timer, so the board reads one consistent list.
 
 ### Club data
-- The club name comes from zweef.app (`GET /club.json`): fetched during "Test connection" in the setup and on every refresh. Cached locally so it stays visible offline.
+- The club name should come from zweef.app (`GET /club.json`), fetched during "Test connection" and on every refresh, and cached locally so it stays visible offline.
+- **That endpoint answers 500 for a real club.** Until it works, the app shows "Winter" as its title. Whether someone may type the club name in the setup instead is an open decision ([zweef-api.md](zweef-api.md)).
 - The app is generic: no club name, members, aircraft or tasks in the code.
 
-### Member list and photos
-- On every successful sync: `GET /accounts.json` → upsert members (active/inactive), download photos and cache them locally (a file on disk, the path in the model).
-- No photo → initials in a coloured circle (the colour derived deterministically from the id).
+### Member list and avatars
+- On every successful sync: `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
+- **Members always show initials** in a colour derived from their id: `accounts.json` carries no photo, avatar or image field for any member (verified against a real club, see [zweef-api.md](zweef-api.md)). There is nothing to download and no photo cache.
 - "Often here": the top 5 members by number of sessions in the last 30 days, otherwise by last seen.
 - Search on first and last name, diacritics-insensitive.
 
@@ -105,7 +106,10 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 A login or PIN for members, managing hours on the device, free text, voice notes, CSV export, entering or editing hours after the fact on the device, syncing running timers between devices (see [ADR 0009](decisions/0009-universal-app-iphone-and-ipad.md)).
 
 ## Open questions
-- Is there a photo URL in the accounts response?
-- Allowed values for `category` / `project` / `status`, and the POST response.
+- The POST response shape: does creating a registration return its id? Finding out means writing to a live club.
+- Why `GET /club.json` answers 500 and `GET /maintenance-hours/periods.json` answers 404, and how to find the period of a brand-new maintenance period.
+- May someone type the club name in the setup while `club.json` is broken?
 - The closing time.
 - Is wired wifi or a device with its own 4G/5G possible for the workshop?
+
+Answered against a real club on 18 October 2026: there is no photo in the accounts response, and `category` is empty rather than `"Maintenance"` (see [zweef-api.md](zweef-api.md)).

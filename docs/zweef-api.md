@@ -1,39 +1,82 @@
 # zweef.app (GlidingApp) API
 
-Source: https://documenter.getpostman.com/view/25434528/2s8ZDX5PRi (consulted 18 October 2026). The documentation contains no response examples: verify everything with a real API key and capture the real JSON as fixtures in the tests.
+Source: https://documenter.getpostman.com/view/25434528/2s8ZDX5PRi (consulted 18 October 2026). The published documentation lists the endpoints but contains **no response examples at all**, so every shape below was read off live responses from a real club on 18 October 2026 and captured — anonymised — as fixtures in [`Tests/Fixtures`](../Tests/Fixtures/README.md).
 
-- **Base URL**: `https://admin.gliding.app/club/{club}/api` (`{club}` = the schema name from the club settings)
+- **Base URL**: `https://admin.gliding.app/club/{club}/api` (`{club}` = the schema name from the club settings). There is no endpoint that works without it.
 - **Auth**: the header `X-API-KEY: <token>` (created in the admin pages). The documentation says so explicitly: do not use it client-side → only in the proxy.
 
 ## Endpoints we use
 The app is generic: everything club-specific (name, members, aircraft, period) comes from these endpoints.
 
-| Method | Path | Purpose in the app |
-|---|---|---|
-| GET | `/club.json` | Club details; the app uses the **club name** (the title on the home screen, the confirmation in the setup). Also the first call during "Test connection". The exact field name still needs verifying. |
-| GET | `/accounts.json` | Active members (`?inactive=1` for inactive ones) |
-| GET | `/material.json` | Aircraft/equipment for the aircraft picker (`material_id`) |
-| GET | `/maintenance-hours/periods.json` | The active maintenance period; `?id=123` for a specific one |
-| GET | `/maintenance-hours/{periodId}/hours.json` | The registrations in a period; `/maintenance-hours/current/hours.json` for the current one |
-| POST | `/maintenance-hours.json` | Create a registration |
-| PUT | `/maintenance-hours.json` | Update a registration (`id` required in the body) |
-| DELETE | `/maintenance-hours.json` | Delete a registration (`id` required in the body) |
+| Method | Path | Verified | Purpose in the app |
+|---|---|---|---|
+| GET | `/club.json` | **500** | Should give the club name. Answers `500 Server Error` for a real club, so the app cannot rely on it (see below). |
+| GET | `/accounts.json` | 200 | Active members. A bare JSON array. |
+| GET | `/accounts.json?inactive=1` | 200 | **Only** the inactive members, not all of them — getting everybody means two calls. |
+| GET | `/material.json` | 200 | Aircraft and equipment for the aircraft picker. A bare array. |
+| GET | `/maintenance-hours/periods.json` | **404** | Should give the active period. Answers `404` for a real club (also with `?id=`), so the app derives the period another way (see below). |
+| GET | `/maintenance-hours/current/hours.json` | 200 | The registrations in the current period. A bare array. |
+| GET | `/maintenance-hours/{periodId}/hours.json` | 200 | The registrations in one period. |
+| POST | `/maintenance-hours.json` | not tried | Create a registration. `GET` on this path answers `405`, which confirms it is write-only. |
+| PUT / DELETE | `/maintenance-hours.json` | not tried | Update or delete, `id` required in the body. Not used: corrections happen in zweef.app (ADR 0004). |
 
-## POST /maintenance-hours.json — the example from the documentation
+## What the responses actually contain
+
+### `GET /accounts.json`
+A bare array. Each member carries about twenty top-level keys plus nested `data` (26 keys), `extra` (club-specific custom fields) and `association` objects — including address, date of birth, national registry number and medical validity dates.
+
+The app decodes exactly four: `id`, `first_name`, `last_name`, `is_active`. What it never decodes it can never store, log or leak.
+
+> **There is no photo.** Across every member of a real club there is no `photo`, `image`, `avatar` or `picture` key anywhere in the response, nested objects included. The member tiles therefore always show initials in a colour derived from the member's id. This answers an open question that had been in the spec from the start, and it is why there is no photo cache.
+
+Verified non-null for every member: `id`, `first_name`, `last_name`, `name`, `is_active`, `email`, `groups`, `uuid`.
+
+### `GET /material.json`
+A bare array of aircraft *and* ground equipment.
+
+| Field | Values seen | Use |
+|---|---|---|
+| `id` | int | This is what `material_id` on a registration refers to |
+| `kist_id` | int or null | Links to the flights table; null for anything that does not fly. **Not** the id to upload |
+| `name` | string | What the aircraft picker shows |
+| `category` | `kist`, `rollend`, `overig` | `kist` = aircraft, the rest is winches, cars, buildings |
+| `kist_configuration` | `Glider`, `TMG`, `Sustainer`, `Self-launching`, `""`, or the key is absent | Gliders are offered first |
+| `status` | `in bedrijf`, `niet inzetbaar` | |
+
+`kist_configuration` is genuinely missing on non-aircraft and empty on at least one aircraft, so it decodes as optional.
+
+### `GET /maintenance-hours/current/hours.json`
+A bare array of stored registrations: `id`, `date_created`, `period_id`, `user_id`, `user_name`, `date`, `hours`, `material_id`, `workorder_id`, `is_private`, `category`, `sub_category`, `project`, `description`, `status`, `date_reviewed`, `reviewer_id`, `reviewer_name`.
+
+The values a real club has, which is what the app matches rather than the documentation's example:
+
+| Field | Reality | The documentation's example |
+|---|---|---|
+| `category` | `""` on every registration | `"Maintenance"` |
+| `sub_category` | `""` | `""` |
+| `project` | a short free-text label (`"Club"`) | `"Workshop"` |
+| `status` | `"in_aanvraag"`, and `"geaccepteerd"` once the board approves | `"in_aanvraag"` |
+| `hours` | float, one or two decimals (`1.5`, `5.3`) | `2.5` |
+| `date` | `"YYYY-MM-DD"` | same |
+| `description` | free text, Dutch | same |
+
+So the app sends an **empty** `category`, not `"Maintenance"`: matching what the club already has keeps the board's own filters working.
+
+## POST /maintenance-hours.json — the body we send
 ```json
 {
-  "period_id": 123,
-  "user_id": 5,
-  "user_name": "Example",
-  "date": "2002-02-02",
-  "hours": 2.5,
-  "material_id": null,
+  "period_id": 1,
+  "user_id": 101,
+  "user_name": "Jan Verhoeven",
+  "date": "2026-10-15",
+  "hours": 2.3,
+  "material_id": 1,
   "workorder_id": null,
   "is_private": false,
-  "category": "Maintenance",
+  "category": "",
   "sub_category": "",
-  "project": "Workshop",
-  "description": "Routine inspection",
+  "project": "Zweefvliegtuig",
+  "description": "Zweefvliegtuig · ASK 21 · 09:12–11:30 [ou:a1b2c3d4]",
   "status": "in_aanvraag"
 }
 ```
@@ -41,32 +84,39 @@ The app is generic: everything club-specific (name, members, aircraft, period) c
 ## Mapping from a WorkSession
 | Field | Value |
 |---|---|
-| `period_id` | The active period at the moment of upload (cached; fetched again when in doubt) |
+| `period_id` | The active period (see "Finding the period") |
 | `user_id`, `user_name` | The member (`zweefId`, full name) |
-| `date` | `yyyy-MM-dd` of `start` in the device's own time zone, which is what defines "the day" for the club (Europe/Brussels for the clubs this targets) |
-| `hours` | The duration in hours, two decimals (2h15 → 2.25). Rounding: the exact minutes, unless the club decides otherwise |
-| `material_id` | The chosen aircraft, or `null` |
+| `date` | `yyyy-MM-dd` of `start` in the device's own time zone, which is what defines the club's day |
+| `hours` | The duration in hours, two decimals (2h15 → 2.25). Rounding: the exact minutes |
+| `material_id` | The chosen aircraft's material `id`, or `null` |
 | `workorder_id` | `null` |
 | `is_private` | `false` |
-| `category` | `"Maintenance"` (to be confirmed) |
+| `category` | `""` (see above) |
 | `sub_category` | `""` |
-| `project` | The task label as the club has it, or `""` |
-| `description` | Composed, e.g. `"Glider · ASK 21 · 09:12–11:30 · stopped automatically"`; flags at the end; always an app tag `[ou:<uuid-prefix8>]` for dedup |
+| `project` | The task label as the club stores it, or `""` |
+| `description` | Composed: task · aircraft · times · flags, then the dedup tag. Flags are in the club's reporting language (ADR 0010) |
 | `status` | `"in_aanvraag"` |
 
-### Which language goes to zweef.app
-The app's UI is English, Dutch or French, but a club's maintenance-hours list in zweef.app should not be a mix of all three. So the uploaded text uses the club's **reporting language** (`AppSettings.reportingLanguage`, default: the device language during setup), not the language of the member who stopped the timer:
+## Finding the period
+`periods.json` is the documented way and answers 404 for a real club, so the app reads `period_id` off the registrations in `current/hours.json` instead.
 
-- `description` is built from the catalog in that language (the flags, and words like "stopped automatically").
-- `project` is the task label as the club stores it, in whatever language the club typed. It is data, so it is not translated.
-- `hours` is a JSON number, so it always uses a dot as its decimal separator, whatever the locale shows on screen.
-- The tag `[ou:<uuid-prefix8>]` is a machine key: never translated, never reformatted.
+That leaves one hole: a brand-new period with no registrations yet has no `period_id` to read. The app then has nothing to upload against and keeps the sessions local — they are not lost, but they do not move either. Worth asking zweef.app about, together with why `periods.json` 404s.
+
+## The club name
+`GET /club.json` answers `500` for a real club, so the app cannot count on learning the club's name. It caches whatever it last received and falls back to showing "Winter". Whether the setup assistant should let someone type the club name instead is an open decision (it currently contradicts ADR 0008's "nothing club-specific is typed in").
 
 ## Dedup / idempotency
 The POST has no client-side key. The strategy:
-1. After a successful POST: store the `remoteId` from the response (its shape still needs verifying).
+1. After a successful POST: store the `remoteId` from the response, if there is one.
 2. If the response is unclear (a timeout after sending): before trying again, `GET /maintenance-hours/current/hours.json` and look for a registration with the tag `[ou:xxxxxxxx]` in `description` (fallback: the same `user_id` + `date` + `hours`). Found → mark it as uploaded with that `id`.
 3. Corrections after upload happen in zweef.app, not in the app (PUT/DELETE are only there for future use).
 
+The response shape of a successful POST is **still unverified**: finding out means creating a real registration in a live club. The decoder therefore accepts a bare id, `{"id": …}`, `{"data": {"id": …}}` and `{"maintenance_hour": {"id": …}}`, and treats a missing id as a success — dedup works off the tag, not off the id.
+
 ## Proxy
 The app talks to the proxy (`proxy/`), never directly to admin.gliding.app. The proxy only forwards the paths above and replaces the device token with the `X-API-KEY`.
+
+## Still open
+- The POST response shape, and whether it returns the new id.
+- Why `periods.json` 404s, and how to find the period of a brand-new maintenance period.
+- Why `club.json` answers 500.

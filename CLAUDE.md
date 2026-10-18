@@ -53,9 +53,12 @@ SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
 - Commits: Conventional Commits in English (see `CONTRIBUTING.md`).
 
 ## Open questions (see also docs/spec.md)
-- Does `GET /accounts.json` return a photo URL per member? Undocumented → test it with an API key.
-- Which values does zweef.app accept for `category`, `project` and `status`; what does the POST return (an id?).
+- What does `POST /maintenance-hours.json` return? Verifying it means creating a real registration in a live club.
+- Why does `GET /club.json` answer 500 and `GET /maintenance-hours/periods.json` answer 404? And how is the period found for a brand-new maintenance period?
+- May someone type the club name in the setup while `club.json` is broken? (Today that contradicts ADR 0008.)
 - The exact closing time; can the workshop device get wired wifi or its own 4G/5G connection?
+
+Answered on 18 October 2026 by checking a real club (`docs/zweef-api.md`): `accounts.json` has **no** photo field, so avatars are always initials; `category` is `""`, not `"Maintenance"`; `status` goes `in_aanvraag` → `geaccepteerd`.
 
 ## Links
 (The analysis and mockups are the author's private links; they are not needed in order to contribute.)

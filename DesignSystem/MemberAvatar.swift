@@ -2,11 +2,12 @@ import SwiftUI
 
 /// A member's photo, or their initials when there is no photo.
 ///
-/// Photos come from zweef.app and are cached on disk, so this reads from a file
-/// rather than the network: in a hangar without a connection the member list
-/// still has to look like itself. Until the photo cache exists (phase 4) every
-/// member falls back to initials, which is also what happens for members who
-/// never uploaded one.
+/// In practice this is always the initials: zweef.app's `accounts.json` carries
+/// no photo, avatar or image field for any member, verified against a real club
+/// (`docs/zweef-api.md`). The file-based branch stays because the model keeps
+/// the photo fields for the day zweef.app adds them — and because reading from
+/// disk rather than the network is the only way a member list can look like
+/// itself in a hangar with no signal.
 struct MemberAvatar: View {
     let member: Member
     var size: CGFloat

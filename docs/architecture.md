@@ -24,7 +24,7 @@ This document describes how the app is put together technically: which modules e
 │                ▼                                                   │
 │  Data                                                              │
 │    SessionStore ──── SwiftData (Member, WorkSession, ...)          │
-│    PhotoCache   ──── Application Support/Photos                    │
+│    ZweefClient  ──── Transport (proxy or direct)                   │
 │    SyncEngine (actor) ── ZweefAPI ── Transport ──────────────┐     │
 │    AutoStopService · ConnectivityMonitor · BackgroundTasks   │     │
 │                                                              │     │
@@ -96,9 +96,8 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 ### `Data/`
 - `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
 - `SyncEngine` (`actor`): see [sync.md](sync.md). Uses its own (background) `ModelContext` through a `ModelActor`.
-- `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews).
+- `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews). Six calls, only one of which writes. There is no photo cache: zweef.app returns no member photos, so avatars are initials ([zweef-api.md](zweef-api.md)).
 - `Transport` (protocol) with `ProxyTransport` and `DirectTransport`: sets the right base URL and headers. `ZweefClient` does not know which mode is active.
-- `PhotoCache`: downloads and stores profile photos, and returns local URLs.
 - `AutoStopService`: calls `SessionStore.applyAutoStop` at app launch, when the app becomes active, every minute in the foreground, and in the background task.
 - `ConnectivityMonitor`: a wrapper around `NWPathMonitor` that exposes an `AsyncStream<Bool>`.
 

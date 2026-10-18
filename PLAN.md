@@ -30,13 +30,13 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Screen-stays-on logic (`isIdleTimerDisabled`) while a timer runs, and Guided Access friendliness (no links that leave the app). Limiting it to the shared device needs the configuration from phase 4b.
 
 ## Phase 3 — zweef.app
-- [ ] `ZweefAPI` protocol + `ZweefClient` (URLSession, async/await, Codable) + `FakeZweefAPI`.
-- [ ] Capture real JSON from accounts, material, periods and a POST response as fixtures (using a test API key).
-- [ ] Mapping WorkSession → POST body (`docs/zweef-api.md`).
+- [x] `ZweefAPI` protocol + `ZweefClient` (URLSession, async/await, Codable) + `FakeZweefAPI`.
+- [x] Capture real JSON from accounts, material and hours as anonymised fixtures. Still open: the POST response, which needs a registration in a live club. `periods.json` 404s and `club.json` 500s — see `docs/zweef-api.md`.
+- [x] Mapping WorkSession → POST body (`docs/zweef-api.md`).
 
 ## Phase 4 — Sync
 - [ ] `SyncEngine` actor as described in `docs/sync.md` (triggers, backoff, dedup, rejected).
-- [ ] Photo cache (download, store in Application Support, clean up).
+- [x] ~~Photo cache~~ — dropped: `accounts.json` carries no photo for any member, so there is nothing to cache and avatars are always initials.
 - [ ] Register the BGAppRefreshTask.
 - [ ] Tests with FakeZweefAPI (timeouts, 4xx, duplicate triggers).
 

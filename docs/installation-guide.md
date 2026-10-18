@@ -46,7 +46,7 @@ The app opens with the setup assistant:
 1. **Connection**: choose Proxy and fill in the proxy URL and the device token, or choose Direct and fill in the schema name and the API key. Tap **Test connection**; you should see the active maintenance period.
 2. **Club**: the app shows your club's name as it appears in zweef.app; check that it is the right one. After that, set the closing time (when forgotten timers stop automatically), the task list, and the language the hours are written in when they go to zweef.app.
 3. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings.
-4. **Done**: the members and their photos are fetched as soon as there is internet.
+4. **Done**: the members are fetched as soon as there is internet. (zweef.app has no member photos, so the app shows initials.)
 
 ## Step 6 — Lock the shared device into the app
 Only for the shared workshop device; skip this on a personal phone.

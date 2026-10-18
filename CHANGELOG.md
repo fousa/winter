@@ -21,8 +21,10 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The screens, in both size classes: home (member grid, search, letter index, "Often here", the "Working now" bar), the start and stop sheets, the confirmations with undo, closing the day, and the sync overview. Design system components (`MemberAvatar`, glass bar and card, stat card, flag badge) and `LayoutMetrics`, which resolves the mockups' sizes from the size classes.
 - Member list rules in `Domain` with tests: diacritics-insensitive search, letter sections, and the "often here" ranking.
 - All 84 UI strings in the String Catalog, translated into Dutch and French.
+- zweef.app client: `ZweefAPI` with `ZweefClient` (URLSession, async/await) and `FakeZweefAPI`, `ProxyTransport` and `DirectTransport`, typed errors that say whether to retry, and the `WorkSession` → registration mapping. Anonymised fixtures captured from a real club.
 
 ### Changed
 - All repository documentation is written in English.
+- Verified the zweef.app API against a real club: `accounts.json` has no member photo (avatars are always initials, and the photo cache is dropped), `category` is sent empty rather than `"Maintenance"`, the active period is read from `current/hours.json` because `periods.json` answers 404, and `club.json` answers 500 so the club name may be unavailable.
 - No CI: tests and the secrets check are run locally before merging (ADR 0011).
 - `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.

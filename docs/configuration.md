@@ -10,11 +10,11 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 | Device token | **Keychain** | with proxy | a long random string, unique per device |
 | Club schema (`{club}`) | UserDefaults | with direct | from the zweef.app club settings |
 | zweef.app API key | **Keychain** | with direct | `X-API-KEY` |
-| Club name | UserDefaults (cache) | automatic | fetched from zweef.app (`GET /club.json`) during "Test connection" and on every refresh; cannot be entered by hand |
+| Club name | UserDefaults (cache) | automatic | fetched from zweef.app (`GET /club.json`) during "Test connection" and on every refresh; cannot be entered by hand. That endpoint currently answers 500, so the app may simply not have a name to show ([zweef-api.md](zweef-api.md)) |
 | Closing time | SwiftData `AppSettings` | yes | 21:00 by default |
 | Tasks | SwiftData | yes | a default list (Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else), seeded in the setup language and editable; edited labels are club data and are not translated |
 | Reporting language | SwiftData `AppSettings` | yes | `en`/`nl`/`fr` for the text sent to zweef.app; defaults to the device language during setup ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)) |
-| `category` / `status` for zweef.app | UserDefaults | yes | `Maintenance` / `in_aanvraag` by default |
+| `category` / `status` for zweef.app | UserDefaults | yes | `""` / `in_aanvraag` by default — an empty category is what real registrations carry, the documentation's `Maintenance` is not ([zweef-api.md](zweef-api.md)) |
 | Admin code | **Keychain** (hashed) | yes | six digits; protects only the settings screen, not everyday use |
 
 Keychain items use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, so they stay out of backups and off other devices.
@@ -28,8 +28,8 @@ Both modes use the same `ZweefAPI` interface; only the transport layer differs (
 ## First launch: the setup assistant
 It appears for as long as the configuration is incomplete. The steps:
 1. **Welcome** — what the app does, what you need (a proxy URL + token, or a club schema + API key).
-2. **Connection** — pick a mode, fill in the fields (key fields as `SecureField`, pasting allowed), tap "Test connection" → `GET /maintenance-hours/periods.json`. On success it fetches the club name (`GET /club.json`) and shows "Connected to <club name>" plus the active period; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
-3. **Club** — shows the fetched club name for confirmation ("Is this your club?"); then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter". The reporting language for zweef.app is set here too, defaulting to the current device language.
+2. **Connection** — pick a mode, fill in the fields (key fields as `SecureField`, pasting allowed), tap "Test connection" → `GET /maintenance-hours/current/hours.json` (not `periods.json`, which 404s). On success it shows the active period, and tries `GET /club.json` for the club name — which currently answers 500, so a successful connection without a name is normal; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
+3. **Club** — shows the fetched club name for confirmation ("Is this your club?") when there is one; then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter". The reporting language for zweef.app is set here too, defaulting to the current device language.
 4. **Admin code** — six digits, entered twice.
 5. **Done** — the members are fetched (if there is internet); a tip to turn on Guided Access.
 
@@ -53,8 +53,8 @@ When present: the values are adopted (secrets go straight into the Keychain) and
 
 ## Generic for every club
 Winter contains nothing tied to a single club:
-- The **club name** and the **members** (with photos) come from zweef.app.
-- The **aircraft** come from `material.json`, the **maintenance period** from `maintenance-hours/periods.json`.
+- The **club name** and the **members** come from zweef.app. There are no member photos: `accounts.json` has no photo field, so the app shows initials ([zweef-api.md](zweef-api.md)).
+- The **aircraft** come from `material.json`, the **maintenance period** from the registrations in `maintenance-hours/current/hours.json`.
 - The **task list**, the **closing time**, the **reporting language** and the zweef.app values for `category`/`status` are configurable, with sensible defaults.
 - The **UI language** follows the device: English, Dutch or French, with English as the fallback. Not a setting in the app.
 - Copy and examples in the code and the previews use fictional clubs and members.

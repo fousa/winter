@@ -12,7 +12,7 @@ Internet at the club is unreliable. The app always works locally; syncing is a b
 
 ## The order of one sync run (`SyncEngine` is an `actor`, one run at a time)
 1. **Apply auto-stop** (running timers past the closing time).
-2. **Refresh** (at most once every 6 h, or when the cache is empty): club → update the club name; accounts → upsert members; photos → download (only changed or missing ones); material → aircraft; periods → the active period.
+2. **Refresh** (at most once every 6 h, or when the cache is empty): club → update the club name if `club.json` answers at all; accounts → upsert members (twice: active, then `?inactive=1`); material → aircraft; the active period → read off `current/hours.json`, because `periods.json` 404s. No photos: there are none to fetch ([zweef-api.md](zweef-api.md)).
 3. **Upload** every session with `syncState == .ready` (and completed `.local` ones older than 24 h):
    - Set `.uploading`, POST, and on success `.uploaded` + `remoteId` + `uploadedAt`.
    - Network error/timeout/5xx → back to `.ready`, `attempts += 1`, `lastError`.
@@ -23,7 +23,7 @@ Internet at the club is unreliable. The app always works locally; syncing is a b
 ## What the sync screen shows
 - The connection status (online / no connection) and the time of the last attempt.
 - The number of pending sessions and the total pending hours.
-- The last successful upload, the last refresh of club, members and photos, and the active period.
+- The last successful upload, the last refresh of club and members, and the active period.
 - **Needs attention**: `.rejected` sessions with their reason.
 - **Waiting to upload**: per day (`.local`/`.ready`), with the number of sessions, the total, and whether the day is closed.
 - **Recently uploaded**: the most recent days with `.uploaded`.

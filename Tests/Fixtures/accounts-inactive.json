@@ -1,0 +1,24 @@
+[
+  {
+    "id": 201,
+    "uuid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "first_name": "Sofie",
+    "last_name": "Claes",
+    "name": "Sofie Claes",
+    "email": "sofie@example.com",
+    "phone": "",
+    "is_active": false,
+    "lid_nummer": "0005",
+    "lidmaatschap": "Oud-lid",
+    "groups": [],
+    "association": {},
+    "home_club": null,
+    "charge_to_id": null,
+    "deactivate_by_date": "2026-01-31",
+    "delete_by_date": null,
+    "unsubscribe_to_all_mail": true,
+    "date_updated": "2026-02-01T09:00:00.000000+01:00",
+    "extra": {},
+    "data": {}
+  }
+]
