@@ -39,7 +39,10 @@ actor SyncEngine {
     }
 
     private let container: ModelContainer
-    private let api: any ZweefAPI
+    /// Resolved at the start of every run, not captured at init: the setup
+    /// assistant creates the connection after launch, and the settings screen
+    /// can replace a token the club has revoked.
+    private let apiProvider: @Sendable () -> any ZweefAPI
     private let flagLabel: @Sendable (SessionFlag) -> String
     private let calendar: Calendar
     private let now: @Sendable () -> Date
@@ -55,14 +58,14 @@ actor SyncEngine {
 
     init(
         container: ModelContainer,
-        api: any ZweefAPI,
+        apiProvider: @escaping @Sendable () -> any ZweefAPI,
         flagLabel: @escaping @Sendable (SessionFlag) -> String,
         calendar: Calendar = .club,
         now: @escaping @Sendable () -> Date = { Date() },
         jitter: @escaping @Sendable () -> Double = { .random(in: 0...1) }
     ) {
         self.container = container
-        self.api = api
+        self.apiProvider = apiProvider
         self.flagLabel = flagLabel
         self.calendar = calendar
         self.now = now
@@ -103,6 +106,7 @@ actor SyncEngine {
         // One context per run: created here, on the actor's own executor, and
         // gone when the run ends. Nothing stale survives between runs.
         let context = ModelContext(container)
+        let api = apiProvider()
         var outcome = Outcome()
 
         logger.info("Sync run started (\(trigger.rawValue, privacy: .public))")
@@ -119,7 +123,11 @@ actor SyncEngine {
         }
 
         do {
-            outcome.refreshed = try await refreshIfDue(in: context)
+            outcome.refreshed = try await refreshIfDue(in: context, api: api)
+        } catch ZweefError.invalidConfiguration {
+            // Nothing is set up yet. Not worth a log line on every run: the
+            // sync screen already says so, in words a member understands.
+            outcome.error = .invalidConfiguration
         } catch let error as ZweefError {
             outcome.error = error
             log(.error, "Refresh failed", in: context)
@@ -130,7 +138,7 @@ actor SyncEngine {
         }
 
         do {
-            let upload = try await uploadReadySessions(in: context, trigger: trigger)
+            let upload = try await uploadReadySessions(in: context, api: api, trigger: trigger)
             outcome.uploaded = upload.uploaded
             outcome.rejected = upload.rejected
             outcome.failed = upload.failed
@@ -190,7 +198,7 @@ actor SyncEngine {
 
     /// Brings the club name, the members, the aircraft and the active period up
     /// to date, at most once every six hours.
-    private func refreshIfDue(in context: ModelContext) async throws -> Bool {
+    private func refreshIfDue(in context: ModelContext, api: any ZweefAPI) async throws -> Bool {
         let settings = try settings(in: context)
         let memberCount = try context.fetchCount(FetchDescriptor<Member>())
 
@@ -285,6 +293,7 @@ actor SyncEngine {
     /// waiting more than a day.
     private func uploadReadySessions(
         in context: ModelContext,
+        api: any ZweefAPI,
         trigger: Trigger
     ) async throws -> UploadResult {
         let settings = try settings(in: context)

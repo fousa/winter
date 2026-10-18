@@ -44,8 +44,8 @@ Through TestFlight, Apple Business Manager, or by building it yourself with Xcod
 ## Step 5 — First launch
 The app opens with the setup assistant:
 1. **Connection**: choose Proxy and fill in the proxy URL and the device token, or choose Direct and fill in the schema name and the API key. Tap **Test connection**; you should see the active maintenance period.
-2. **Club**: the app shows your club's name as it appears in zweef.app; check that it is the right one. After that, set the closing time (when forgotten timers stop automatically), the task list, and the language the hours are written in when they go to zweef.app.
-3. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings.
+2. **Club**: type your club's name — it becomes the title on the home screen. (zweef.app is supposed to supply it, but that endpoint is currently broken, so the field is filled in for you only when it answers.) After that, set the closing time (when forgotten timers stop automatically) and the language the hours are written in when they go to zweef.app.
+3. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings. Three wrong attempts are free, after that the app makes you wait a little longer each time.
 4. **Done**: the members are fetched as soon as there is internet. (zweef.app has no member photos, so the app shows initials.)
 
 ## Step 6 — Lock the shared device into the app
@@ -73,5 +73,6 @@ Press and hold the title (your club's name) for 3 seconds and enter the admin co
 | The wrong club name | The name comes from zweef.app; change it there. The app picks it up on the next refresh. |
 | A new member is missing | Members are refreshed whenever there is internet. Or: Settings › Refresh members now. |
 | Admin code forgotten | Delete the app and reinstall it. **Careful:** sessions that have not been uploaded yet are lost. Check the sync screen first to see whether everything has been uploaded. |
+| Too many wrong codes | The wait grows to at most five minutes. It does not reset by force-quitting the app; just wait. |
 | The device is stolen or lost | Proxy: remove that device's token from `DEVICE_TOKENS` and redeploy. Direct: revoke the API key in zweef.app. |
 | A timer from the workshop iPad is missing on a phone | Timers stay on the device they were started on. Stop it on that iPad; after upload, all hours come together in zweef.app. |

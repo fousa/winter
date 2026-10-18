@@ -2,15 +2,22 @@ import BackgroundTasks
 import SwiftData
 import SwiftUI
 
-/// The app's entry point: builds the one model container, the sync stack, and
-/// the triggers that keep hours moving.
+/// The app's entry point: builds the one model container, the configuration and
+/// the sync stack, and wires the triggers that keep hours moving.
 @main
 struct WinterApp: App {
-    /// The background refresh task's identifier, which must match the
-    /// `BGTaskSchedulerPermittedIdentifiers` entry in the Info.plist.
-    static let refreshTaskIdentifier = "app.winter.refresh"
+    /// Must match the `BGTaskSchedulerPermittedIdentifiers` entry in
+    /// `App/Info.plist`, or the system refuses every request.
+    ///
+    /// `nonisolated` because the background task scheduling happens off the
+    /// main actor.
+    nonisolated static let refreshTaskIdentifier = "app.winter.refresh"
 
     private let container: ModelContainer
+    private let configuration: AppConfiguration
+    private let secrets: any SecretStore
+    private let connection: ConnectionProvider
+
     @State private var sync: SyncCoordinator
     @State private var autoStop: AutoStopService
 
@@ -28,20 +35,30 @@ struct WinterApp: App {
         }
         self.container = container
 
-        let store = SessionStore(context: container.mainContext)
-        let autoStop = AutoStopService(store: store) {
-            try? store.settings()
-        }
+        let configuration = AppConfiguration()
+        let secrets = KeychainSecretStore()
+        // Read once at launch and updated whenever the settings change, so the
+        // sync engine always uses the current token.
+        let connection = ConnectionProvider(
+            settings: ConnectionSettings(configuration: configuration, secrets: secrets)
+        )
+        self.configuration = configuration
+        self.secrets = secrets
+        self.connection = connection
 
-        // The reporting language is club data, so it is read from the store
-        // rather than from the device: the board gets one consistent list
-        // whoever stopped the timer (ADR 0010).
-        let language = ReportingLanguage(code: (try? store.settings())?.reportingLanguageCode ?? "en")
+        let store = SessionStore(context: container.mainContext)
+        let autoStop = AutoStopService(store: store) { try? store.settings() }
 
         let engine = SyncEngine(
             container: container,
-            api: WinterApp.makeAPI(),
-            flagLabel: { flag in language.label(for: flag) }
+            apiProvider: { connection.api() },
+            // Resolved per call, not captured: a club can change the language
+            // its hours are written in, and the next upload should use it
+            // (ADR 0010).
+            flagLabel: { flag in
+                let code = MainActor.assumeIsolated { (try? store.settings())?.reportingLanguageCode } ?? "en"
+                return ReportingLanguage(code: code).label(for: flag)
+            }
         )
 
         self.autoStop = autoStop
@@ -54,7 +71,7 @@ struct WinterApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView(configuration: configuration, secrets: secrets, connection: connection)
                 .environment(sync)
                 .task { await sync.watchConnectivity() }
                 .task { await autoStop.runWhileActive() }
@@ -74,34 +91,15 @@ struct WinterApp: App {
             // Best effort: the system decides whether this ever runs. Hours are
             // safe on the device either way; this only shortens the wait.
             await sync.backgroundRefresh()
-            await scheduleBackgroundRefreshFromBackground()
+            scheduleBackgroundRefresh()
         }
     }
 
-    /// Until the setup assistant exists (phase 4b), the app has no configured
-    /// connection, so it runs against the fake and keeps every hour local.
-    ///
-    /// Replacing this with a real transport built from the Keychain and
-    /// `AppConfiguration` is the first thing phase 4b does.
-    private static func makeAPI() -> any ZweefAPI {
-        FakeZweefAPI(
-            club: .failure(.server(status: 500)),
-            accounts: .success([]),
-            material: .success([]),
-            hours: .success([]),
-            create: .failure(.unreachable)
-        )
-    }
-
-    private func scheduleBackgroundRefresh() {
+    private nonisolated func scheduleBackgroundRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: Self.refreshTaskIdentifier)
         // Not sooner than an hour: a club's hours are not urgent, and asking
         // too often is how an app loses its background budget.
         request.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
         try? BGTaskScheduler.shared.submit(request)
-    }
-
-    private func scheduleBackgroundRefreshFromBackground() async {
-        scheduleBackgroundRefresh()
     }
 }

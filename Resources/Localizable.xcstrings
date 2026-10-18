@@ -49,6 +49,102 @@
         }
       }
     },
+    "A code for these settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een code voor deze instellingen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un code pour ces réglages"
+          }
+        }
+      }
+    },
+    "A proxy URL and a device token, or your club schema and an API key": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een proxy-URL en een apparaattoken, of je clubschema en een API-sleutel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une URL de proxy et un jeton d'appareil, ou votre schéma de club et une clé API"
+          }
+        }
+      }
+    },
+    "A six-digit code to protect these settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een code van zes cijfers om deze instellingen te beschermen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un code à six chiffres pour protéger ces réglages"
+          }
+        }
+      }
+    },
+    "API key": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-sleutel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clé API"
+          }
+        }
+      }
+    },
+    "Admin code": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beheercode"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code d'administration"
+          }
+        }
+      }
+    },
+    "Again": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnieuw"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encore"
+          }
+        }
+      }
+    },
     "Also from earlier days": {
       "localizations": {
         "fr": {
@@ -77,6 +173,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gaat ook mee"
+          }
+        }
+      }
+    },
+    "Asks which aircraft": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vraagt welk toestel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demande quel appareil"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terug"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retour"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuleer"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        }
+      }
+    },
+    "Change": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wijzigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier"
+          }
+        }
+      }
+    },
+    "Change the admin code": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beheercode wijzigen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier le code d'administration"
           }
         }
       }
@@ -145,18 +321,194 @@
         }
       }
     },
-    "Connection refused: check the token in Settings": {
+    "Club name": {
       "localizations": {
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verbinding geweigerd: controleer het token in Instellingen"
+            "value": "Clubnaam"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
+            "value": "Nom du club"
+          }
+        }
+      }
+    },
+    "Club schema": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clubschema"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schéma du club"
+          }
+        }
+      }
+    },
+    "Code": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code"
+          }
+        }
+      }
+    },
+    "Connected": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbonden"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté"
+          }
+        }
+      }
+    },
+    "Connected to %@": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbonden met %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté à %@"
+          }
+        }
+      }
+    },
+    "Connection": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinding"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion"
+          }
+        }
+      }
+    },
+    "Connection refused: check the token in Settings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
             "value": "Connexion refusée : vérifiez le jeton dans les réglages"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinding geweigerd: controleer het token in Instellingen"
+          }
+        }
+      }
+    },
+    "Could not connect with these details.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kon geen verbinding maken met deze gegevens."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de se connecter avec ces données."
+          }
+        }
+      }
+    },
+    "Could not store the code. Try again.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kon de code niet bewaren. Probeer opnieuw."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d'enregistrer le code. Réessayez."
+          }
+        }
+      }
+    },
+    "Data": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gegevens"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Données"
+          }
+        }
+      }
+    },
+    "Device token": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apparaattoken"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeton d'appareil"
+          }
+        }
+      }
+    },
+    "Direct": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direct"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direct"
           }
         }
       }
@@ -177,6 +529,22 @@
         }
       }
     },
+    "English": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "English"
+          }
+        }
+      }
+    },
     "Enjoy the work, %@": {
       "localizations": {
         "fr": {
@@ -189,6 +557,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Veel werkplezier, %@"
+          }
+        }
+      }
+    },
+    "Enter the admin code": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geef de beheercode"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrez le code d'administration"
+          }
+        }
+      }
+    },
+    "Erase": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wissen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer"
+          }
+        }
+      }
+    },
+    "Erase everything on this device": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles wissen op dit toestel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout effacer sur cet appareil"
+          }
+        }
+      }
+    },
+    "Erase everything on this device?": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles wissen op dit toestel?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout effacer sur cet appareil ?"
           }
         }
       }
@@ -209,6 +641,54 @@
         }
       }
     },
+    "Forgotten it? The app has to be deleted and set up again, and hours that have not been uploaded are lost with it.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergeten? Dan moet de app verwijderd en opnieuw ingesteld worden, en gaan uren die nog niet doorgestuurd zijn verloren."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oublié ? L'app doit être supprimée et reconfigurée, et les heures pas encore envoyées seront perdues."
+          }
+        }
+      }
+    },
+    "Français": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Français"
+          }
+        }
+      }
+    },
+    "Hours already in zweef.app stay there.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uren die al in zweef.app staan blijven daar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les heures déjà dans zweef.app y restent."
+          }
+        }
+      }
+    },
     "Hours appear here once someone has worked and the day is closed.": {
       "localizations": {
         "fr": {
@@ -225,6 +705,38 @@
         }
       }
     },
+    "Hours are written in": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uren worden geschreven in"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les heures sont écrites en"
+          }
+        }
+      }
+    },
+    "Hours are written to zweef.app in": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uren gaan naar zweef.app in"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les heures sont envoyées à zweef.app en"
+          }
+        }
+      }
+    },
     "Hours waiting": {
       "localizations": {
         "fr": {
@@ -237,6 +749,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uren in wacht"
+          }
+        }
+      }
+    },
+    "How does this device reach zweef.app?": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoe bereikt dit toestel zweef.app?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment cet appareil joint-il zweef.app ?"
           }
         }
       }
@@ -307,16 +835,16 @@
     },
     "Last attempt": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laatste poging"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Dernière tentative"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste poging"
           }
         }
       }
@@ -387,16 +915,64 @@
     },
     "Maintenance period": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Période d'entretien"
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Onderhoudsperiode"
           }
+        }
+      }
+    },
+    "Managed by your organisation": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beheerd door je organisatie"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Période d'entretien"
+            "value": "Géré par votre organisation"
+          }
+        }
+      }
+    },
+    "Members can start logging hours. The list of members arrives as soon as this device has a connection.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leden kunnen beginnen met uren registreren. De ledenlijst komt binnen zodra dit toestel verbinding heeft."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les membres peuvent commencer à enregistrer leurs heures. La liste des membres arrivera dès que cet appareil aura une connexion."
+          }
+        }
+      }
+    },
+    "Members log their maintenance hours here with start and stop, without logging in. The hours are kept on this device and sent to zweef.app as soon as there is a connection.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leden registreren hier hun onderhoudsuren met start en stop, zonder aan te melden. De uren blijven op dit toestel en gaan naar zweef.app zodra er verbinding is."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les membres enregistrent ici leurs heures d'entretien avec démarrer et arrêter, sans connexion. Les heures restent sur cet appareil et partent vers zweef.app dès qu'il y a une connexion."
           }
         }
       }
@@ -413,6 +989,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Leden ververst"
+          }
+        }
+      }
+    },
+    "Members, tasks, hours and the connection are all removed.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leden, taken, uren en de verbinding worden allemaal verwijderd."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les membres, les tâches, les heures et la connexion seront tous supprimés."
+          }
+        }
+      }
+    },
+    "Nederlands": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nederlands"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nederlands"
           }
         }
       }
@@ -449,18 +1057,98 @@
         }
       }
     },
-    "No connection": {
+    "New admin code": {
       "localizations": {
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Geen verbinding"
+            "value": "Nieuwe beheercode"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
+            "value": "Nouveau code d'administration"
+          }
+        }
+      }
+    },
+    "New value": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieuwe waarde"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle valeur"
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volgende"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivant"
+          }
+        }
+      }
+    },
+    "No code is set on this device.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Op dit toestel is geen code ingesteld."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun code n'est défini sur cet appareil."
+          }
+        }
+      }
+    },
+    "No connection": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
             "value": "Pas de connexion"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen verbinding"
+          }
+        }
+      }
+    },
+    "No connection. You can continue and test again later.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen verbinding. Je kan verder en later opnieuw testen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de connexion. Vous pouvez continuer et réessayer plus tard."
           }
         }
       }
@@ -477,6 +1165,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nog geen uren"
+          }
+        }
+      }
+    },
+    "No maintenance period found yet.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen onderhoudsperiode gevonden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune période d'entretien trouvée pour l'instant."
           }
         }
       }
@@ -513,6 +1217,22 @@
         }
       }
     },
+    "Not set": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet ingesteld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non défini"
+          }
+        }
+      }
+    },
     "Nothing logged yet.": {
       "localizations": {
         "fr": {
@@ -541,6 +1261,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vaak hier"
+          }
+        }
+      }
+    },
+    "On a shared device, turn on Guided Access so the app cannot be left: Settings › Accessibility › Guided Access": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zet op een gedeeld toestel Begeleide toegang aan, zodat de app niet verlaten kan worden: Instellingen › Toegankelijkheid › Begeleide toegang"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur un appareil partagé, activez l'accès guidé pour qu'on ne puisse pas quitter l'app : Réglages › Accessibilité › Accès guidé"
           }
         }
       }
@@ -577,6 +1313,86 @@
         }
       }
     },
+    "Paste the token or key. It goes straight into the Keychain.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plak het token of de sleutel. Die gaat rechtstreeks naar de Keychain."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collez le jeton ou la clé. Il va directement dans le trousseau."
+          }
+        }
+      }
+    },
+    "Proxy": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy"
+          }
+        }
+      }
+    },
+    "Proxy URL": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy-URL"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL du proxy"
+          }
+        }
+      }
+    },
+    "Reach these settings again by holding the title for three seconds": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kom hier terug door drie seconden op de titel te drukken"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revenez ici en maintenant le titre pendant trois secondes"
+          }
+        }
+      }
+    },
+    "Ready": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klaar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prêt"
+          }
+        }
+      }
+    },
     "Ready to get going?": {
       "localizations": {
         "fr": {
@@ -605,6 +1421,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "Recent doorgestuurd"
+          }
+        }
+      }
+    },
+    "Refused: check the token or the API key.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geweigerd: controleer het token of de API-sleutel."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refusé : vérifiez le jeton ou la clé API."
+          }
+        }
+      }
+    },
+    "Rename these to whatever your club calls them. The names are yours and are never translated.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geef deze de namen die je club gebruikt. De namen zijn de jouwe en worden nooit vertaald."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renommez-les comme votre club les appelle. Ces noms sont les vôtres et ne sont jamais traduits."
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaren"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
           }
         }
       }
@@ -689,6 +1553,22 @@
         }
       }
     },
+    "Settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instellingen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réglages"
+          }
+        }
+      }
+    },
     "Short session": {
       "localizations": {
         "fr": {
@@ -705,6 +1585,86 @@
         }
       }
     },
+    "Six digits": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zes cijfers"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Six chiffres"
+          }
+        }
+      }
+    },
+    "Six digits, please.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zes cijfers, graag."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Six chiffres, s'il vous plaît."
+          }
+        }
+      }
+    },
+    "Six digits. Members never need it — it only protects the settings, the tokens and the erase button. Store it with your other club passwords.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zes cijfers. Leden hebben die nooit nodig — ze beschermt alleen de instellingen, de tokens en de wisknop. Bewaar ze bij de andere clubwachtwoorden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Six chiffres. Les membres n'en ont jamais besoin — il protège seulement les réglages, les jetons et le bouton d'effacement. Conservez-le avec les autres mots de passe du club."
+          }
+        }
+      }
+    },
+    "Six digits. Store it with your other club passwords.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zes cijfers. Bewaar ze bij de andere clubwachtwoorden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Six chiffres. Conservez-le avec les autres mots de passe du club."
+          }
+        }
+      }
+    },
+    "Some values are managed by your organisation and cannot be changed here.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sommige waarden worden beheerd door je organisatie en kunnen hier niet gewijzigd worden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certaines valeurs sont gérées par votre organisation et ne peuvent pas être modifiées ici."
+          }
+        }
+      }
+    },
     "Start": {
       "localizations": {
         "fr": {
@@ -717,6 +1677,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Starten"
+          }
+        }
+      }
+    },
+    "Start using Winter": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Winter gebruiken"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer à utiliser Winter"
           }
         }
       }
@@ -749,6 +1725,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Start je uren"
+          }
+        }
+      }
+    },
+    "Step %lld of %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "Step %1$lld of %2$lld"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stap %1$lld van %2$lld"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étape %1$lld sur %2$lld"
           }
         }
       }
@@ -898,6 +1896,54 @@
         }
       }
     },
+    "Task": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taak"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâche"
+          }
+        }
+      }
+    },
+    "Tasks": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâches"
+          }
+        }
+      }
+    },
+    "Test connection": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinding testen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tester la connexion"
+          }
+        }
+      }
+    },
     "Thanks, %@": {
       "localizations": {
         "fr": {
@@ -910,6 +1956,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bedankt, %@"
+          }
+        }
+      }
+    },
+    "That URL or club schema cannot be used.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die URL of dat clubschema kan niet gebruikt worden."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette URL ou ce schéma de club n'est pas utilisable."
+          }
+        }
+      }
+    },
+    "That code is not right.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die code is niet juist."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce code n'est pas correct."
           }
         }
       }
@@ -946,18 +2024,130 @@
         }
       }
     },
-    "The hours stay on this device until the connection returns.": {
+    "The board reads one consistent list, whichever language a member's own device is in.": {
       "localizations": {
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "De uren blijven op dit toestel tot er weer verbinding is."
+            "value": "Het bestuur leest één consistente lijst, in welke taal het toestel van een lid ook staat."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
+            "value": "Le comité lit une liste cohérente, quelle que soit la langue de l'appareil d'un membre."
+          }
+        }
+      }
+    },
+    "The hours stay on this device until the connection returns.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
             "value": "Les heures restent sur cet appareil jusqu'au retour de la connexion."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De uren blijven op dit toestel tot er weer verbinding is."
+          }
+        }
+      }
+    },
+    "The key gives access to all of your club's member and financial data, and this device is physically reachable.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De sleutel geeft toegang tot alle leden- en financiële gegevens van je club, en dit toestel is fysiek bereikbaar."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clé donne accès à toutes les données des membres et financières de votre club, et cet appareil est accessible physiquement."
+          }
+        }
+      }
+    },
+    "The key gives access to all of your club's member and financial data.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De sleutel geeft toegang tot alle leden- en financiële gegevens van je club."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clé donne accès à toutes les données des membres et financières de votre club."
+          }
+        }
+      }
+    },
+    "The name appears as the title on the home screen. zweef.app does not always give it, so you can type it yourself.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De naam staat als titel op het startscherm. zweef.app geeft hem niet altijd, dus je kan hem zelf invullen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le nom apparaît comme titre sur l'écran d'accueil. zweef.app ne le fournit pas toujours, vous pouvez donc le saisir vous-même."
+          }
+        }
+      }
+    },
+    "The proxy keeps your club's API key off this device. zweef.app's own documentation advises against putting it here, so pick the proxy if you can.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De proxy houdt de API-sleutel van je club van dit toestel. De documentatie van zweef.app raadt af om hem hier te zetten, dus kies de proxy als het kan."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le proxy garde la clé API de votre club hors de cet appareil. La documentation de zweef.app déconseille de la mettre ici, choisissez donc le proxy si possible."
+          }
+        }
+      }
+    },
+    "The time forgotten timers should stop": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het uur waarop vergeten timers moeten stoppen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L'heure à laquelle les minuteries oubliées doivent s'arrêter"
+          }
+        }
+      }
+    },
+    "The two codes are not the same.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De twee codes zijn niet gelijk."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les deux codes ne sont pas identiques."
           }
         }
       }
@@ -980,16 +2170,48 @@
     },
     "This device has no zweef.app connection configured yet.": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cet appareil n'a pas encore de connexion zweef.app configurée."
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Dit toestel heeft nog geen zweef.app-verbinding ingesteld."
           }
+        }
+      }
+    },
+    "Timers stop at": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timers stoppen om"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cet appareil n'a pas encore de connexion zweef.app configurée."
+            "value": "Les minuteries s'arrêtent à"
+          }
+        }
+      }
+    },
+    "Timers stop automatically at": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timers stoppen automatisch om"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les minuteries s'arrêtent automatiquement à"
           }
         }
       }
@@ -1010,6 +2232,22 @@
         }
       }
     },
+    "Too many attempts.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Te veel pogingen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trop de tentatives."
+          }
+        }
+      }
+    },
     "Total": {
       "localizations": {
         "fr": {
@@ -1022,6 +2260,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Totaal"
+          }
+        }
+      }
+    },
+    "Try again in %lld s": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnieuw proberen over %lld s"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayez dans %lld s"
           }
         }
       }
@@ -1060,16 +2314,16 @@
     },
     "Unknown": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Onbekend"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Inconnue"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onbekend"
           }
         }
       }
@@ -1090,6 +2344,22 @@
         }
       }
     },
+    "Value": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waarde"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur"
+          }
+        }
+      }
+    },
     "Waiting to upload": {
       "localizations": {
         "fr": {
@@ -1102,6 +2372,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wacht op upload"
+          }
+        }
+      }
+    },
+    "Welcome to Winter": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Welkom bij Winter"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bienvenue dans Winter"
           }
         }
       }
@@ -1171,6 +2457,22 @@
         }
       }
     },
+    "You can skip this and set it up later; the app works offline either way.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je kan dit overslaan en later instellen; de app werkt toch offline."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous pouvez passer cette étape et la configurer plus tard ; l'app fonctionne hors ligne de toute façon."
+          }
+        }
+      }
+    },
     "You pick what you worked on when you stop.": {
       "localizations": {
         "fr": {
@@ -1183,6 +2485,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Waaraan je werkte, kies je bij het stoppen."
+          }
+        }
+      }
+    },
+    "Your club": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je club"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre club"
           }
         }
       }
@@ -1260,6 +2578,92 @@
                 "stringUnit": {
                   "state": "translated",
                   "value": "%lld leden · tik om te stoppen"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "^[%lld registration](inflect: true) in period %lld.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "new",
+            "value": "^[%1$lld registration](inflect: true) in period %2$lld."
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld registratie in periode %2$lld."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld registraties in periode %2$lld."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld enregistrement dans la période %2$lld."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%1$lld enregistrements dans la période %2$lld."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "^[%lld session](inflect: true) has not reached zweef.app yet and will be lost.": {
+      "localizations": {
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessie heeft zweef.app nog niet bereikt en gaat verloren."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessies hebben zweef.app nog niet bereikt en gaan verloren."
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld session n'a pas encore atteint zweef.app et sera perdue."
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessions n'ont pas encore atteint zweef.app et seront perdues."
                 }
               }
             }
@@ -1659,18 +3063,82 @@
         }
       }
     },
-    "zweef.app refused one of the registrations": {
+    "zweef.app answered something unexpected.": {
       "localizations": {
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "zweef.app weigerde een van de registraties"
+            "value": "zweef.app antwoordde iets onverwachts."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
+            "value": "zweef.app a répondu quelque chose d'inattendu."
+          }
+        }
+      }
+    },
+    "zweef.app had a problem (%lld). Try again later.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app had een probleem (%lld). Probeer later opnieuw."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app a rencontré un problème (%lld). Réessayez plus tard."
+          }
+        }
+      }
+    },
+    "zweef.app refused one of the registrations": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
             "value": "zweef.app a refusé l'un des enregistrements"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app weigerde een van de registraties"
+          }
+        }
+      }
+    },
+    "zweef.app refused the request (%lld).": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app weigerde de aanvraag (%lld)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app a refusé la requête (%lld)."
+          }
+        }
+      }
+    },
+    "••••••• (set)": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "••••••• (ingesteld)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "••••••• (défini)"
           }
         }
       }

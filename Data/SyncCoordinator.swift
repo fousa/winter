@@ -83,7 +83,7 @@ extension SyncCoordinator {
         return SyncCoordinator(
             engine: SyncEngine(
                 container: container,
-                api: FakeZweefAPI(),
+                apiProvider: { FakeZweefAPI() },
                 // The same source the app uses: the club's reporting language,
                 // not the UI's wording (ADR 0010).
                 flagLabel: { ReportingLanguage.english.label(for: $0) }

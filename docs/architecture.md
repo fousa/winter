@@ -103,10 +103,13 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 - `ConnectivityMonitor`: a wrapper around `NWPathMonitor` exposing an `AsyncStream<Bool>`, behind a `ConnectivityReporting` protocol so a preview can be offline on purpose. A sync fires when the path *becomes* satisfied, not on every update.
 
 ### `Configuration/`
-- `AppConfiguration`: typed access to the non-secret settings (UserDefaults).
-- `KeychainStore`: reading/writing secrets (device token, API key, the hash of the admin code).
-- `ManagedConfiguration`: reads MDM values; those take precedence and are read-only.
-- `AdminCodeVerifier`: checks the admin code (hash + salt, with a delay after failed attempts).
+- `AppConfiguration` (`@MainActor`, `@Observable`): typed access to the non-secret settings (UserDefaults), and whether the device is configured at all.
+- `SecretStore`: a protocol with `KeychainSecretStore` (the real one) and `InMemorySecretStore` (tests, previews). The Keychain needs a signed app with an entitlement, and these rules deserve tests that run anywhere.
+- `ManagedConfiguration`: MDM values, parsed once into typed fields so it is a plain `Sendable` value. Takes precedence and is read-only.
+- `AdminCodeVerifier`: salt + SHA-256 in the Keychain, with a lockout that grows after wrong attempts. Throws rather than returning a result, so a caller cannot forget to look at the answer.
+- `ConnectionSettings` / `ConnectionProvider`: a `Sendable` snapshot of the connection, and the holder the sync engine reads on every run. The connection changes while the app runs — setup creates it, settings edit it — so an engine that captured an API at launch would keep using a revoked token.
+- `ConnectionTester`: tries a connection without saving it, using `current/hours.json` rather than the `periods.json` that answers 404.
+- `ReportingLanguage`, `DefaultTasks`: the club's language for uploads, and the task list it starts with.
 - See [configuration.md](configuration.md) for every key.
 
 ### `DesignSystem/`

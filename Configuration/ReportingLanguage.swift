@@ -6,7 +6,7 @@ import Foundation
 /// club's maintenance-hours list should not end up with Dutch flags on one row
 /// and French on the next depending on whose phone stopped the timer
 /// (ADR 0010).
-struct ReportingLanguage: Equatable, Sendable {
+struct ReportingLanguage: Hashable, Sendable {
     /// One of the three languages the app ships in.
     let code: String
 

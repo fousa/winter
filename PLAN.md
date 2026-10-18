@@ -35,19 +35,18 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Mapping WorkSession → POST body (`docs/zweef-api.md`).
 
 ## Phase 4 — Sync
-The engine runs against the stub until the setup assistant configures a real connection in phase 4b.
 - [x] `SyncEngine` actor as described in `docs/sync.md` (triggers, backoff, dedup, rejected).
 - [x] ~~Photo cache~~ — dropped: `accounts.json` carries no photo for any member, so there is nothing to cache and avatars are always initials.
 - [x] Register the BGAppRefreshTask, with the `UIBackgroundModes` and `BGTaskSchedulerPermittedIdentifiers` keys it needs in `App/Info.plist`.
 - [x] Tests with FakeZweefAPI (timeouts, 4xx, duplicate triggers).
 
 ## Phase 4b — Configuration
-- [ ] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-configuration reader.
-- [ ] Setup assistant (docs/configuration.md), including "Test connection" and the club-name field (ADR 0012; the policy and storage are done, the screen is not).
-- [ ] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
-- [ ] `ProxyTransport` and `DirectTransport` behind `ZweefAPI`.
-- [ ] Configurable task list (TaskDefinition), seeded from the catalog in the setup language.
-- [ ] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`.
+- [x] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-configuration reader.
+- [x] Setup assistant (docs/configuration.md), including "Test connection" and the club-name field (ADR 0012).
+- [x] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
+- [x] `ProxyTransport` and `DirectTransport` behind `ZweefAPI`.
+- [x] Configurable task list (TaskDefinition), seeded from the catalog in the setup language.
+- [x] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`.
 
 ## Phase 5 — Proxy
 - [ ] Deploy the Cloudflare Worker from `proxy/`; secrets `ZWEEF_API_KEY`, `CLUB`, `DEVICE_TOKENS`.

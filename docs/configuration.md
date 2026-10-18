@@ -17,7 +17,9 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 | `category` / `status` for zweef.app | UserDefaults | yes | `""` / `in_aanvraag` by default — an empty category is what real registrations carry, the documentation's `Maintenance` is not ([zweef-api.md](zweef-api.md)) |
 | Admin code | **Keychain** (hashed) | yes | six digits; protects only the settings screen, not everyday use |
 
-Keychain items use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, so they stay out of backups and off other devices.
+Keychain items use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`: *after first unlock* because a wall-mounted device reboots and has to sync before anyone touches it, and *this device only* so a token cannot travel in a backup. The three keys are `deviceToken`, `apiKey` and `adminCode`, namespaced per bundle id so a debug and a release build on one device do not fight over a token.
+
+The admin code itself is never stored — a random 16-byte salt and a SHA-256 hash are. Three wrong attempts are free (room for a typo), after which the wait doubles from 30 s to a ceiling of five minutes. The count is persisted, so force-quitting the app is not a way to reset it. The code protects the *settings*, not use of the app: six digits keep a curious member out of the tokens and the erase button, and nothing more is claimed for them.
 
 ## Connection modes
 - **Proxy (recommended)**: the club deploys the Worker from `proxy/` with its own API key. The device only knows the proxy URL and a device token, which the club can revoke. This follows zweef.app's advice not to keep the key client-side. Every device gets its own token, so each can be revoked separately.
@@ -31,7 +33,9 @@ It appears for as long as the configuration is incomplete. The steps:
 2. **Connection** — pick a mode, fill in the fields (key fields as `SecureField`, pasting allowed), tap "Test connection" → `GET /maintenance-hours/current/hours.json` (not `periods.json`, which 404s). On success it shows the active period, and tries `GET /club.json` for the club name — which currently answers 500, so a successful connection without a name is normal; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
 3. **Club** — the club name: prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter". The reporting language for zweef.app is set here too, defaulting to the current device language.
 4. **Admin code** — six digits, entered twice.
-5. **Done** — the members are fetched (if there is internet); a tip to turn on Guided Access.
+5. **Done** — the members are fetched (if there is internet); a tip to turn on Guided Access, and where to find the settings again.
+
+Testing the connection is encouraged but not required: a club setting the app up in a hangar with no signal must still be able to finish. Secrets are written to the Keychain as the step is left, and the fields are cleared so the values do not sit in a view model for the rest of the session.
 
 ## Changing settings later
 - The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
@@ -49,7 +53,7 @@ Clubs with Apple Business Manager or an MDM can skip the setup. The app reads `U
 | `clubSchema` | String |
 | `closingTime` | String (`HH:mm`) |
 
-When present: the values are adopted (secrets go straight into the Keychain) and setup step 2 is skipped. Managed values are read-only in the settings screen.
+When present: the values are adopted (secrets go straight into the Keychain) and the fields are prefilled, so nobody has to type a 64-character token into a device on a wall. Managed values are read-only in the setup and in the settings screen, marked with a building icon and "Managed by your organisation" — letting someone edit a value the MDM will overwrite tonight is worse than not offering it. A malformed `closingTime` is ignored rather than guessed at.
 
 ## Generic for every club
 Winter contains nothing tied to a single club:

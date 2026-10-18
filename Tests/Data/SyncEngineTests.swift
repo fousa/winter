@@ -82,7 +82,7 @@ struct SyncEngineTests {
         let clock = TestClock(now)
         let engine = SyncEngine(
             container: container,
-            api: api,
+            apiProvider: { api },
             flagLabel: { flag in flag.rawValue },
             calendar: calendar,
             now: { clock.now },
