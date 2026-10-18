@@ -1,0 +1,20 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+
+# Persoonlijke build-instellingen
+Config/Local.xcconfig
+
+# Secrets
+*.env
+.dev.vars
+
+# Proxy
+proxy/node_modules/
+proxy/.wrangler/
+
+# macOS
+.DS_Store
