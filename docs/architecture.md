@@ -95,11 +95,12 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 
 ### `Data/`
 - `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
-- `SyncEngine` (`actor`): see [sync.md](sync.md). Uses its own (background) `ModelContext` through a `ModelActor`.
+- `SyncEngine` (`actor`): see [sync.md](sync.md). Creates its own `ModelContext` per run, on its own executor, so nothing is shared with the UI and nothing stale survives between runs. Runs one at a time: actors are reentrant, so a flag guards it and extra triggers merge into a single follow-up.
+- `SyncCoordinator` (`@MainActor`, `@Observable`): the only thing the screens talk to about syncing. Owns the triggers — connectivity returning, the app becoming active, the background task, "try again now" — and publishes `isSyncing`, `isConnected` and the last outcome.
 - `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews). Six calls, only one of which writes. There is no photo cache: zweef.app returns no member photos, so avatars are initials ([zweef-api.md](zweef-api.md)).
 - `Transport` (protocol) with `ProxyTransport` and `DirectTransport`: sets the right base URL and headers. `ZweefClient` does not know which mode is active.
-- `AutoStopService`: calls `SessionStore.applyAutoStop` at app launch, when the app becomes active, every minute in the foreground, and in the background task.
-- `ConnectivityMonitor`: a wrapper around `NWPathMonitor` that exposes an `AsyncStream<Bool>`.
+- `AutoStopService`: calls `SessionStore.applyAutoStop` when the app becomes active and every minute in the foreground. Separate from the sync engine because it must work with no network at all.
+- `ConnectivityMonitor`: a wrapper around `NWPathMonitor` exposing an `AsyncStream<Bool>`, behind a `ConnectivityReporting` protocol so a preview can be offline on purpose. A sync fires when the path *becomes* satisfied, not on every update.
 
 ### `Configuration/`
 - `AppConfiguration`: typed access to the non-secret settings (UserDefaults).

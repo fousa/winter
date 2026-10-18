@@ -322,28 +322,38 @@ struct HomeView: View {
 }
 
 #Preview("iPad · nobody working", traits: .landscapeLeft) {
+    let container = try! SampleData.container()
     HomeView()
-        .modelContainer(try! SampleData.container())
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("iPad · two working", traits: .landscapeLeft) {
+    let container = try! SampleData.container(runningSessionCount: 2)
     HomeView()
-        .modelContainer(try! SampleData.container(runningSessionCount: 2))
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("iPad · busy", traits: .landscapeLeft) {
+    let container = try! SampleData.container(runningSessionCount: 6)
     HomeView()
-        .modelContainer(try! SampleData.container(runningSessionCount: 6))
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("iPhone · two working") {
+    let container = try! SampleData.container(runningSessionCount: 2)
     HomeView()
-        .modelContainer(try! SampleData.container(runningSessionCount: 2))
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("French · accessibility size") {
+    let container = try! SampleData.container(runningSessionCount: 2)
     HomeView()
-        .modelContainer(try! SampleData.container(runningSessionCount: 2))
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
         .environment(\.locale, Locale(identifier: "fr"))
         .environment(\.dynamicTypeSize, .accessibility3)
 }

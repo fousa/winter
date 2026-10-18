@@ -35,10 +35,11 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Mapping WorkSession → POST body (`docs/zweef-api.md`).
 
 ## Phase 4 — Sync
-- [ ] `SyncEngine` actor as described in `docs/sync.md` (triggers, backoff, dedup, rejected).
+The engine runs against the stub until the setup assistant configures a real connection in phase 4b.
+- [x] `SyncEngine` actor as described in `docs/sync.md` (triggers, backoff, dedup, rejected).
 - [x] ~~Photo cache~~ — dropped: `accounts.json` carries no photo for any member, so there is nothing to cache and avatars are always initials.
-- [ ] Register the BGAppRefreshTask.
-- [ ] Tests with FakeZweefAPI (timeouts, 4xx, duplicate triggers).
+- [x] Register the BGAppRefreshTask, with the `UIBackgroundModes` and `BGTaskSchedulerPermittedIdentifiers` keys it needs in `App/Info.plist`.
+- [x] Tests with FakeZweefAPI (timeouts, 4xx, duplicate triggers).
 
 ## Phase 4b — Configuration
 - [ ] `KeychainStore`, `AppConfiguration` (UserDefaults), managed-configuration reader.

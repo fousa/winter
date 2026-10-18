@@ -49,6 +49,7 @@ enum SyncState: String, Codable {
     var remoteId: Int?
     var lastError: String?
     var attempts: Int
+    var lastAttemptAt: Date?   // backoff is per session, not per device
     var dayClosedAt: Date?
     var uploadedAt: Date?
 }

@@ -12,6 +12,7 @@ struct CloseDayView: View {
     @Environment(\.metrics) private var metrics
     @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
+    @Environment(SyncCoordinator.self) private var sync
 
     @Query private var sessions: [WorkSession]
     @Query private var members: [Member]
@@ -199,6 +200,9 @@ struct CloseDayView: View {
         do {
             try store.closeDay()
             feedback += 1
+            // Closing the day is a sync trigger (docs/sync.md): the hours go up
+            // now if there is a connection, and wait if there is not.
+            Task { await sync.dayWasClosed() }
             dismiss()
         } catch {
             // The only reason closing fails is a timer that started while this
@@ -208,15 +212,19 @@ struct CloseDayView: View {
 }
 
 #Preview("iPad", traits: .landscapeLeft) {
+    let container = try! SampleData.closedDayContainer()
     NavigationStack {
         CloseDayView()
     }
-    .modelContainer(try! SampleData.closedDayContainer())
+    .modelContainer(container)
+    .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("iPhone · timers running") {
+    let container = try! SampleData.container(runningSessionCount: 2)
     NavigationStack {
         CloseDayView()
     }
-    .modelContainer(try! SampleData.container(runningSessionCount: 2))
+    .modelContainer(container)
+    .environment(SyncCoordinator.preview(container: container))
 }

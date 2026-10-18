@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Only the keys that cannot be expressed as INFOPLIST_KEY_* build settings.
+  Everything else — the display name, the device family, the supported
+  orientations — comes from Config/Shared.xcconfig and is merged in at build
+  time by GENERATE_INFOPLIST_FILE.
+-->
+<plist version="1.0">
+<dict>
+	<!-- The three languages the app ships in (ADR 0010). The .lproj folders
+	     built from the string catalog decide what iOS offers; this states it
+	     explicitly so the App Store listing and Settings agree. -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>nl</string>
+		<string>fr</string>
+	</array>
+
+	<!-- Background refresh only shortens the wait before hours reach
+	     zweef.app; it never decides whether they are safe (ADR 0001). Without
+	     both of these keys, BGTaskScheduler refuses the request outright. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>app.winter.refresh</string>
+	</array>
+</dict>
+</plist>

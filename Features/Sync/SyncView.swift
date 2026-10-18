@@ -7,12 +7,14 @@ import SwiftUI
 /// *visible* (ADR 0001): a member who closed the day in a hangar without
 /// signal can check that nothing was lost.
 ///
-/// It reads the stored sync state only. The engine that uploads, retries and
-/// refreshes arrives in phase 4; until then "Try again now" has nothing to ask,
-/// and says so rather than pretending.
+/// It reads the stored sync state and asks ``SyncCoordinator`` to try again.
+/// What it cannot yet show is a configured connection: until the setup
+/// assistant exists (phase 4b) the app runs against a stub, so nothing actually
+/// leaves the device and the counters only ever grow.
 struct SyncView: View {
     @Environment(\.metrics) private var metrics
     @Environment(\.locale) private var locale
+    @Environment(SyncCoordinator.self) private var sync
 
     @Query private var sessions: [WorkSession]
     @Query private var members: [Member]
@@ -44,15 +46,15 @@ struct SyncView: View {
     private var statusColumn: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 12) {
-                Image(systemName: waiting.isEmpty ? "checkmark.icloud" : "icloud.and.arrow.up")
+                Image(systemName: statusSymbol)
                     .font(.largeTitle)
-                    .foregroundStyle(waiting.isEmpty ? Color.runningTimer : .flag)
+                    .foregroundStyle(sync.isConnected ? (waiting.isEmpty ? Color.runningTimer : .flag) : .secondary)
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    (waiting.isEmpty ? Text("Everything uploaded") : Text("Waiting to upload"))
+                    statusTitle
                         .font(.headline)
-                    Text("Syncing starts in a later version; nothing is lost in the meantime.")
+                    statusDetail
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -69,20 +71,35 @@ struct SyncView: View {
                 )
             }
 
-            Button("Try again now", systemImage: "arrow.clockwise") {}
-                .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
-                .buttonStyle(.glass)
-                .disabled(true)
+            Button {
+                Task { await sync.retryNow() }
+            } label: {
+                if sync.isSyncing {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
+                } else {
+                    Label("Try again now", systemImage: "arrow.clockwise")
+                        .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
+                }
+            }
+            .buttonStyle(.glass)
+            .disabled(sync.isSyncing)
 
             VStack(alignment: .leading, spacing: 6) {
                 LabeledContent(String(localized: "Last upload")) {
                     Text(relative(settings.first?.lastSuccessfulUploadAt))
+                }
+                LabeledContent(String(localized: "Last attempt")) {
+                    Text(relative(settings.first?.lastAttemptAt))
                 }
                 LabeledContent(String(localized: "Members refreshed")) {
                     Text(relative(settings.first?.lastRefreshAt))
                 }
                 LabeledContent(String(localized: "Club")) {
                     Text(settings.first?.clubName ?? String(localized: "Not connected yet"))
+                }
+                LabeledContent(String(localized: "Maintenance period")) {
+                    Text(settings.first?.activePeriodId.map(String.init) ?? String(localized: "Unknown"))
                 }
             }
             .font(.subheadline)
@@ -151,6 +168,36 @@ struct SyncView: View {
         }
     }
 
+    // MARK: - Status
+
+    private var statusSymbol: String {
+        guard sync.isConnected else { return "wifi.slash" }
+        return waiting.isEmpty ? "checkmark.icloud" : "icloud.and.arrow.up"
+    }
+
+    private var statusTitle: Text {
+        if !sync.isConnected { return Text("No connection") }
+        return waiting.isEmpty ? Text("Everything uploaded") : Text("Waiting to upload")
+    }
+
+    /// Honest about the one thing that is not wired up yet.
+    private var statusDetail: Text {
+        if let error = sync.lastOutcome?.error {
+            switch error {
+            case .notAuthorised:
+                return Text("Connection refused: check the token in Settings")
+            case .rejected:
+                return Text("zweef.app refused one of the registrations")
+            default:
+                return Text("The hours stay on this device until the connection returns.")
+            }
+        }
+        if !sync.isConnected {
+            return Text("The hours stay on this device until the connection returns.")
+        }
+        return Text("This device has no zweef.app connection configured yet.")
+    }
+
     // MARK: - Derived state
 
     private var waiting: [WorkSession] {
@@ -182,12 +229,23 @@ struct SyncView: View {
     }
 }
 
-#Preview("iPad", traits: .landscapeLeft) {
+#Preview("iPad · waiting", traits: .landscapeLeft) {
+    let container = try! SampleData.closedDayContainer()
     NavigationStack { SyncView() }
-        .modelContainer(try! SampleData.closedDayContainer())
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }
 
-#Preview("iPhone · empty") {
+#Preview("iPhone · no connection") {
+    let container = try! SampleData.closedDayContainer()
     NavigationStack { SyncView() }
-        .modelContainer(try! SampleData.container())
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container, connected: false))
+}
+
+#Preview("iPhone · nothing yet") {
+    let container = try! SampleData.container()
+    NavigationStack { SyncView() }
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }

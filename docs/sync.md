@@ -8,7 +8,7 @@ Internet at the club is unreliable. The app always works locally; syncing is a b
 - "Close day" → sync.
 - "Try again now" on the sync screen → sync (ignoring backoff).
 - `BGAppRefreshTask` (best effort; the system decides when).
-- While the app is in the foreground and something is waiting: retry with exponential backoff (30 s, 1 m, 2 m, 5 m, max 15 m) plus jitter.
+- While the app is in the foreground and something is waiting: retry with exponential backoff (30 s, 1 m, 2 m, 5 m, max 15 m) plus up to 20% jitter, so several devices in one club do not retry on the same second. The backoff is counted per session from its own `lastAttemptAt`: a registration zweef.app keeps refusing must not hold back an hour that has never been tried. "Try again now" skips it entirely.
 
 ## The order of one sync run (`SyncEngine` is an `actor`, one run at a time)
 1. **Apply auto-stop** (running timers past the closing time).

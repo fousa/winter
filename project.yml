@@ -34,6 +34,7 @@ targets:
     platform: iOS
     sources:
       - path: App
+        excludes: ["Info.plist"]
       - path: Configuration
       - path: Data
       - path: DesignSystem
@@ -48,7 +49,10 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: Winter
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         # The app ships in these three languages only. See ADR 0010.
-        INFOPLIST_KEY_CFBundleLocalizations: en nl fr
+        # Hand-written, for the keys that have no INFOPLIST_KEY_ equivalent
+        # (the languages and the background task identifiers). Xcode merges the
+        # INFOPLIST_KEY_* settings from the xcconfig into it.
+        INFOPLIST_FILE: App/Info.plist
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         DEVELOPMENT_ASSET_PATHS: ""

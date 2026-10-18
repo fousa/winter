@@ -3,1021 +3,1135 @@
   "strings": {
     "%@ started": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ is gestart"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ a commencé"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is gestart"
           }
         }
       }
     },
     "%@ stopped": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ is gestopt"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ a terminé"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is gestopt"
           }
         }
       }
     },
     "%@, working now": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@, nu aan het werk"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "%@, au travail"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@, nu aan het werk"
           }
         }
       }
     },
     "Also from earlier days": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ook van eerdere dagen"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Aussi des jours précédents"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ook van eerdere dagen"
           }
         }
       }
     },
     "Also included": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gaat ook mee"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Également inclus"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gaat ook mee"
           }
         }
       }
     },
     "Close": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sluiten"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Fermer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sluiten"
           }
         }
       }
     },
     "Close day": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dag afsluiten"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Clôturer la journée"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dag afsluiten"
           }
         }
       }
     },
     "Closes by itself after 3 seconds": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sluit vanzelf na 3 seconden"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Se ferme après 3 secondes"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sluit vanzelf na 3 seconden"
           }
         }
       }
     },
     "Club": {
       "localizations": {
-        "nl": {
+        "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Club"
           }
         },
-        "fr": {
+        "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Club"
+          }
+        }
+      }
+    },
+    "Connection refused: check the token in Settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinding geweigerd: controleer het token in Instellingen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connexion refusée : vérifiez le jeton dans les réglages"
           }
         }
       }
     },
     "Done": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klaar"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Terminé"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klaar"
           }
         }
       }
     },
     "Enjoy the work, %@": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Veel werkplezier, %@"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Bon travail, %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veel werkplezier, %@"
           }
         }
       }
     },
     "Everything uploaded": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alles is doorgestuurd"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Tout est envoyé"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles is doorgestuurd"
           }
         }
       }
     },
     "Hours appear here once someone has worked and the day is closed.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uren verschijnen hier zodra iemand gewerkt heeft en de dag afgesloten is."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Les heures apparaissent ici dès que quelqu'un a travaillé et que la journée est clôturée."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uren verschijnen hier zodra iemand gewerkt heeft en de dag afgesloten is."
           }
         }
       }
     },
     "Hours waiting": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uren in wacht"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Heures en attente"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uren in wacht"
           }
         }
       }
     },
     "I'm stopping this for someone else": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ik stop dit voor iemand anders"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "J'arrête ceci pour quelqu'un d'autre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ik stop dit voor iemand anders"
           }
         }
       }
     },
     "Is %@ right?": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klopt %@?"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "%@, c'est correct ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klopt %@?"
           }
         }
       }
     },
     "Jump to a letter": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ga naar een letter"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Aller à une lettre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ga naar een letter"
           }
         }
       }
     },
     "Keep working": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer"
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Verder werken"
           }
+        }
+      }
+    },
+    "Last attempt": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste poging"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Continuer"
+            "value": "Dernière tentative"
           }
         }
       }
     },
     "Last one out? Close the day.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Als laatste weg? Sluit de dag af."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Dernier à partir ? Clôturez la journée."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als laatste weg? Sluit de dag af."
           }
         }
       }
     },
     "Last upload": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laatste upload"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Dernier envoi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste upload"
           }
         }
       }
     },
     "Long session": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lange sessie"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Session longue"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lange sessie"
           }
         }
       }
     },
     "Maintenance hours · %@ · tap your name to start": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heures d'entretien · %@ · touchez votre nom pour commencer"
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Onderhoudsuren · %@ · tik op je naam om te starten"
           }
+        }
+      }
+    },
+    "Maintenance period": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onderhoudsperiode"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Heures d'entretien · %@ · touchez votre nom pour commencer"
+            "value": "Période d'entretien"
           }
         }
       }
     },
     "Members refreshed": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Leden ververst"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Membres actualisés"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leden ververst"
           }
         }
       }
     },
     "Needs attention": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aandacht nodig"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Attention requise"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aandacht nodig"
           }
         }
       }
     },
     "Never": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jamais"
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Nog nooit"
           }
+        }
+      }
+    },
+    "No connection": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen verbinding"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jamais"
+            "value": "Pas de connexion"
           }
         }
       }
     },
     "No hours yet": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nog geen uren"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Pas encore d'heures"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen uren"
           }
         }
       }
     },
     "Nobody on this device": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niemand op dit toestel"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Personne sur cet appareil"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niemand op dit toestel"
           }
         }
       }
     },
     "Not connected yet": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nog niet verbonden"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Pas encore connecté"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog niet verbonden"
           }
         }
       }
     },
     "Nothing logged yet.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nog niets geregistreerd."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Rien d'enregistré pour l'instant."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog niets geregistreerd."
           }
         }
       }
     },
     "Often here": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vaak hier"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Souvent ici"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaak hier"
           }
         }
       }
     },
     "Opens stopping": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opent het stoppen"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ouvre l'arrêt"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opent het stoppen"
           }
         }
       }
     },
     "Optional": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optioneel"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Facultatif"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optioneel"
           }
         }
       }
     },
     "Ready to get going?": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Klaar om te beginnen?"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Prêt à commencer ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klaar om te beginnen?"
           }
         }
       }
     },
     "Recently uploaded": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recent doorgestuurd"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Envoyé récemment"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent doorgestuurd"
           }
         }
       }
     },
     "Saved on this device, with or without internet.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wordt op dit toestel bewaard, ook zonder internet."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Enregistré sur cet appareil, avec ou sans internet."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wordt op dit toestel bewaard, ook zonder internet."
           }
         }
       }
     },
     "Search members": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zoek leden"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Rechercher des membres"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoek leden"
           }
         }
       }
     },
     "Sends today's hours to zweef.app": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stuurt de uren van vandaag naar zweef.app"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Envoie les heures du jour vers zweef.app"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuurt de uren van vandaag naar zweef.app"
           }
         }
       }
     },
     "Sessions today": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sessies vandaag"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Sessions aujourd'hui"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessies vandaag"
           }
         }
       }
     },
     "Sessions waiting": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sessies in wacht"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Sessions en attente"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessies in wacht"
           }
         }
       }
     },
     "Short session": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Korte sessie"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Session courte"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Korte sessie"
           }
         }
       }
     },
     "Start": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Starten"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Commencer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starten"
           }
         }
       }
     },
     "Started at %@": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestart om %@"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Commencé à %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestart om %@"
           }
         }
       }
     },
     "Starts your hours": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start je uren"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Démarre vos heures"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start je uren"
           }
         }
       }
     },
     "Stop": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stoppen"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Arrêter"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stoppen"
           }
         }
       }
     },
     "Stop and save": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop en bewaar"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Arrêter et enregistrer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop en bewaar"
           }
         }
       }
     },
     "Stop the running timers first": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop eerst de lopende timers"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Arrêtez d'abord les minuteries en cours"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop eerst de lopende timers"
           }
         }
       }
     },
     "Stop them first, then close the day.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop ze eerst, sluit daarna de dag af."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Arrêtez-les d'abord, puis clôturez la journée."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop ze eerst, sluit daarna de dag af."
           }
         }
       }
     },
     "Stopped automatically": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Automatisch gestopt"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Arrêtée automatiquement"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch gestopt"
           }
         }
       }
     },
     "Stopped by someone else": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestopt door iemand anders"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Arrêtée par quelqu'un d'autre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestopt door iemand anders"
           }
         }
       }
     },
     "Sync": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synchronisatie"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Synchronisation"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisatie"
+          }
         }
       }
     },
     "Syncing starts in a later version; nothing is lost in the meantime.": {
+      "extractionState": "stale",
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synchroniseren komt in een latere versie; er gaat intussen niets verloren."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "La synchronisation arrivera dans une version ultérieure ; rien n'est perdu entre-temps."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchroniseren komt in een latere versie; er gaat intussen niets verloren."
           }
         }
       }
     },
     "Tap to stop": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tik om te stoppen"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Touchez pour arrêter"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tik om te stoppen"
           }
         }
       }
     },
     "Thanks, %@": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bedankt, %@"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Merci, %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bedankt, %@"
           }
         }
       }
     },
     "That isn't me": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dat ben ik niet"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ce n'est pas moi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dat ben ik niet"
           }
         }
       }
     },
     "That looks short. Saving it is fine — the board sees it marked as a short session.": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cela semble court. Vous pouvez l'enregistrer — le comité la verra signalée comme session courte."
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Dat lijkt kort. Bewaren mag — het bestuur ziet het gemarkeerd als korte sessie."
           }
+        }
+      }
+    },
+    "The hours stay on this device until the connection returns.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De uren blijven op dit toestel tot er weer verbinding is."
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cela semble court. Vous pouvez l'enregistrer — le comité la verra signalée comme session courte."
+            "value": "Les heures restent sur cet appareil jusqu'au retour de la connexion."
           }
         }
       }
     },
     "They go to zweef.app by themselves once this device has a connection.": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elles partiront vers zweef.app dès que cet appareil aura une connexion."
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Ze gaan vanzelf naar zweef.app zodra dit toestel verbinding heeft."
           }
+        }
+      }
+    },
+    "This device has no zweef.app connection configured yet.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit toestel heeft nog geen zweef.app-verbinding ingesteld."
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elles partiront vers zweef.app dès que cet appareil aura une connexion."
+            "value": "Cet appareil n'a pas encore de connexion zweef.app configurée."
           }
         }
       }
     },
     "Today": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vandaag"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Aujourd'hui"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vandaag"
           }
         }
       }
     },
     "Total": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Totaal"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Total"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Totaal"
           }
         }
       }
     },
     "Try again now": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nu opnieuw proberen"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Réessayer maintenant"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu opnieuw proberen"
           }
         }
       }
     },
     "Undo": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Ongedaan maken"
           }
+        }
+      }
+    },
+    "Unknown": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onbekend"
+          }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Annuler"
+            "value": "Inconnue"
           }
         }
       }
     },
     "Unknown member": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Onbekend lid"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Membre inconnu"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onbekend lid"
           }
         }
       }
     },
     "Waiting to upload": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wacht op upload"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "En attente d'envoi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wacht op upload"
           }
         }
       }
     },
     "What were you working on?": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waaraan werkte je?"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Sur quoi travailliez-vous ?"
           }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waaraan werkte je?"
+          }
         }
       }
     },
     "Winter": {
+      "extractionState": "stale",
       "localizations": {
-        "nl": {
+        "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Winter"
           }
         },
-        "fr": {
+        "nl": {
           "stringUnit": {
             "state": "translated",
             "value": "Winter"
@@ -1027,72 +1141,54 @@
     },
     "Working now": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nu aan het werk"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Au travail"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu aan het werk"
           }
         }
       }
     },
     "Working since %@": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bezig sinds %@"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Au travail depuis %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezig sinds %@"
           }
         }
       }
     },
     "You pick what you worked on when you stop.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waaraan je werkte, kies je bij het stoppen."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Vous choisirez sur quoi vous avez travaillé en arrêtant."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waaraan je werkte, kies je bij het stoppen."
           }
         }
       }
     },
     "^[%lld member](inflect: true)": {
       "localizations": {
-        "nl": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld lid"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld leden"
-                }
-              }
-            }
-          }
-        },
         "fr": {
           "variations": {
             "plural": {
@@ -1110,29 +1206,29 @@
               }
             }
           }
-        }
-      }
-    },
-    "^[%lld member](inflect: true) · tap to stop": {
-      "localizations": {
+        },
         "nl": {
           "variations": {
             "plural": {
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld lid · tik om te stoppen"
+                  "value": "%lld lid"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld leden · tik om te stoppen"
+                  "value": "%lld leden"
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "^[%lld member](inflect: true) · tap to stop": {
+      "localizations": {
         "fr": {
           "variations": {
             "plural": {
@@ -1150,29 +1246,29 @@
               }
             }
           }
-        }
-      }
-    },
-    "^[%lld session](inflect: true) ready": {
-      "localizations": {
+        },
         "nl": {
           "variations": {
             "plural": {
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld sessie klaar"
+                  "value": "%lld lid · tik om te stoppen"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld sessies klaar"
+                  "value": "%lld leden · tik om te stoppen"
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "^[%lld session](inflect: true) ready": {
+      "localizations": {
         "fr": {
           "variations": {
             "plural": {
@@ -1190,29 +1286,29 @@
               }
             }
           }
-        }
-      }
-    },
-    "^[%lld session](inflect: true) waiting to upload": {
-      "localizations": {
+        },
         "nl": {
           "variations": {
             "plural": {
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld sessie wacht op upload"
+                  "value": "%lld sessie klaar"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld sessies wachten op upload"
+                  "value": "%lld sessies klaar"
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "^[%lld session](inflect: true) waiting to upload": {
+      "localizations": {
         "fr": {
           "variations": {
             "plural": {
@@ -1230,29 +1326,29 @@
               }
             }
           }
-        }
-      }
-    },
-    "^[%lld timer](inflect: true) still running": {
-      "localizations": {
+        },
         "nl": {
           "variations": {
             "plural": {
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld timer loopt nog"
+                  "value": "%lld sessie wacht op upload"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld timers lopen nog"
+                  "value": "%lld sessies wachten op upload"
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "^[%lld timer](inflect: true) still running": {
+      "localizations": {
         "fr": {
           "variations": {
             "plural": {
@@ -1266,6 +1362,24 @@
                 "stringUnit": {
                   "state": "translated",
                   "value": "%lld minuteries encore en cours"
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld timer loopt nog"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld timers lopen nog"
                 }
               }
             }
@@ -1371,32 +1485,32 @@
     },
     "hours : minutes": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "uur : minuten"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "heures : minutes"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "uur : minuten"
           }
         }
       }
     },
     "since %@": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "sinds %@"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "depuis %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sinds %@"
           }
         }
       }
@@ -1541,6 +1655,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hangar en werkplaats"
+          }
+        }
+      }
+    },
+    "zweef.app refused one of the registrations": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app weigerde een van de registraties"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "zweef.app a refusé l'un des enregistrements"
           }
         }
       }

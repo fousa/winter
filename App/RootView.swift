@@ -31,11 +31,15 @@ struct RootView: View {
 }
 
 #Preview("Nobody working", traits: .landscapeLeft) {
+    let container = try! SampleData.container()
     RootView()
-        .modelContainer(try! SampleData.container())
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("A day's work", traits: .landscapeLeft) {
+    let container = try! SampleData.closedDayContainer()
     RootView()
-        .modelContainer(try! SampleData.closedDayContainer())
+        .modelContainer(container)
+        .environment(SyncCoordinator.preview(container: container))
 }

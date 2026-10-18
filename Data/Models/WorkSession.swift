@@ -53,6 +53,12 @@ final class WorkSession {
     var remoteId: Int?
     var lastError: String?
     var attempts: Int
+    /// When this session was last pushed at zweef.app, successfully or not.
+    ///
+    /// Backoff is per session rather than per device: one registration that
+    /// zweef.app keeps refusing must not hold back an hour that has never been
+    /// tried.
+    var lastAttemptAt: Date?
     var dayClosedAt: Date?
     var uploadedAt: Date?
 
@@ -70,6 +76,7 @@ final class WorkSession {
         remoteId: Int? = nil,
         lastError: String? = nil,
         attempts: Int = 0,
+        lastAttemptAt: Date? = nil,
         dayClosedAt: Date? = nil,
         uploadedAt: Date? = nil
     ) {
@@ -86,6 +93,7 @@ final class WorkSession {
         self.remoteId = remoteId
         self.lastError = lastError
         self.attempts = attempts
+        self.lastAttemptAt = lastAttemptAt
         self.dayClosedAt = dayClosedAt
         self.uploadedAt = uploadedAt
     }
