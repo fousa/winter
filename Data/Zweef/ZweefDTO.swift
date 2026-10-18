@@ -104,46 +104,61 @@ struct MaintenanceHourDraft: Encodable, Equatable, Sendable {
 
 /// What comes back from a successful `POST /maintenance-hours.json`.
 ///
-/// The shape is unconfirmed — posting to a live club to find out would create a
-/// real registration — so the id is optional and every plausible shape is
-/// accepted. A nil id is not a failure: dedup works off the tag in the
-/// description, not off this.
+/// zweef.app answers with the whole stored registration, flat, exactly as
+/// `hours.json` would return it — `id` at the top level, the fields we sent
+/// echoed back, and the review fields empty. Verified against a real club on
+/// 18 October 2026 by creating one registration and deleting it again.
+///
+/// The record is kept, not just the id: it is the server's own account of what
+/// it stored, which is the only trustworthy answer to "did the hours arrive as
+/// we meant them".
 struct CreatedRegistration: Decodable, Equatable, Sendable {
+    /// The registration's id in zweef.app, stored as `WorkSession.remoteId`.
     let id: Int?
 
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case data
-        case maintenanceHour
+    /// The stored registration, when the response carried the full record.
+    let registration: ZweefMaintenanceHour?
+
+    private struct IdOnly: Decodable {
+        let id: Int?
     }
 
-    private struct Wrapper: Decodable { let id: Int? }
+    private struct Wrapped: Decodable {
+        let data: IdOnly?
+        let maintenanceHour: IdOnly?
+    }
 
     init(from decoder: any Decoder) throws {
-        // A bare id, `{"id": 12}`, `{"data": {"id": 12}}` or
-        // `{"maintenance_hour": {"id": 12}}` all mean the same thing.
-        if let single = try? decoder.singleValueContainer(), let id = try? single.decode(Int.self) {
-            self.id = id
+        // The shape zweef.app actually returns.
+        if let record = try? ZweefMaintenanceHour(from: decoder) {
+            id = record.id
+            registration = record
             return
         }
 
-        guard let container = try? decoder.container(keyedBy: CodingKeys.self) else {
-            self.id = nil
-            return
-        }
+        registration = nil
 
-        if let id = try? container.decodeIfPresent(Int.self, forKey: .id) {
-            self.id = id
-        } else if let nested = try? container.decodeIfPresent(Wrapper.self, forKey: .data) {
-            self.id = nested.id
-        } else if let nested = try? container.decodeIfPresent(Wrapper.self, forKey: .maintenanceHour) {
-            self.id = nested.id
+        // Kept as a safety net, not as speculation: PUT is undocumented too,
+        // and an id we can still read is better than an upload we cannot
+        // confirm. A missing id is not a failure — dedup uses the tag in the
+        // description.
+        // Each branch must find an actual id: both helper types have only
+        // optional fields, so they decode *any* object happily and a bare
+        // `try?` would stop at the first one and report nil.
+        if let single = try? decoder.singleValueContainer(), let bare = try? single.decode(Int.self) {
+            id = bare
+        } else if let value = (try? IdOnly(from: decoder))?.id {
+            id = value
+        } else if let wrapped = try? Wrapped(from: decoder),
+                  let value = wrapped.data?.id ?? wrapped.maintenanceHour?.id {
+            id = value
         } else {
-            self.id = nil
+            id = nil
         }
     }
 
-    init(id: Int?) {
+    init(id: Int?, registration: ZweefMaintenanceHour? = nil) {
         self.id = id
+        self.registration = registration
     }
 }

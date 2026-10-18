@@ -175,7 +175,25 @@ struct ZweefClientTests {
         #expect(body["workorder_id"] == nil)
     }
 
-    @Test("An id comes back whatever shape it arrives in", arguments: [
+    @Test("The real response is the whole stored registration, with its id")
+    func decodesTheRealCreateResponse() async throws {
+        let (client, _) = try makeClient(fixture: "maintenance-hour-created.json")
+
+        let created = try await client.create(FakeDraft.minimal)
+
+        #expect(created.id == 12)
+        // The server's own account of what it stored, which is the only
+        // trustworthy answer to "did the hours arrive as we meant them".
+        let record = try #require(created.registration)
+        #expect(record.periodId == 1)
+        #expect(record.userId == 101)
+        #expect(record.hours == 0.1)
+        #expect(record.status == "in_aanvraag")
+        #expect(record.date == "2026-10-18")
+        #expect(record.description.contains("[ou:a1b2c3d4]"))
+    }
+
+    @Test("An id is still found in the shapes we have not seen", arguments: [
         #"{"id": 7}"#,
         #"{"data": {"id": 7}}"#,
         #"{"maintenance_hour": {"id": 7}}"#,
@@ -185,6 +203,8 @@ struct ZweefClientTests {
         let (client, _) = try makeClient(body: Data(json.utf8))
         let created = try await client.create(FakeDraft.minimal)
         #expect(created.id == 7)
+        // Only the full record carries one; these shapes do not.
+        #expect(created.registration == nil)
     }
 
     @Test("A response with no id is still a success, because dedup uses the tag")

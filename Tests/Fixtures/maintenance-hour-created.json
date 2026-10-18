@@ -1,0 +1,20 @@
+{
+  "id": 12,
+  "date_created": "2026-10-18T15:57:45.390792+02:00",
+  "period_id": 1,
+  "user_id": 101,
+  "user_name": "Jan Verhoeven",
+  "date": "2026-10-18",
+  "hours": 0.1,
+  "material_id": null,
+  "workorder_id": null,
+  "is_private": false,
+  "category": "",
+  "sub_category": "",
+  "project": "",
+  "description": "Glider · 09:12–09:18 [ou:a1b2c3d4]",
+  "status": "in_aanvraag",
+  "date_reviewed": null,
+  "reviewer_id": null,
+  "reviewer_name": ""
+}

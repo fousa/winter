@@ -53,11 +53,10 @@ SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
 - Commits: Conventional Commits in English (see `CONTRIBUTING.md`).
 
 ## Open questions (see also docs/spec.md)
-- What does `POST /maintenance-hours.json` return? Verifying it means creating a real registration in a live club.
 - Why does `GET /club.json` answer 500 and `GET /maintenance-hours/periods.json` answer 404? And how is the period found for a brand-new maintenance period?
 - The exact closing time; can the workshop device get wired wifi or its own 4G/5G connection?
 
-Answered on 18 October 2026 by checking a real club (`docs/zweef-api.md`): `accounts.json` has **no** photo field, so avatars are always initials; `category` is `""`, not `"Maintenance"`; `status` goes `in_aanvraag` → `geaccepteerd`.
+Answered on 18 October 2026 by checking a real club (`docs/zweef-api.md`): `accounts.json` has **no** photo field, so avatars are always initials; `category` is `""`, not `"Maintenance"`; `status` goes `in_aanvraag` → `geaccepteerd`; the POST returns the whole stored record, and `user_name` is free text that zweef.app does not check against `user_id`.
 
 ## Links
 (The analysis and mockups are the author's private links; they are not needed in order to contribute.)

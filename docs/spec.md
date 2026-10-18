@@ -106,9 +106,8 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 A login or PIN for members, managing hours on the device, free text, voice notes, CSV export, entering or editing hours after the fact on the device, syncing running timers between devices (see [ADR 0009](decisions/0009-universal-app-iphone-and-ipad.md)).
 
 ## Open questions
-- The POST response shape: does creating a registration return its id? Finding out means writing to a live club.
 - Why `GET /club.json` answers 500 and `GET /maintenance-hours/periods.json` answers 404, and how to find the period of a brand-new maintenance period.
 - The closing time.
 - Is wired wifi or a device with its own 4G/5G possible for the workshop?
 
-Answered against a real club on 18 October 2026: there is no photo in the accounts response, and `category` is empty rather than `"Maintenance"` (see [zweef-api.md](zweef-api.md)).
+Answered against a real club on 18 October 2026: there is no photo in the accounts response, `category` is empty rather than `"Maintenance"`, and creating a registration returns the whole stored record (see [zweef-api.md](zweef-api.md)).
