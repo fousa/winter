@@ -1,5 +1,5 @@
-// Cloudflare Worker: a proxy between the iPad and the zweef.app (GlidingApp) API.
-// The zweef.app API key stays here; the iPad only ever sends a device token of its own.
+// Cloudflare Worker: a proxy between the app and the zweef.app (GlidingApp) API.
+// The zweef.app API key stays here; a device only ever sends a device token of its own.
 //
 // Secrets / vars (wrangler secret put ...):
 //   ZWEEF_API_KEY  — the X-API-KEY from the zweef.app admin

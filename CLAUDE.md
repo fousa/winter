@@ -1,6 +1,6 @@
-# Winter — iPad app for maintenance hours
+# Winter — iPhone and iPad app for maintenance hours
 
-**Winter** is generic: usable by any club that uses zweef.app. A shared iPad in the club's workshop where members log their maintenance hours with start/stop, without logging in. Everything is stored locally and, as soon as there is a connection, synced to zweef.app (GlidingApp) as *maintenance hours*.
+**Winter** is generic: usable by any club that uses zweef.app. Members log their maintenance hours with start/stop, without logging in — usually on a shared iPad in the club's workshop, and just as well on a phone. Everything is stored locally and, as soon as there is a connection, synced to zweef.app (GlidingApp) as *maintenance hours*.
 
 ## Read first
 Full index: `docs/README.md`.
@@ -17,14 +17,15 @@ Full index: `docs/README.md`.
 - `mockups/*.dc.html` — the mockup source files (reference for layout, sizes and colours; they do not run standalone, they need the design-canvas runtime)
 
 ## Settled decisions (do not change without discussion)
-- **Platform**: native iPadOS 26, SwiftUI, Swift 6 strict concurrency, SwiftData. Landscape only, iPad 11" as the reference (1194×834 pt). No iPhone target.
+- **Platform**: native iOS/iPadOS 26, SwiftUI, Swift 6 strict concurrency, SwiftData. One universal app for iPhone and iPad, all orientations, no orientation locks. Layout follows the size classes, never the device model or a screen size. The iPad 11" in landscape (1194×834 pt) is the reference design; compact layouts are derived from it.
+- **One device, one set of sessions**: running timers and the day overview are about the device they live on. No syncing of running timers between devices.
 - **Look & feel**: iOS 26 HIG. Liquid Glass only on the navigation/control layer (toolbar, floating bar at the bottom, sheets, buttons). Content (member tiles, lists, cards) stays opaque. System font, system colours, inset grouped lists.
 - **No login** for members. Members pick their name; no PIN for everyday use. Only the settings screen sits behind an admin code. Checking and corrections happen in zweef.app by the board (registrations arrive with status `in_aanvraag`).
 - **Fully usable offline**. Starting, stopping and closing the day work without a network. Internet at the club is unreliable; syncing happens automatically whenever there is a connection.
 - **Two taps** to start (name → Start) and two to stop (card → Stop and save). Picking a task and an aircraft is optional.
 - **No** voice notes/dictation, **no** free-text field, **no** CSV export.
 - **Closing the day** is open to everyone, but only when no timers are running. Anyone may stop someone else's forgotten timer. At the closing time (configurable, 21:00 suggested) the app stops running timers automatically and flags them "stopped automatically".
-- **API key**: by default through a proxy (`proxy/`) that each club deploys itself; the iPad has its own revocable device token. A direct mode (API key in the Keychain, with a warning) exists for clubs without a proxy.
+- **API key**: by default through a proxy (`proxy/`) that each club deploys itself; every device has its own revocable device token. A direct mode (API key in the Keychain, with a warning) exists for clubs without a proxy.
 - **Open source** (MIT). Nothing club-specific or secret in the code or the repository. The proxy URL, the device token (or club schema + API key in direct mode), the closing time and the tasks are configured in a setup assistant on first launch, and can be changed later in an in-app settings screen behind an admin code. The club name, members and aircraft come from zweef.app (`GET /club.json`, `accounts.json`, `material.json`). Secrets only in the Keychain. Optionally through MDM (Managed App Configuration).
 - **UI language**: Dutch (Flemish). Code, identifiers and commits in English.
 
@@ -47,14 +48,14 @@ SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
 - Domain rules (closing time, short session, duration → decimal hours) as pure functions with unit tests (Swift Testing).
 - Network code testable through a `ZweefAPI` protocol with a fake.
 - No third-party dependencies unless genuinely necessary.
-- Previews for every screen with fake data (the same sample members as the mockups).
+- Previews for every screen with fake data (the same sample members as the mockups), on an iPad in landscape and an iPhone in portrait.
 - Documentation: public types and non-trivial functions get a DocC comment (`///`) that explains the *why*. Update `docs/` in the same change as the behaviour, and add a line to `CHANGELOG.md`.
 - Commits: Conventional Commits in English (see `CONTRIBUTING.md`).
 
 ## Open questions (see also docs/spec.md)
 - Does `GET /accounts.json` return a photo URL per member? Undocumented → test it with an API key.
 - Which values does zweef.app accept for `category`, `project` and `status`; what does the POST return (an id?).
-- The exact closing time; can the iPad get wired wifi or its own 4G/5G connection?
+- The exact closing time; can the workshop device get wired wifi or its own 4G/5G connection?
 
 ## Links
 (The analysis and mockups are the author's private links; they are not needed in order to contribute.)

@@ -58,7 +58,7 @@ The app is generic: everything club-specific (name, members, aircraft, period) c
 The POST has no client-side key. The strategy:
 1. After a successful POST: store the `remoteId` from the response (its shape still needs verifying).
 2. If the response is unclear (a timeout after sending): before trying again, `GET /maintenance-hours/current/hours.json` and look for a registration with the tag `[ou:xxxxxxxx]` in `description` (fallback: the same `user_id` + `date` + `hours`). Found → mark it as uploaded with that `id`.
-3. Corrections after upload happen in zweef.app, not on the iPad (PUT/DELETE are only there for future use).
+3. Corrections after upload happen in zweef.app, not in the app (PUT/DELETE are only there for future use).
 
 ## Proxy
-The iPad talks to the proxy (`proxy/`), never directly to admin.gliding.app. The proxy only forwards the paths above and replaces the device token with the `X-API-KEY`.
+The app talks to the proxy (`proxy/`), never directly to admin.gliding.app. The proxy only forwards the paths above and replaces the device token with the `X-API-KEY`.

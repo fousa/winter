@@ -9,9 +9,10 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0003 | [The API key through a proxy, direct mode as the exception](0003-proxy-for-the-api-key.md) | accepted |
 | 0004 | [Hours as maintenance hours in zweef.app, approved there](0004-maintenance-hours-endpoint.md) | accepted |
 | 0005 | [Anyone closes the day, only when no timers are running](0005-closing-the-day.md) | accepted |
-| 0006 | [A native SwiftUI app for iPadOS 26 with Liquid Glass](0006-native-ipados-26.md) | accepted |
+| 0006 | [A native SwiftUI app for iPadOS 26 with Liquid Glass](0006-native-ipados-26.md) | accepted (device and orientation superseded by 0009) |
 | 0007 | [No voice notes, free-text field or CSV export](0007-no-free-form-input.md) | accepted |
 | 0008 | [Open source, configured on the device](0008-open-source-configuration.md) | accepted |
+| 0009 | [One universal app for iPhone and iPad, fully adaptive](0009-universal-app-iphone-and-ipad.md) | accepted |
 
 ## Template
 ```markdown

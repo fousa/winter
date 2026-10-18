@@ -4,14 +4,14 @@ This document describes how the app is put together technically: which modules e
 
 ## Goals that drive the architecture
 1. **Never lose hours.** Every action is stored locally straight away. The network is never a precondition for recording something.
-2. **Offline-first.** The local database is the source of truth for the iPad. zweef.app is the destination, not the source.
+2. **Offline-first.** The local database is the source of truth for the device. zweef.app is the destination, not the source.
 3. **Generic and secret-free.** No club-specific values or secrets in the code; the club name, members and aircraft come from zweef.app. Everything else comes from the configuration on the device.
 4. **Testable without a network and without zweef.app.** Every external dependency sits behind a protocol.
 5. **Simplicity.** One app target, no third-party dependencies, no backend of our own beyond the thin proxy.
 
 ## Overview
 ```
-┌───────────────────────────── iPad app ─────────────────────────────┐
+┌──────────────────────────── Winter app ────────────────────────────┐
 │                                                                    │
 │  Features (SwiftUI views + @Observable view models, @MainActor)    │
 │    Home · StartSheet · StopSheet · Confirmation · CloseDay · Sync  │
@@ -150,5 +150,5 @@ Time is always injectable (`Clock`/`now: () -> Date`), so that the closing time 
 
 ## Deliberately not used
 - No backend or database of our own beyond the proxy.
-- No CloudKit sync between iPads (one iPad per club is the assumption).
+- No CloudKit sync between devices. Every device keeps its own sessions and uploads them itself; running timers are not shared ([ADR 0009](decisions/0009-universal-app-iphone-and-ipad.md)).
 - No third-party networking or DI libraries.

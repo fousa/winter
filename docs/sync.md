@@ -7,7 +7,7 @@ Internet at the club is unreliable. The app always works locally; syncing is a b
 - The app becomes active (`scenePhase == .active`) → sync.
 - "Close day" → sync.
 - "Try again now" on the sync screen → sync (ignoring backoff).
-- `BGAppRefreshTask` (best effort; iPadOS decides when).
+- `BGAppRefreshTask` (best effort; the system decides when).
 - While the app is in the foreground and something is waiting: retry with exponential backoff (30 s, 1 m, 2 m, 5 m, max 15 m) plus jitter.
 
 ## The order of one sync run (`SyncEngine` is an `actor`, one run at a time)

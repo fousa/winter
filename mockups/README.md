@@ -4,6 +4,8 @@ Source files from the design canvas (https://claude.ai/artifact/XMfZ6e3Hj5xbwkNH
 
 The file names come from the canvas and are kept as they are there.
 
+The mockups show the iPad in landscape, which is the reference design. The app itself is universal and adapts to iPhone and to every orientation; `docs/design.md` describes how each screen below behaves in a compact size class.
+
 | File | Screen |
 |---|---|
 | `Main.dc.html` | 1 · Home (tweak `aanHetWerk` 0–10) |

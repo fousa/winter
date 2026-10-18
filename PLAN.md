@@ -3,7 +3,7 @@
 Work phase by phase; after each phase, make sure the app builds and the tests pass.
 
 ## Phase 0 — Project
-- [ ] Xcode project "Winter" (iPadOS 26, SwiftUI, Swift 6, iPad only, landscape only). Preferably generated with XcodeGen (`project.yml`) so Claude Code can manage it.
+- [ ] Xcode project "Winter" (iOS/iPadOS 26, SwiftUI, Swift 6, universal iPhone + iPad, all orientations). Preferably generated with XcodeGen (`project.yml`) so Claude Code can manage it.
 - [ ] Folder structure as described in CLAUDE.md; String Catalog with `nl-BE`.
 - [ ] Test target with Swift Testing.
 
@@ -18,12 +18,14 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [ ] Seed with sample members for previews and first tests.
 
 ## Phase 2 — UI with fake data
-- [ ] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge.
+- [ ] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.
 - [ ] Home screen including search, letter index, "Often here", and the "Working now" bar (1–3 large, 4+ compact).
 - [ ] Start and Stop sheets, confirmations with auto-dismiss and undo, haptics.
 - [ ] Close day.
 - [ ] Sync screen.
-- [ ] Screen-stays-on logic (`isIdleTimerDisabled`) and Guided Access friendliness (no links that leave the app).
+- [ ] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets, the collapsed floating bar, Settings as one `Form`. No `userInterfaceIdiom` or `UIScreen.main` anywhere.
+- [ ] Previews per screen for iPad landscape, iPhone portrait, iPhone landscape (compact height) and the largest accessibility text size.
+- [ ] Screen-stays-on logic (`isIdleTimerDisabled`) and Guided Access friendliness (no links that leave the app), only for the shared device.
 
 ## Phase 3 — zweef.app
 - [ ] `ZweefAPI` protocol + `ZweefClient` (URLSession, async/await, Codable) + `FakeZweefAPI`.
@@ -49,5 +51,6 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 6 — Finishing touches
 - [ ] VoiceOver labels, Dynamic Type, contrast.
+- [ ] Rotation pass on both devices: no clipping, no layout jumps, nothing hidden behind the floating bar or a safe area.
 - [ ] TestFlight / Apple Business Manager rollout.
-- [ ] Test at the club: three members of different ages, one day without internet.
+- [ ] Test at the club: three members of different ages, one day without internet, on the workshop iPad and on a phone.

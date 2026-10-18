@@ -22,8 +22,8 @@ The UI is in Dutch and the code is in English. Use these names consistently.
 | Registratie | maintenance-hours record | A maintenance-hours row in zweef.app |
 | Onderhoudsperiode | `period` | The period in zweef.app that registrations belong to |
 | Proxy | proxy | The club's Cloudflare Worker that holds the API key |
-| Apparaattoken | `deviceToken` | The secret the iPad uses to authenticate with the proxy |
+| Apparaattoken | `deviceToken` | The secret a device uses to authenticate with the proxy; one per device |
 | Beheercode | `adminCode` | The code that protects the settings screen |
 | Setup-assistent | `Setup` | Configuration on first launch |
-| Begeleide toegang | Guided Access | The iPadOS feature that keeps the iPad in one app |
+| Begeleide toegang | Guided Access | The iOS/iPadOS feature that keeps the shared device in one app |
 | Bestuur | the board | Approves registrations in zweef.app; has no role in the app |

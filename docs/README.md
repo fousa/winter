@@ -19,7 +19,7 @@ An overview of all documentation in this repository. If you are new, start at th
 | [Data model](data-model.md) | SwiftData models and derived rules |
 | [Synchronisation](sync.md) | The offline-first sync engine |
 | [zweef.app API](zweef-api.md) | Endpoints, field mapping, dedup |
-| [Design](design.md) | Screens, Liquid Glass, colours, copy |
+| [Design](design.md) | Screens, adaptive layout per size class, Liquid Glass, colours, copy |
 | [Glossary](glossary.md) | Dutch UI terms ↔ English code names |
 | [Decisions (ADRs)](decisions/README.md) | Why the main choices were made the way they were |
 | [Mockups](../mockups/README.md) | Source files of the screen designs |

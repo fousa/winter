@@ -1,25 +1,35 @@
 # Functional specification
 
 ## Purpose
-Members log their maintenance hours on a shared iPad in the hangar/workshop, without logging in, with as few taps as possible. The hours end up in zweef.app as maintenance-hours registrations, where the board approves them.
+Members log their maintenance hours on a shared device in the hangar/workshop, without logging in, with as few taps as possible. The hours end up in zweef.app as maintenance-hours registrations, where the board approves them.
 
 ## Roles
 | Role | What | Where |
 |---|---|---|
-| Member | Starts/stops their own session, optionally picks a task and an aircraft, closes the day if they are the last to leave | iPad |
+| Member | Starts/stops their own session, optionally picks a task and an aircraft, closes the day if they are the last to leave | iPhone or iPad |
 | Board / maintenance officer | Approves registrations, corrects them | zweef.app |
 
 ## Environment
-- One iPad, landscape, mounted on a wall or a stand, in Guided Access.
-- The screen stays on while the app is in use (`isIdleTimerDisabled = true` as long as a timer is running or the app was used recently); it may dim after two minutes of inactivity.
+The app is one universal app for iPhone and iPad, in any orientation ([ADR 0009](decisions/0009-universal-app-iphone-and-ipad.md)).
+
+- **The shared workshop device** is the main setup: usually an iPad in landscape, mounted on a wall or a stand, in Guided Access. The screen stays on while the app is in use (`isIdleTimerDisabled = true` as long as a timer is running or the app was used recently); it may dim after two minutes of inactivity.
+- **A personal iPhone or iPad** is the same app with the same flows, for a club without a shared iPad or for a member who logs their own hours. No Guided Access and no screen-on behaviour beyond a running timer.
 - Internet is unreliable or absent. The app must work fully offline.
 
-## Screens (see docs/design.md for details)
+### Several devices
+Each device has its own local database and its own device token, and uploads its own sessions.
+
+- A running timer is only visible — and can only be stopped — on the device it was started on. zweef.app has no concept of a running timer, so there is nothing to sync it through.
+- Closing the day closes the sessions on *that* device. Another device can still have open sessions of its own; it closes them itself.
+- "Working now", the day overview and the pending-upload counts are therefore always about the current device. The copy says so explicitly.
+- Once uploaded, every device's hours end up in the same place in zweef.app, where the board sees the full picture.
+
+## Screens (see docs/design.md for the layouts per size class)
 0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
 1. **Home** — member list (often here + all members, search, letter index), sync status button, "Close day" button, floating "Working now" bar.
 2. **Start** (sheet) — photo + name, "Start", "That's not me".
 3. **Start confirmation** — glass card, "Undo" (10 s), dismisses itself after 3 s.
-4. **Stop** (sheet) — person and running timer on the left, task list and aircraft picker on the right, "Stop and save".
+4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save".
 5. **Stop confirmation** — duration, task/aircraft, "Undo", dismisses itself after 3 s.
 6. **Close day** — overview of the day, flagged sessions, "Close day".
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, "Try again now".
@@ -45,7 +55,7 @@ Members log their maintenance hours on a shared iPad in the hangar/workshop, wit
 - The button is always visible in the top right of the home screen.
 - Timers running → the button is disabled (glass, grey, with a lock).
 - No running timers → the button is active and opens screen 6.
-- Screen 6 shows, per session: member, times, task/aircraft, duration, flags. Including sessions from earlier days that were never closed ("Also included").
+- Screen 6 shows, per session on this device: member, times, task/aircraft, duration, flags. Including sessions from earlier days that were never closed ("Also included").
 - "Close day" sets every completed session of that day (or days) to `readyForUpload` and triggers a sync. Works offline.
 - **If nobody closes the day**: sessions are kept. At the next closing, every open day is included. The home screen shows a reminder "3 days not closed" (a badge on the status button).
 
@@ -84,10 +94,10 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - Details: docs/configuration.md.
 
 ## Out of scope
-A login or PIN for members, managing hours on the iPad, free text, voice notes, CSV export, entering or editing hours after the fact on the iPad, an iPhone version.
+A login or PIN for members, managing hours on the device, free text, voice notes, CSV export, entering or editing hours after the fact on the device, syncing running timers between devices (see [ADR 0009](decisions/0009-universal-app-iphone-and-ipad.md)).
 
 ## Open questions
 - Is there a photo URL in the accounts response?
 - Allowed values for `category` / `project` / `status`, and the POST response.
 - The closing time.
-- Is wired wifi or an iPad with its own 4G/5G possible?
+- Is wired wifi or a device with its own 4G/5G possible for the workshop?

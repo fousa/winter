@@ -3,5 +3,9 @@
 
 PRODUCT_BUNDLE_IDENTIFIER = $(BUNDLE_ID_PREFIX).winter
 IPHONEOS_DEPLOYMENT_TARGET = 26.0
-TARGETED_DEVICE_FAMILY = 2
 SWIFT_VERSION = 6.0
+
+// Universal: iPhone (1) and iPad (2), no orientation locks. See ADR 0009.
+TARGETED_DEVICE_FAMILY = 1,2
+INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight

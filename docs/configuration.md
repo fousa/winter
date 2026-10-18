@@ -7,7 +7,7 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 |---|---|---|---|
 | Connection mode | UserDefaults | yes | `proxy` (recommended) or `direct` |
 | Proxy URL | UserDefaults | with proxy | e.g. `https://winter-proxy.<account>.workers.dev` |
-| Device token | **Keychain** | with proxy | a long random string, unique per iPad |
+| Device token | **Keychain** | with proxy | a long random string, unique per device |
 | Club schema (`{club}`) | UserDefaults | with direct | from the zweef.app club settings |
 | zweef.app API key | **Keychain** | with direct | `X-API-KEY` |
 | Club name | UserDefaults (cache) | automatic | fetched from zweef.app (`GET /club.json`) during "Test connection" and on every refresh; cannot be entered by hand |
@@ -19,8 +19,8 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 Keychain items use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`, so they stay out of backups and off other devices.
 
 ## Connection modes
-- **Proxy (recommended)**: the club deploys the Worker from `proxy/` with its own API key. The iPad only knows the proxy URL and a device token, which the club can revoke. This follows zweef.app's advice not to keep the key client-side.
-- **Direct**: for clubs without technical people. The club schema and the API key are stored in the iPad's Keychain. The settings screen shows a clear warning: the key grants access to all member data and financial data, and an iPad in the hangar is physically reachable.
+- **Proxy (recommended)**: the club deploys the Worker from `proxy/` with its own API key. The device only knows the proxy URL and a device token, which the club can revoke. This follows zweef.app's advice not to keep the key client-side. Every device gets its own token, so each can be revoked separately.
+- **Direct**: for clubs without technical people. The club schema and the API key are stored in the device's Keychain. The settings screen shows a clear warning: the key grants access to all member data and financial data, and a device in the hangar is physically reachable.
 
 Both modes use the same `ZweefAPI` interface; only the transport layer differs (`ProxyTransport` vs `DirectTransport`).
 
@@ -34,7 +34,7 @@ It appears for as long as the configuration is incomplete. The steps:
 
 ## Changing settings later
 - The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
-- The same fields as the setup, plus: "Refresh members now", "Change token", "Erase everything on this iPad" (with a confirmation; it warns if there are still sessions that have not been uploaded).
+- The same fields as the setup, plus: "Refresh members now", "Change token", "Erase everything on this device" (with a confirmation; it warns if there are still sessions that have not been uploaded).
 - Admin code forgotten → delete the app and reinstall it (local data and the Keychain go with it; warn about this in the README).
 
 ## MDM / Managed App Configuration (optional)
