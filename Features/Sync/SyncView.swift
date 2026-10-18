@@ -59,6 +59,7 @@ struct SyncView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            .accessibilityElement(children: .combine)
 
             HStack(spacing: 10) {
                 StatCard(
@@ -160,6 +161,7 @@ struct SyncView: View {
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 10)
+                    .accessibilityElement(children: .combine)
 
                     if session.id != sessions.last?.id { Divider() }
                 }

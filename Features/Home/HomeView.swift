@@ -123,6 +123,7 @@ struct HomeView: View {
                 }
             }
         }
+        .accessibilityElement(children: .contain)
     }
 
     @ViewBuilder
@@ -161,6 +162,10 @@ struct HomeView: View {
                     Image(systemName: pendingUploadCount > 0 ? "icloud.and.arrow.up" : "checkmark.icloud")
                 }
             }
+            // Icon only: "Sync" becomes "Synchronisation" in French, which does
+            // not belong in a toolbar next to a search field. The meaning lives
+            // in the accessibility label below instead.
+            .labelStyle(.iconOnly)
             .badge(pendingUploadCount)
             .accessibilityLabel(
                 pendingUploadCount > 0
@@ -176,6 +181,10 @@ struct HomeView: View {
             } label: {
                 Label {
                     Text("Close day")
+                        // "Clôturer la journée" is twice the English. One line,
+                        // shrink a little rather than wrap or truncate.
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 } icon: {
                     Image(systemName: canCloseDay ? "moon.stars" : "lock")
                 }

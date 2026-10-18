@@ -9,7 +9,17 @@ The mockups show the iPad in landscape, which stays the reference design. Everyt
 - SwiftUI: `.glassEffect()` / `GlassEffectContainer` for custom glass shapes, `.buttonStyle(.glass)` for secondary buttons and `.buttonStyle(.glassProminent)` for primary ones. Let standard toolbars and sheets use their system glass instead of rebuilding it.
 - Big targets: at least 44 pt, primary buttons 56–64 pt tall, capsule-shaped. Concentric corner radii (tiles 24, cards 24–28, sheets system).
 - System font (SF Pro), support Dynamic Type. Times with `.monospacedDigit()`.
-- Colours: system colours. Primary `.tint` (blue). Timers in dark green (an accessible variant of `.green`), flags orange, stop red (like the Clock app).
+- **A size from the mockups still has to scale.** `.font(.system(size:))` is fixed, so a member with Larger Text would get the same 28 pt timer as everyone else — exactly backwards, since the timer is what they came to read. Use `.scaledFont(size:relativeTo:…)`, which scales against a text style and stops at a maximum before the number pushes the name off the card. Plain `.font(.title)` tokens elsewhere.
+- VoiceOver: a row is one stop, not four. Cards, stat cards and list rows use `.accessibilityElement(children: .combine)`; a selected task carries `.isSelected` rather than only a checkmark; decorative glyphs and avatars are `.accessibilityHidden(true)` because the name is already in the row's label.
+- Colours: system colours. Primary `.tint` (blue).
+- **Contrast is measured, not judged.** Apple's `systemGreen` and `systemOrange` are 2.2:1 on white — fine as a fill behind white text, unreadable as text on an opaque card. So each custom colour is darkened until it passes 4.5:1 against the surface it actually sits on, and the ratio is recorded next to it in `DesignSystem/Palette.swift`:
+
+| Colour | Used for | Ratio |
+|---|---|---|
+| `.runningTimer` (green, 35% black) | running timers, "connected", the working dot | 4.9:1 on white |
+| `.flag` (orange, 35% black) | flag badges, "needs attention" | 4.9:1 on white, 4.3:1 on the badge's own tint |
+| `.stopAction` (red, 15% black) | the stop button's fill | white on it is 4.7:1 |
+| `.avatarBackground` (8 hues, 20% black) | initials | carries white initials |
 - Confirmations: haptics (`.sensoryFeedback(.success, …)`).
 
 ## Adaptive layout
@@ -97,7 +107,7 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 - Counts use the catalog's plural variants ("8 waiting", "1 waiting"), including Dutch and French plural rules.
 - Weekdays and month names come from the locale, so the home subtitle is not a hand-built string.
 - Member names, the club name, aircraft and club-edited task labels are data, not copy: they are shown as they come from zweef.app or as the club typed them, never translated.
-- French labels run roughly 20–30% longer than English. Buttons, capsules and the floating bar grow with their label; nothing truncates a primary action. Check the longest language together with the largest Dynamic Type size.
+- French labels run roughly 20–30% longer than English, and some short ones far more. The `String catalog` test suite prints the ones that more than double, which is the list to check on a device. Today that is "Close day" → "Clôturer la journée", "Sync" → "Synchronisation", "Admin code" → "Code d'administration". Two of those sit in toolbars, so the sync button is icon-only and "Close day" shrinks slightly rather than wrapping.
 - VoiceOver labels are translated too, including the ones that differ from the visible text (the sync status button, the timer).
 
 ## Sample data for previews

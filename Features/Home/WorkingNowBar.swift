@@ -125,6 +125,7 @@ struct WorkingNowBar: View {
             .background(.background.opacity(0.7), in: .rect(cornerRadius: 18))
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
         .accessibilityHint(Text("Opens stopping"))
     }
 
@@ -164,6 +165,7 @@ struct WorkingNowBar: View {
             .frame(minHeight: LayoutMetrics.minimumTapTarget)
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
     }
 }
 

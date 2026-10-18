@@ -13,8 +13,8 @@ struct FlagBadge: View {
             .labelStyle(.titleAndIcon)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
-            .background(Color.flag.opacity(0.15), in: .capsule)
-            .foregroundStyle(Color.flag.mix(with: .black, by: 0.25))
+            .background(Color.flagBackground, in: .capsule)
+            .foregroundStyle(Color.flag)
     }
 }
 

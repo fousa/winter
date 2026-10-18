@@ -49,9 +49,19 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`.
 
 ## Phase 6 — Finishing touches
-- [ ] VoiceOver labels, Dynamic Type, contrast.
-- [ ] Translations: fill `nl` and `fr` in the catalog, have a native speaker read each, and check that no key is missing or stale.
-- [ ] Localisation pass in French (the longest language) at the largest text size: no truncated buttons, no clipped capsules.
+
+Done in code:
+- [x] VoiceOver labels and grouping, Dynamic Type through `.scaledFont`, and contrast measured rather than judged — every custom colour now passes 4.5:1 on the surface it sits on (`docs/design.md`).
+- [x] Translations: `nl` and `fr` complete, and a `String catalog` test suite that fails on a missing translation, a stale string, an empty key or an incomplete plural. It also prints the short labels that grow most in French.
+- [x] Distribution documented: build-it-yourself, TestFlight and MDM (`docs/installation-guide.md`).
+
+Needs a device or a simulator, which the development machine does not have:
+- [ ] Look at it. Nobody has yet seen this app run: not a preview, not a screenshot. The glass, the floating bar over a scrolling grid and the two-column stop sheet are reasoned, not observed.
 - [ ] Rotation pass on both devices: no clipping, no layout jumps, nothing hidden behind the floating bar or a safe area.
-- [ ] TestFlight / Apple Business Manager rollout.
+- [ ] French at the largest accessibility text size, on the four labels the catalog test flags.
+- [ ] VoiceOver pass with the screen curtain on: start, stop, close the day.
+
+Needs people:
+- [ ] A native Dutch and a native French speaker read their language. The translations are mine and have not been reviewed.
+- [ ] TestFlight rollout (needs the club's Apple Developer Program account).
 - [ ] Test at the club: three members of different ages, one day without internet, on the workshop iPad and on a phone.

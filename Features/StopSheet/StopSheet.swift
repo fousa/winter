@@ -173,6 +173,9 @@ struct StopSheet: View {
                         .contentShape(.rect)
                     }
                     .buttonStyle(.plain)
+                    .accessibilityElement(children: .combine)
+                    // A checkmark is invisible to a listener; the trait is not.
+                    .accessibilityAddTraits(selectedTask?.key == task.key ? [.isSelected] : [])
 
                     if task.key != tasks.last?.key {
                         Divider().padding(.leading, 56)
@@ -220,6 +223,7 @@ struct StopSheet: View {
 
         if isSelected {
             chip.buttonStyle(.glassProminent)
+                .accessibilityAddTraits(.isSelected)
         } else {
             chip.buttonStyle(.glass)
         }

@@ -118,6 +118,7 @@ struct CloseDayView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
+        .accessibilityElement(children: .combine)
     }
 
     private var closeBar: some View {

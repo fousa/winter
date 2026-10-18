@@ -14,8 +14,10 @@ struct RunningTimerText: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             Text(text(at: context.date))
-                .font(.system(size: size, weight: weight, design: .rounded))
+                .scaledFont(size: size, relativeTo: .title, weight: weight, design: .rounded, maximum: size * 1.4)
                 .monospacedDigit()
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
                 .foregroundStyle(.runningTimer)
                 .contentTransition(.numericText())
                 .accessibilityLabel(accessibilityText(at: context.date))

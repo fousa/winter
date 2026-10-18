@@ -31,7 +31,30 @@ It is in your club settings in zweef.app — a short identifier that appears in
 the API's address. You need it in step 3.
 
 ## Step 3 — Install the app
-Through TestFlight, Apple Business Manager, or by building it yourself with Xcode (see the [README](../README.md#building-it-yourself)).
+Three ways, depending on what your club has.
+
+**Build it yourself** (no Apple Developer Program needed, good for one device):
+install Xcode on a Mac, follow the [README](../README.md#building-it-yourself),
+plug the device in and run. A free Apple ID signs the app for seven days, after
+which you plug it in again — tedious for a wall-mounted device, fine for trying
+it out.
+
+**TestFlight** (needs the Apple Developer Program, €99/year) is what most clubs
+will want:
+
+1. In App Store Connect, create an app record with the bundle identifier from
+   your `Config/Local.xcconfig`.
+2. In Xcode: Product › Archive, then Distribute App › TestFlight & App Store.
+3. Add the people who set up devices as internal testers. Builds last 90 days
+   and update over the air, so a device on a wall keeps itself current.
+
+**Apple Business Manager / MDM**, if the club already has one: distribute the
+app to the device and push the `clubSchema` and `closingTime` keys with it
+([configuration.md](configuration.md)). The API key is never pushed — a managed
+configuration is readable on the device — so it is still typed once per device.
+
+The app is not on the App Store. It is one club's tool, and publishing it would
+mean a review process for a screen full of Dutch member names.
 
 ## Step 4 — First launch
 The app opens with the setup assistant:

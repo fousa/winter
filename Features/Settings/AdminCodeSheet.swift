@@ -20,7 +20,7 @@ struct AdminCodeSheet: View {
         NavigationStack {
             VStack(spacing: metrics.sectionSpacing) {
                 Image(systemName: "lock")
-                    .font(.system(size: 44))
+                    .scaledFont(size: 44, relativeTo: .largeTitle)
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
 

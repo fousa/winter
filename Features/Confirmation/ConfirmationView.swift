@@ -17,7 +17,7 @@ struct ConfirmationView: View {
         GlassCard {
             VStack(spacing: 16) {
                 Image(systemName: "checkmark")
-                    .font(.system(size: 44, weight: .semibold))
+                    .scaledFont(size: 44, relativeTo: .largeTitle, weight: .semibold)
                     .foregroundStyle(.white)
                     .frame(width: 96, height: 96)
                     .background(accent.gradient, in: .circle)

@@ -247,7 +247,7 @@ struct SetupView: View {
     private var done: some View {
         VStack(alignment: .leading, spacing: 16) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 64))
+                .scaledFont(size: 64, relativeTo: .largeTitle)
                 .foregroundStyle(Color.runningTimer)
 
             Text("Ready")

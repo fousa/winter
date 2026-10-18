@@ -32,6 +32,9 @@ struct MemberAvatar: View {
             .fill(Color.avatarBackground(forMemberId: member.zweefId).gradient)
             .overlay {
                 Text(initialsText)
+                    // Deliberately *not* scaled: the circle has a fixed size,
+                    // so growing the letters inside it only clips them. The
+                    // name is read from the tile, which does scale.
                     .font(.system(size: size * 0.38, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
                     .minimumScaleFactor(0.6)
