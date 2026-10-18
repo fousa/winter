@@ -11,7 +11,7 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 0b — Open source
 - [x] Git repository with README, LICENSE, .gitignore, `Config/*.xcconfig` (no secrets).
-- [ ] A check in CI or pre-commit that no tokens or keys end up in commits (e.g. gitleaks).
+- [x] No CI ([ADR 0011](docs/decisions/0011-no-continuous-integration.md)): tests and the secrets check are run locally before merging.
 
 ## Phase 1 — Domain and storage
 - [x] SwiftData models from `docs/data-model.md`.

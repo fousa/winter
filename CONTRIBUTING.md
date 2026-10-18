@@ -43,7 +43,7 @@ The app ships in **English, Dutch and French**, and only those three ([ADR 0010]
 
 ## Secrets and privacy
 - **Never** put API keys, tokens, club schemas or real member data in the repository, in issues or in screenshots.
-- CI runs a secret scan; a PR with a detected secret will not be merged. If something does leak, read [SECURITY.md](SECURITY.md).
+- There is no CI and no automated scan ([ADR 0011](docs/decisions/0011-no-continuous-integration.md)): check your own diff before pushing. A PR with a secret in it will not be merged. If something does leak, read [SECURITY.md](SECURITY.md).
 
 ## Questions
 Open an issue with the `question` label.

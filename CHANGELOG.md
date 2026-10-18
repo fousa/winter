@@ -21,4 +21,5 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 
 ### Changed
 - All repository documentation is written in English.
+- No CI: tests and the secrets check are run locally before merging (ADR 0011).
 - `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.

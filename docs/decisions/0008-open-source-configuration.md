@@ -1,6 +1,6 @@
 # 0008 — Open source, configured on the device
 
-- **Status**: accepted
+- **Status**: accepted (UI language superseded by [0010](0010-three-languages-en-nl-fr.md), CI secret scanning by [0011](0011-no-continuous-integration.md))
 - **Date**: 2026-10-18
 
 ## Context
@@ -12,7 +12,7 @@ The code is open source (MIT). Nothing club-specific or secret lives in the repo
 ## Consequences
 - The app is called Winter and is generic: the club name, members, aircraft and period come from zweef.app; the task list, the closing time and the zweef.app values are configurable.
 - Being generic now also covers language: the app ships in English, Dutch and French ([ADR 0010](0010-three-languages-en-nl-fr.md)).
-- Secret scanning (gitleaks) in CI.
+- Secrets are kept out of commits by review, not by a pipeline: the project runs no CI ([ADR 0011](0011-no-continuous-integration.md)).
 - Test data and fixtures are anonymised.
 
 ## Alternatives considered
