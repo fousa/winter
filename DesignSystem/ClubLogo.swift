@@ -22,6 +22,13 @@ struct ClubLogo: View {
         }
     }
 
+    /// Loads a picture picked in Photos and prepares it as a logo; nil when
+    /// nothing was picked or it is not a picture.
+    static func prepared(from item: PhotosPickerItem?) async -> Data? {
+        guard let item, let picked = try? await item.loadTransferable(type: Data.self) else { return nil }
+        return prepare(picked)
+    }
+
     /// Scales a picked picture down to at most `maximum` pixels on its longest
     /// side and encodes it as PNG.
     ///
@@ -66,8 +73,11 @@ struct ClubLogoPicker: View {
 
             Spacer()
 
+            // Read out here: the picker's label closure is Sendable and may
+            // not read the main-actor binding itself, but it may capture a Bool.
+            let hasLogo = data != nil
             PhotosPicker(selection: $item, matching: .images) {
-                Text(data == nil ? "Choose" : "Change")
+                Text(hasLogo ? "Change" : "Choose")
             }
 
             if data != nil {
@@ -78,13 +88,13 @@ struct ClubLogoPicker: View {
                 .buttonStyle(.borderless)
             }
         }
-        .task(id: item) {
-            guard let item,
-                  let picked = try? await item.loadTransferable(type: Data.self),
-                  let prepared = ClubLogo.prepare(picked)
-            else { return }
-            data = prepared
-        }
+        .task(id: item) { await load() }
+    }
+
+    /// On the main actor, where `data` lives; the `task` closure only awaits
+    /// it, so it never touches the binding itself.
+    private func load() async {
+        if let prepared = await ClubLogo.prepared(from: item) { data = prepared }
     }
 }
 
@@ -115,8 +125,10 @@ struct ClubLogoChooser: View {
             }
 
             HStack(spacing: 12) {
+                // See ClubLogoPicker: the label closure is Sendable.
+                let hasLogo = data != nil
                 PhotosPicker(selection: $item, matching: .images) {
-                    Label(data == nil ? "Choose a logo" : "Change", systemImage: "photo.on.rectangle")
+                    Label(hasLogo ? "Change" : "Choose a logo", systemImage: "photo.on.rectangle")
                 }
                 .buttonStyle(.glassProminent)
 
@@ -129,12 +141,12 @@ struct ClubLogoChooser: View {
                 }
             }
         }
-        .task(id: item) {
-            guard let item,
-                  let picked = try? await item.loadTransferable(type: Data.self),
-                  let prepared = ClubLogo.prepare(picked)
-            else { return }
-            data = prepared
-        }
+        .task(id: item) { await load() }
+    }
+
+    /// On the main actor, where `data` lives; the `task` closure only awaits
+    /// it, so it never touches the binding itself.
+    private func load() async {
+        if let prepared = await ClubLogo.prepared(from: item) { data = prepared }
     }
 }
