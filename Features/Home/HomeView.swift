@@ -479,6 +479,9 @@ extension HomeView {
 }
 #endif
 
+// Debug only, like `SyncCoordinator.preview` they use: a Release archive
+// (Xcode Cloud) does not compile previews' helpers.
+#if DEBUG
 #Preview("iPad · nobody working", traits: .landscapeLeft) {
     let container = try! SampleData.container()
     HomeView()
@@ -515,3 +518,4 @@ extension HomeView {
         .environment(\.locale, Locale(identifier: "fr"))
         .environment(\.dynamicTypeSize, .accessibility3)
 }
+#endif

@@ -260,6 +260,9 @@ struct SyncView: View {
     }
 }
 
+// Debug only, like `SyncCoordinator.preview` they use: a Release archive
+// (Xcode Cloud) does not compile previews' helpers.
+#if DEBUG
 #Preview("iPad · waiting", traits: .landscapeLeft) {
     let container = try! SampleData.finishedSessionsContainer()
     NavigationStack { SyncView() }
@@ -280,3 +283,4 @@ struct SyncView: View {
         .modelContainer(container)
         .environment(SyncCoordinator.preview(container: container))
 }
+#endif

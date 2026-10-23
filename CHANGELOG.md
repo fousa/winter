@@ -69,6 +69,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The stop sheet has a comment field under the tasks, and a club can require a comment ("A comment is required when stopping", in the setup's club step and in Settings). The task tiles are one row each, so the form sheet fits it without growing.
 
 ### Fixed
+- The Xcode Cloud archive failed: the `#Preview` blocks in the home, sync and root views used `SyncCoordinator.preview`, which exists only in Debug builds. The previews are now inside `#if DEBUG` too, so a Release build compiles.
 - After deleting and reinstalling the app, setup jumped to the home screen as soon as the connection step was saved, and the home screen stayed empty. iOS keeps Keychain items when an app is deleted, so the old API key and admin code made the device look set up. Setup now completes only on its last step (a flag in UserDefaults, which is deleted with the app), the members are fetched right after it, and an empty member list says where the members come from with a "Fetch members" button instead of "No results".
 - A member's avatar colour changed every time the app started: it came from `id.hashValue`, which Swift seeds afresh per launch. It now comes from the id itself.
 - The sync screen said "This device has no zweef.app connection configured yet" on a connected device, a placeholder from before the setup assistant existed. It now says why hours are waiting. The two counters line up at the top.

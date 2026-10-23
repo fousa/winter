@@ -100,6 +100,9 @@ extension View {
     }
 }
 
+// Debug only, like `SyncCoordinator.preview` they use: a Release archive
+// (Xcode Cloud) does not compile previews' helpers.
+#if DEBUG
 #Preview("Needs setup", traits: .landscapeLeft) {
     let container = try! WinterSchema.inMemoryContainer()
     RootView(
@@ -126,3 +129,4 @@ extension View {
     .modelContainer(container)
     .environment(SyncCoordinator.preview(container: container))
 }
+#endif
