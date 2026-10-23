@@ -485,7 +485,7 @@ struct HomeView: View {
 
 #if DEBUG
 extension HomeView {
-    /// `-sampleScreen sync` or `stop`, next to `-sampleClub`:
+    /// `-sampleScreen sync`, `stop` or `start`, next to `-sampleClub`:
     /// opens that screen on launch so it can be looked at on a simulator
     /// (CONTRIBUTING.md).
     fileprivate func openSampleScreen() async {
@@ -500,6 +500,8 @@ extension HomeView {
         case "sync": path = [.sync]
         case "stop":
             if let session = runningSessions.first { model.route = .stop(sessionId: session.id) }
+        case "start":
+            if let member = idleMembers.first { model.start(member: member, store: store) }
         default: break
         }
     }

@@ -50,28 +50,46 @@ struct LetterIndex: View {
 
 /// The undo offer after a start.
 ///
-/// Starting shows no confirmation card, so this is where a start under the
-/// wrong name is taken back: small, out of the way, and gone by itself after
-/// ten seconds (`docs/spec.md`).
+/// Starting shows no confirmation card, so this is both the confirmation and
+/// the way to take back a start under the wrong name: a green check, "Jan is
+/// working since 14:05" in large type and an "Undo" button, gone by itself
+/// after ten seconds (`docs/spec.md`). Large on purpose: an iPad cannot buzz,
+/// so this is the only sign an older member gets that the tap landed.
 struct UndoChip: View {
+    @Environment(\.locale) private var locale
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     let undo: HomeModel.PendingUndo
     var onUndo: () -> Void
     var onExpire: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "arrow.uturn.backward")
+        HStack(spacing: 14) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.title2)
+                .foregroundStyle(Color.runningTimer)
                 .accessibilityHidden(true)
 
-            Text("\(undo.memberName) started")
-                .font(.subheadline)
+            // A size up on an iPad, read from a step back; a phone's width
+            // is already filled by the headline.
+            Text(message)
+                .font(horizontalSizeClass == .compact ? .headline : .title3.weight(.semibold))
+                .fixedSize(horizontal: false, vertical: true)
 
-            Button("Undo", action: onUndo)
-                .font(.subheadline.weight(.semibold))
+            Button("Undo", systemImage: "arrow.uturn.backward", action: onUndo)
+                .buttonStyle(.glass)
+                .accessibilityHint(Text("Removes this timer again"))
         }
-        .padding(.horizontal, 14)
-        .frame(minHeight: LayoutMetrics.minimumTapTarget)
+        .padding(.leading, 18)
+        .padding(.trailing, 10)
+        .padding(.vertical, 8)
+        .frame(minHeight: horizontalSizeClass == .compact ? 60 : 68)
         .glassEffect(.regular, in: .capsule)
+        // On an iPad there is no buzz to feel, so this is the only sign the
+        // tap landed: say it out loud too, for VoiceOver.
+        .onAppear {
+            AccessibilityNotification.Announcement(message).post()
+        }
         .task(id: undo.id) {
             let remaining = undo.expiresAt.timeIntervalSinceNow
             guard remaining > 0 else { return onExpire() }
@@ -79,5 +97,12 @@ struct UndoChip: View {
             onExpire()
         }
         .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    /// "Jan is working since 14:05": who, and that the clock runs, rather
+    /// than the bare "Jan started" that was easy to miss.
+    private var message: String {
+        let time = undo.startedAt.formatted(Date.FormatStyle(date: .omitted, time: .shortened).locale(locale))
+        return String(localized: "\(undo.memberName) is working since \(time)")
     }
 }

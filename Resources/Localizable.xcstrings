@@ -1,18 +1,18 @@
 {
   "sourceLanguage": "en",
   "strings": {
-    "%@ started": {
+    "%@ is working since %@": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ a commencé"
+            "value": "%1$@ travaille depuis %2$@"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ is gestart"
+            "value": "%1$@ is aan het werk sinds %2$@"
           }
         }
       }
@@ -1613,6 +1613,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verwijderd van dit toestel, gaat nooit naar zweef.app"
+          }
+        }
+      }
+    },
+    "Removes this timer again": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprime à nouveau ce chronomètre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijdert deze timer weer"
           }
         }
       }

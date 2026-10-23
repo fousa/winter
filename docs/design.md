@@ -75,7 +75,7 @@ Running timers belong to the device they were started on. The "Working now" sect
 A form sheet (~540×560). "Close" on the left (a word, not an ×), title "Start". Avatar 120, name 34 bold, "Ready to get going?". One button: "Start" (glassProminent, play.fill, standard size). A wrong name is dismissed with the close button, like any sheet; the mockup's "That's not me" button is gone. Footnote: "You pick what you worked on when you stop."
 
 ### 3. Start confirmation (`Gestart.dc.html`) — dropped
-The mockup's card ("Enjoy the work, Ellen") is not built. Starting already shows itself: the sheet closes, the tile moves into "Working now" with its clock running, and a haptic fires. A card on top of that only stood between the member and the workshop. A start under the wrong name is taken back with the "Undo" chip at the bottom of the home screen ("Ellen started · Undo"), which disappears by itself after 10 s.
+The mockup's card ("Enjoy the work, Ellen") is not built. Starting already shows itself: the sheet closes, the tile moves into "Working now" with its clock running, and a haptic fires. A card on top of that only stood between the member and the workshop. At the bottom of the home screen a confirmation appears for 10 s: a green check, "Ellen is working since 14:05" (headline on a phone, title 3 on an iPad, at least 60 pt tall) and an "Undo" button (glass) that takes back a start under the wrong name. Large on purpose, and announced to VoiceOver: an iPad cannot buzz, so this is the only sign an older member gets that the tap landed.
 
 ### 4. Stop (`Stop.dc.html`)
 A form sheet (the system's form size, smaller than the mockup's ~920×680 so the home screen stays in view around it), in one column:

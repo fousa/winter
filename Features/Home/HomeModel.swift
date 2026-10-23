@@ -77,6 +77,8 @@ final class HomeModel {
     struct PendingUndo: Identifiable, Hashable {
         var sessionId: UUID
         var memberName: String
+        /// When the timer started, for "Jan is working since 14:05".
+        var startedAt: Date
         var expiresAt: Date
 
         var id: UUID { sessionId }
@@ -110,6 +112,7 @@ final class HomeModel {
             pendingUndo = PendingUndo(
                 sessionId: session.id,
                 memberName: member.firstName,
+                startedAt: session.start,
                 expiresAt: .now.addingTimeInterval(Self.undoWindow)
             )
             endSearch()

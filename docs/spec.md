@@ -28,7 +28,7 @@ Each device has its own local database and uploads its own sessions.
 0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
 1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button.
 2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
-3. **Start** has no confirmation of its own: the tile moves into "Working now", a haptic fires, and an "Undo" chip stays for 10 s.
+3. **Start** has no confirmation card: the tile moves into "Working now", a haptic fires on a phone, and a large "Jan is working since 14:05 · Undo" confirmation stays at the bottom for 10 s.
 4. **Stop** (sheet) — the person and the running timer, "Stop and save", what the work was on (zweef.app's material) and a comment; a trash menu to delete the timer instead, with the confirmation inside the menu.
 5. **Stop confirmation** — duration, what it was on, "Undo"; stays until someone taps outside it.
 6. **Close day** — removed ([ADR 0018](decisions/0018-no-closing-the-day.md)); the sync screen lists the waiting sessions.
@@ -40,7 +40,7 @@ Each device has its own local database and uploads its own sessions.
 1. The member taps their tile (home screen).
 2. The "Start" sheet appears → tap "Start".
 3. The session is saved immediately (`status = .running`, `start = now`).
-4. No confirmation card: the sheet closes and the tile moves into "Working now" with its clock running. An "Undo" chip at the bottom of the screen stays for 10 s (undo deletes the session entirely).
+4. No confirmation card: the sheet closes and the tile moves into "Working now" with its clock running. A large confirmation at the bottom of the screen, "Jan is working since 14:05" with an "Undo" button, stays for 10 s (undo deletes the session entirely).
 - The member already has a running session → instead the sheet shows "You have been working since 09:12" with a "Stop" button (which leads to Stopping).
 
 ### Stopping
