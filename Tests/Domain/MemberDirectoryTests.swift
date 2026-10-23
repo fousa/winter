@@ -34,6 +34,22 @@ struct MemberDirectoryTests {
         ]
     }
 
+    // MARK: - Working members
+
+    @Test("A working member leaves the list, so their only tile is in Working now")
+    func workingMembersAreLeftOut() {
+        let idle = MemberDirectory.idle(club, workingIds: [1, 4])
+        #expect(idle.map(\.memberId) == [2, 3, 5, 6])
+    }
+
+    @Test("Often here fills its places with members who are not working")
+    func oftenHereSkipsWorkingMembers() {
+        let counts = [1: 5, 2: 4, 3: 3]
+        let idle = MemberDirectory.idle(club, workingIds: [1])
+        let often = MemberDirectory.oftenHere(from: idle, sessionCounts: counts, limit: 2)
+        #expect(often.map(\.memberId) == [2, 3])
+    }
+
     // MARK: - Search
 
     @Test("An empty query matches everyone, so the list is not empty on open")

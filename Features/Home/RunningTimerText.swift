@@ -11,7 +11,7 @@ struct RunningTimerText: View {
     enum Style {
         /// "1:05" — the large clock on the stop sheet.
         case clock
-        /// "01h05m" — compact and unambiguous inside a member tile.
+        /// "1h05m", or "46m" under an hour — compact inside a member tile.
         case hoursMinutes
     }
 
@@ -19,6 +19,9 @@ struct RunningTimerText: View {
     var size: CGFloat
     var weight: Font.Weight = .semibold
     var style: Style = .clock
+    /// Green on the stop sheet, where the clock is the subject; a member tile
+    /// passes `.primary`, because the time is information there, not a signal.
+    var color: Color = .runningTimer
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
@@ -27,7 +30,7 @@ struct RunningTimerText: View {
                 .monospacedDigit()
                 .minimumScaleFactor(0.7)
                 .lineLimit(1)
-                .foregroundStyle(.runningTimer)
+                .foregroundStyle(color)
                 .contentTransition(.numericText())
                 .accessibilityLabel(accessibilityText(at: context.date))
         }
@@ -37,7 +40,7 @@ struct RunningTimerText: View {
         let minutes = SessionRules.duration(start: start, stop: now)
         switch style {
         case .clock: return "\(minutes / 60):\(String(format: "%02d", minutes % 60))"
-        case .hoursMinutes: return String(format: "%02dh%02dm", minutes / 60, minutes % 60)
+        case .hoursMinutes: return HoursFormatter.compactDuration(minutes: minutes)
         }
     }
 

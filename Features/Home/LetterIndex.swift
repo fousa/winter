@@ -30,11 +30,11 @@ struct LetterIndex: View {
     }
 }
 
-/// The undo offer that stays after the confirmation has closed.
+/// The undo offer after a start.
 ///
-/// The confirmation card closes after three seconds, but undo is promised for
-/// ten (`docs/spec.md`), so the rest of the window lives here: small, out of
-/// the way, and gone by itself.
+/// Starting shows no confirmation card, so this is where a start under the
+/// wrong name is taken back: small, out of the way, and gone by itself after
+/// ten seconds (`docs/spec.md`).
 struct UndoChip: View {
     let undo: HomeModel.PendingUndo
     var onUndo: () -> Void
@@ -45,9 +45,7 @@ struct UndoChip: View {
             Image(systemName: "arrow.uturn.backward")
                 .accessibilityHidden(true)
 
-            (undo.kind == .started
-                ? Text("\(undo.memberName) started")
-                : Text("\(undo.memberName) stopped"))
+            Text("\(undo.memberName) started")
                 .font(.subheadline)
 
             Button("Undo", action: onUndo)

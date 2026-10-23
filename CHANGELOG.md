@@ -30,8 +30,11 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - A running timer can be deleted from the stop sheet instead of saved: a trash menu in the toolbar that asks "Delete Jan's timer?" and says the time is removed from the device and never sent to zweef.app. Only running timers; finished sessions are corrected in zweef.app.
 
 ### Changed
-- The floating "Working now" bar is gone. Running timers are the first section of the member list, in the same tiles as everyone else, with the time written as "01h23m"; the phone's "which timer?" sheet went with the bar.
-- Member tiles are interactive Liquid Glass (ADR 0014); the running ones carry a faint green tint.
+- The floating "Working now" bar is gone. Running timers are the first section of the member list, in the same tiles as everyone else, with the time written as "46m" or "1h23m" in the normal text colour; the phone's "which timer?" sheet went with the bar.
+- "Often here" is now called "Recents" (nl "Recent", fr "Récents"); the ranking is unchanged.
+- Search results have a "Members" heading, so they no longer read as part of "Working now" above them.
+- A member with a running timer appears only in "Working now", not also in "Recents" and the letter sections, and search covers "Working now" too. Starting or stopping animates the tile between the sections.
+- Member tiles are interactive Liquid Glass (ADR 0014). The running ones are wider, with the name on top and the time underneath, so a long name no longer collapses to an ellipsis.
 - The home subtitle is larger: a `.largeSubtitle` toolbar item in title 3 instead of the caption-sized `navigationSubtitle`, wrapping on a phone.
 - The start sheet has one button. "That isn't me" is gone; the close button does the same.
 - The stop sheet no longer asks "I'm stopping this for someone else"; the app no longer records who stopped a timer.
@@ -42,6 +45,8 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - Verified the zweef.app API against a real club: `accounts.json` has no member photo (avatars are always initials, and the photo cache is dropped), `category` is sent empty rather than `"Maintenance"`, the active period is read from `current/hours.json` because `periods.json` answers 404, and `club.json` answers 500 so the club name may be unavailable.
 - No CI: tests and the secrets check are run locally before merging (ADR 0011).
 - `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.
+- Starting no longer shows a confirmation card: the tile moving into "Working now" and a haptic say it worked, and the "Undo" chip stays for 10 seconds.
+- The stop confirmation has no Done button and no longer closes by itself after 3 seconds. It stays until someone taps outside it, and its "Undo" (which sets the timer running again) works for as long as it is up.
 
 ### Fixed
 - Starting or stopping a timer no longer glitches: the sheet used to be swapped for its confirmation in one step, so SwiftUI dismissed and presented at the same time. The confirmation now waits for the sheet to finish closing.

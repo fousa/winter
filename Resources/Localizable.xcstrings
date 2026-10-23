@@ -17,22 +17,6 @@
         }
       }
     },
-    "%@ stopped": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ a terminé"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ is gestopt"
-          }
-        }
-      }
-    },
     "%@, working now": {
       "localizations": {
         "fr": {
@@ -241,6 +225,22 @@
         }
       }
     },
+    "Checks and closes today's hours": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifie et clôture les heures du jour"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Controleert en sluit de uren van vandaag af"
+          }
+        }
+      }
+    },
     "Close": {
       "localizations": {
         "fr": {
@@ -269,22 +269,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dag afsluiten"
-          }
-        }
-      }
-    },
-    "Closes by itself after 3 seconds": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se ferme après 3 secondes"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sluit vanzelf na 3 seconden"
           }
         }
       }
@@ -557,22 +541,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "English"
-          }
-        }
-      }
-    },
-    "Enjoy the work, %@": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bon travail, %@"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Veel werkplezier, %@"
           }
         }
       }
@@ -913,6 +881,22 @@
         }
       }
     },
+    "Members": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Membres"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leden"
+          }
+        }
+      }
+    },
     "Members can start logging hours. The list of members arrives as soon as this device has a connection.": {
       "localizations": {
         "fr": {
@@ -1201,22 +1185,6 @@
         }
       }
     },
-    "Often here": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Souvent ici"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vaak hier"
-          }
-        }
-      }
-    },
     "On a shared device, turn on Guided Access so the app cannot be left: Settings › Accessibility › Guided Access": {
       "localizations": {
         "fr": {
@@ -1345,6 +1313,22 @@
         }
       }
     },
+    "Recents": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récents"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recent"
+          }
+        }
+      }
+    },
     "Refused: check the API key.": {
       "localizations": {
         "nl": {
@@ -1457,22 +1441,6 @@
         }
       }
     },
-    "Sends today's hours to zweef.app": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Envoie les heures du jour vers zweef.app"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stuurt de uren van vandaag naar zweef.app"
-          }
-        }
-      }
-    },
     "Sessions today": {
       "localizations": {
         "fr": {
@@ -1501,6 +1469,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sessies in wacht"
+          }
+        }
+      }
+    },
+    "Sets the timer running again": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relance le chronomètre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zet de timer weer aan"
           }
         }
       }
@@ -1645,22 +1629,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Winter gebruiken"
-          }
-        }
-      }
-    },
-    "Started at %@": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Commencé à %@"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestart om %@"
           }
         }
       }
@@ -1811,6 +1779,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Synchronisatie"
+          }
+        }
+      }
+    },
+    "Tap outside to close": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez à côté pour fermer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tik ernaast om te sluiten"
           }
         }
       }

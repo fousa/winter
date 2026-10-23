@@ -39,4 +39,13 @@ struct HoursFormatterTests {
         #expect(text.contains("18"))
         #expect(!text.contains("0"))
     }
+
+    @Test("A running time has no leading zeros, and no hours under one")
+    func compactDuration() {
+        #expect(HoursFormatter.compactDuration(minutes: 0) == "0m")
+        #expect(HoursFormatter.compactDuration(minutes: 46) == "46m")
+        #expect(HoursFormatter.compactDuration(minutes: 65) == "1h05m")
+        #expect(HoursFormatter.compactDuration(minutes: 120) == "2h00m")
+        #expect(HoursFormatter.compactDuration(minutes: 750) == "12h30m")
+    }
 }

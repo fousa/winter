@@ -32,11 +32,11 @@ final class HomeModel {
     /// `onDismiss`, when the first animation is done.
     private(set) var queuedRoute: Route?
 
-    /// The undo offer that outlives the confirmation card.
+    /// The undo offer after a start, shown as a chip on the home screen.
     ///
-    /// The card closes after three seconds, but undo is promised for ten
-    /// (`docs/spec.md`), so the remainder lives on as a chip on the home
-    /// screen.
+    /// Starting has no confirmation card — the tile moving into "Working now"
+    /// already says it worked — so this chip is the only way back from a
+    /// start under the wrong name, for ten seconds (`docs/spec.md`).
     var pendingUndo: PendingUndo?
 
     /// Bumped to fire haptics; `sensoryFeedback` watches it.
@@ -61,34 +61,26 @@ final class HomeModel {
         }
     }
 
-    /// What a confirmation card says, and what undoing it means.
+    /// What the card after a stop says. Undoing it sets the session running
+    /// again.
     struct Confirmation: Hashable {
-        enum Kind: Hashable {
-            case started
-            case stopped
-        }
-
-        var kind: Kind
         var sessionId: UUID
         var memberName: String
-        /// Set for a stop: the finished session's own summary.
-        var summary: String?
+        /// The finished session's own summary: duration, task, aircraft.
+        var summary: String
     }
 
+    /// A start that can still be taken back.
     struct PendingUndo: Identifiable, Hashable {
         var sessionId: UUID
-        var kind: Confirmation.Kind
         var memberName: String
         var expiresAt: Date
 
         var id: UUID { sessionId }
     }
 
-    /// How long undo stays available after an action, in seconds.
+    /// How long undo stays available after a start, in seconds.
     static let undoWindow: TimeInterval = 10
-
-    /// How long the confirmation card stays up before closing itself.
-    static let confirmationDuration: Duration = .seconds(3)
 
     // MARK: - Derived lists
 
@@ -104,14 +96,20 @@ final class HomeModel {
     /// Starts a session, or sends the member to the stop sheet if they are
     /// already working — which is the one thing a member on a shared device is
     /// most likely to do by accident.
+    ///
+    /// No confirmation card: the sheet closes, the tile moves into "Working
+    /// now" with its clock running, and a haptic marks the moment. A card on
+    /// top of that only stood between the member and the workshop.
     func start(member: Member, store: SessionStore) {
         do {
             let session = try store.start(member: member)
             feedback += 1
-            offerUndo(sessionId: session.id, kind: .started, memberName: member.firstName)
-            present(.confirmation(
-                Confirmation(kind: .started, sessionId: session.id, memberName: member.firstName)
-            ))
+            pendingUndo = PendingUndo(
+                sessionId: session.id,
+                memberName: member.firstName,
+                expiresAt: .now.addingTimeInterval(Self.undoWindow)
+            )
+            route = nil
         } catch SessionStore.StoreError.memberAlreadyWorking(let sessionId) {
             present(.stop(sessionId: sessionId))
         } catch {
@@ -130,13 +128,12 @@ final class HomeModel {
         do {
             try store.stop(session, task: task, aircraft: aircraft)
             feedback += 1
-            let name = member?.firstName ?? ""
-            offerUndo(sessionId: session.id, kind: .stopped, memberName: name)
+            // A start of this same session can no longer be undone.
+            if pendingUndo?.sessionId == session.id { pendingUndo = nil }
             present(.confirmation(
                 Confirmation(
-                    kind: .stopped,
                     sessionId: session.id,
-                    memberName: name,
+                    memberName: member?.firstName ?? "",
                     summary: summary(for: session, task: task, aircraft: aircraft, locale: locale)
                 )
             ))
@@ -148,8 +145,8 @@ final class HomeModel {
     /// Throws a running timer away instead of saving it.
     ///
     /// The sheet has already asked "are you sure?", so there is no confirmation
-    /// card and no undo here: the session is gone, and the "Working now" bar
-    /// shows that at once. A pending undo for that same session is dropped,
+    /// card and no undo here: the session is gone, and its tile leaves
+    /// "Working now" at once. A pending undo for that same session is dropped,
     /// because there is nothing left to undo.
     func discard(_ session: WorkSession, store: SessionStore) {
         do {
@@ -157,29 +154,39 @@ final class HomeModel {
             feedback += 1
             if pendingUndo?.sessionId == session.id { pendingUndo = nil }
         } catch {
-            // The timer is still there, which the bar behind the sheet shows.
+            // The timer is still there, which the list behind the sheet shows.
         }
         route = nil
     }
 
-    /// Takes back whatever the last action was, inside the undo window.
-    func undo(_ undo: PendingUndo, sessions: [WorkSession], store: SessionStore) {
-        guard let session = sessions.first(where: { $0.id == undo.sessionId }) else {
-            pendingUndo = nil
-            return
-        }
-
-        do {
-            switch undo.kind {
-            case .started: try store.undoStart(session)
-            case .stopped: try store.undoStop(session)
+    /// Takes a start back, inside the undo window: the session is deleted.
+    func undoStart(_ undo: PendingUndo, sessions: [WorkSession], store: SessionStore) {
+        if let session = sessions.first(where: { $0.id == undo.sessionId }) {
+            do {
+                try store.undoStart(session)
+                feedback += 1
+            } catch {
+                // Nothing to tell the member: the session is simply still
+                // there, which the list behind the chip already shows.
             }
-            feedback += 1
-        } catch {
-            // Nothing to tell the member: the session is simply still there,
-            // which the list behind the chip already shows.
         }
         pendingUndo = nil
+    }
+
+    /// Takes a stop back from its confirmation card: the session runs again.
+    ///
+    /// Possible for as long as the card is up — it stays until someone taps
+    /// outside it — rather than for a fixed window, because the card is the
+    /// only place the offer is shown.
+    func undoStop(_ confirmation: Confirmation, sessions: [WorkSession], store: SessionStore) {
+        if let session = sessions.first(where: { $0.id == confirmation.sessionId }) {
+            do {
+                try store.undoStop(session)
+                feedback += 1
+            } catch {
+                // The session stays stopped, which the list shows.
+            }
+        }
         route = nil
     }
 
@@ -212,15 +219,6 @@ final class HomeModel {
 
     func canCloseDay(runningCount: Int) -> Bool {
         SessionRules.canCloseDay(runningCount: runningCount)
-    }
-
-    private func offerUndo(sessionId: UUID, kind: Confirmation.Kind, memberName: String) {
-        pendingUndo = PendingUndo(
-            sessionId: sessionId,
-            kind: kind,
-            memberName: memberName,
-            expiresAt: .now.addingTimeInterval(Self.undoWindow)
-        )
     }
 
     private func summary(

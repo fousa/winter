@@ -55,7 +55,7 @@ One folder per screen, containing the view, the view model and the previews.
 | `Home` | Member list with the "Working now" section, search, letter index, the sync status button, the "Close day" button, the hidden entrance to Settings |
 | `StartSheet` | Confirming that the right member is starting; already working → redirect to stopping |
 | `StopSheet` | Showing the running time, picking a task/aircraft, stopping |
-| `Confirmation` | Confirmation after start/stop, with "Undo" and auto-dismiss |
+| `Confirmation` | Confirmation after a stop, with "Undo"; closed by tapping outside it |
 | `CloseDay` | Overview of the day and closing it |
 | `Sync` | Sync status, pending/rejected/uploaded sessions, retrying |
 | `Setup` | The setup assistant on first launch |
@@ -124,14 +124,14 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 ```
 Home (tap a member) → StartSheet → SessionStore.start(member)
    → WorkSession(status: .running) saved
-   → Confirmation (Undo, 10 s) → Home
+   → Home, with an Undo chip (10 s)
 ```
 
 ### Stop
 ```
-Home (tap a card in the bar) → StopSheet → SessionStore.stop(session, task, aircraft, by: .self/.other)
+Home (tap a tile in "Working now") → StopSheet → SessionStore.stop(session, task, aircraft)
    → status .completed, syncState .local
-   → Confirmation (Undo, 10 s) → Home
+   → Confirmation (Undo, until tapped away) → Home
 ```
 
 ### Closing the day and syncing

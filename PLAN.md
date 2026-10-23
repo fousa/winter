@@ -21,8 +21,8 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 2 — UI with fake data
 - [x] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.
-- [x] Home screen including search, letter index, "Often here", and "Working now" (now a section at the top of the list, with the running times).
-- [x] Start and Stop sheets, confirmations with auto-dismiss and undo, haptics.
+- [x] Home screen including search, letter index, "Recents", and "Working now" (now a section at the top of the list, with the running times).
+- [x] Start and Stop sheets, the stop confirmation and the start's undo chip, haptics.
 - [x] Close day.
 - [x] Sync screen (shows the stored sync state; the engine behind it lands in phase 4).
 - [x] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets. No `userInterfaceIdiom` or `UIScreen.main` anywhere. (Settings as one `Form` comes with the screen itself in phase 4b.)

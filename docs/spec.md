@@ -26,11 +26,11 @@ Each device has its own local database and uploads its own sessions.
 
 ## Screens (see docs/design.md for the layouts per size class)
 0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
-1. **Home** — member list ("Working now" with the running times, often here, all members; search, letter index), sync status button, "Close day" button.
+1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button, "Close day" button.
 2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
-3. **Start confirmation** — glass card, "Undo" (10 s), dismisses itself after 3 s.
+3. **Start** has no confirmation of its own: the tile moves into "Working now", a haptic fires, and an "Undo" chip stays for 10 s.
 4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save"; a trash menu to delete the timer instead, with the confirmation inside the menu.
-5. **Stop confirmation** — duration, task/aircraft, "Undo", dismisses itself after 3 s.
+5. **Stop confirmation** — duration, task/aircraft, "Undo"; stays until someone taps outside it.
 6. **Close day** — overview of the day, flagged sessions, "Close day".
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, "Try again now".
 
@@ -40,15 +40,15 @@ Each device has its own local database and uploads its own sessions.
 1. The member taps their tile (home screen).
 2. The "Start" sheet appears → tap "Start".
 3. The session is saved immediately (`status = .running`, `start = now`).
-4. A confirmation with "Undo" for 10 s (which deletes the session entirely).
+4. No confirmation card: the sheet closes and the tile moves into "Working now" with its clock running. An "Undo" chip at the bottom of the screen stays for 10 s (undo deletes the session entirely).
 - The member already has a running session → instead the sheet shows "You have been working since 09:12" with a "Stop" button (which leads to Stopping).
 
 ### Stopping
-1. Someone taps a tile in "Working now" at the top of the list, or the member's own tile further down (their own timer or someone else's).
+1. Someone taps the member's tile in "Working now" at the top of the list (their own timer or someone else's). While a timer runs, that is the member's only tile; search finds it there too.
 2. The "Stop" sheet shows the person, the start time and the running duration.
 3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` the aircraft picker appears (from `material.json`, plus "Other").
 4. "Stop and save" → `stop = now`, `status = .completed`, `syncState = .local`.
-5. A confirmation with "Undo" (10 s, which puts the session back to running).
+5. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
 - Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.
 
 ### Deleting instead of stopping
@@ -99,7 +99,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 ### Member list and avatars
 - On every successful sync: `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
 - **Members always show initials** in a colour derived from their id: `accounts.json` carries no photo, avatar or image field for any member (verified against a real club, see [zweef-api.md](zweef-api.md)). There is nothing to download and no photo cache.
-- "Often here": the top 5 members by number of sessions in the last 30 days, otherwise by last seen.
+- "Recents" (nl "Recent", fr "Récents"): the top 5 members by number of sessions in the last 30 days, otherwise by last seen.
 - Search on first and last name, diacritics-insensitive.
 
 ## Configuration (open source)

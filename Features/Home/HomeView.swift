@@ -21,6 +21,9 @@ struct HomeView: View {
 
     @State private var model = HomeModel()
     @State private var path: [Destination] = []
+    /// Ties a member's tile in "Working now" to their tile in the letter
+    /// sections, so starting or stopping moves the tile instead of swapping it.
+    @Namespace private var tiles
 
     /// The pushed screens.
     enum Destination: Hashable {
@@ -68,6 +71,9 @@ struct HomeView: View {
             }
         }
         .sensoryFeedback(.success, trigger: model.feedback)
+        #if DEBUG
+        .task { openSampleScreen() }
+        #endif
         .keepScreenAwake(!runningSessions.isEmpty)
         .resolvedLayoutMetrics()
     }
@@ -80,30 +86,40 @@ struct HomeView: View {
                 LazyVStack(alignment: .leading, spacing: metrics.sectionSpacing) {
                     // Who is working comes first, with their running time:
                     // stopping is the other half of what this screen is for.
-                    if model.searchText.isEmpty, !runningSessions.isEmpty {
+                    // Searched like everyone else, so typing a name finds a
+                    // member whether or not their timer is running.
+                    if !workingNow.isEmpty {
                         workingNowSection
                     }
 
                     if model.searchText.isEmpty, !oftenHere.isEmpty {
-                        section(title: Text("Often here"), members: oftenHere)
+                        section(title: Text("Recents"), members: oftenHere, movesTiles: false)
                     }
 
-                    if sections.isEmpty {
+                    if sections.isEmpty, workingNow.isEmpty {
                         ContentUnavailableView.search(text: model.searchText)
                             .frame(maxWidth: .infinity)
                             .padding(.top, 40)
+                    } else if !model.searchText.isEmpty {
+                        // One titled section rather than letters: a handful of
+                        // results needs no index, but under "Working now" it
+                        // does need a name, or it reads as part of it.
+                        if !sections.isEmpty {
+                            section(title: Text("Members"), members: sections.flatMap(\.members))
+                        }
                     } else {
                         ForEach(sections) { group in
                             section(
-                                title: model.searchText.isEmpty && !isCompact
-                                    ? Text(verbatim: group.letter)
-                                    : nil,
+                                title: isCompact ? nil : Text(verbatim: group.letter),
                                 members: group.members
                             )
                             .id(group.letter)
                         }
                     }
                 }
+                // Starting or stopping — from a sheet, an undo, or the closing
+                // time — moves the tile between the sections in one motion.
+                .animation(.smooth, value: runningSessions.map(\.id))
                 .padding(.horizontal, metrics.gutter)
                 .padding(.vertical, metrics.sectionSpacing)
             }
@@ -117,16 +133,26 @@ struct HomeView: View {
         }
     }
 
-    private func section(title: Text?, members: [Member]) -> some View {
+    /// - Parameter movesTiles: Whether these tiles take part in the move to
+    ///   and from "Working now". Only one place per member may: "Recents"
+    ///   repeats members from the letter sections, and a geometry group with
+    ///   two tiles in it has no single place to fly from. Those tiles get an
+    ///   id of their own, which matches nothing.
+    private func section(title: Text?, members: [Member], movesTiles: Bool = true) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             if let title {
                 sectionTitle(title)
             }
             tileGrid {
                 ForEach(members) { member in
-                    MemberTile(member: member, workingSince: runningStart(of: member)) {
-                        tap(member)
+                    MemberTile(member: member) {
+                        model.route = .start(memberId: member.zweefId)
                     }
+                    .matchedGeometryEffect(
+                        id: movesTiles ? AnyHashable(member.zweefId) : AnyHashable("often-\(member.zweefId)"),
+                        in: tiles
+                    )
+                    .transition(tileTransition)
                 }
             }
         }
@@ -137,18 +163,23 @@ struct HomeView: View {
     private var workingNowSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle(Text("Working now"))
-            tileGrid {
-                ForEach(runningSessions) { session in
-                    if let member = membersById[session.memberId] {
-                        MemberTile(member: member, workingSince: session.start, showsTimer: true) {
-                            model.route = .stop(sessionId: session.id)
-                        }
+            tileGrid(minimumWidth: metrics.workingTileMinimumWidth) {
+                ForEach(workingNow, id: \.session.id) { session, member in
+                    MemberTile(member: member, workingSince: session.start) {
+                        model.route = .stop(sessionId: session.id)
                     }
+                    .matchedGeometryEffect(id: AnyHashable(member.zweefId), in: tiles)
+                    .transition(tileTransition)
                 }
             }
         }
         .accessibilityElement(children: .contain)
-        .animation(.smooth, value: runningSessions.map(\.id))
+    }
+
+    /// For a tile with no counterpart on screen to move from — a section that
+    /// is scrolled away, or a timer deleted outright.
+    private var tileTransition: AnyTransition {
+        .scale(scale: 0.85).combined(with: .opacity)
     }
 
     private func sectionTitle(_ title: Text) -> some View {
@@ -157,9 +188,12 @@ struct HomeView: View {
             .foregroundStyle(.secondary)
     }
 
-    private func tileGrid(@ViewBuilder content: () -> some View) -> some View {
+    private func tileGrid(
+        minimumWidth: CGFloat? = nil,
+        @ViewBuilder content: () -> some View
+    ) -> some View {
         LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: metrics.tileMinimumWidth), spacing: 10)],
+            columns: [GridItem(.adaptive(minimum: minimumWidth ?? metrics.tileMinimumWidth), spacing: 10)],
             spacing: 10,
             content: content
         )
@@ -169,7 +203,7 @@ struct HomeView: View {
     private var bottomBar: some View {
         if let undo = model.pendingUndo {
             UndoChip(undo: undo) {
-                model.undo(undo, sessions: sessions, store: store)
+                model.undoStart(undo, sessions: sessions, store: store)
             } onExpire: {
                 model.expireUndo()
             }
@@ -235,7 +269,7 @@ struct HomeView: View {
             .disabled(!canCloseDay)
             .accessibilityHint(
                 canCloseDay
-                    ? Text("Sends today's hours to zweef.app")
+                    ? Text("Checks and closes today's hours")
                     : Text("Stop the running timers first")
             )
         }
@@ -289,11 +323,10 @@ struct HomeView: View {
             }
 
         case .confirmation(let confirmation):
+            // Closed by a swipe or a tap above it, like any sheet.
             ConfirmationView(confirmation: confirmation) {
-                if let undo = model.pendingUndo {
-                    model.undo(undo, sessions: sessions, store: store)
-                }
-            } onDone: {
+                model.undoStop(confirmation, sessions: sessions, store: store)
+            } onDismiss: {
                 model.route = nil
             }
             .presentationDetents([.medium])
@@ -307,10 +340,8 @@ struct HomeView: View {
                 .onTapGesture { withAnimation(.smooth) { model.route = nil } }
 
             ConfirmationView(confirmation: confirmation) {
-                if let undo = model.pendingUndo {
-                    withAnimation(.smooth) { model.undo(undo, sessions: sessions, store: store) }
-                }
-            } onDone: {
+                withAnimation(.smooth) { model.undoStop(confirmation, sessions: sessions, store: store) }
+            } onDismiss: {
                 withAnimation(.smooth) { model.route = nil }
             }
             .frame(maxWidth: 480)
@@ -336,12 +367,28 @@ struct HomeView: View {
         Dictionary(members.map { ($0.zweefId, $0) }, uniquingKeysWith: { first, _ in first })
     }
 
+    /// The running timers that match the search, with their member.
+    private var workingNow: [(session: WorkSession, member: Member)] {
+        runningSessions.compactMap { session in
+            guard let member = membersById[session.memberId],
+                  MemberDirectory.matches(member, query: model.searchText)
+            else { return nil }
+            return (session, member)
+        }
+    }
+
+    /// Everyone without a running timer: a working member's tile is in
+    /// "Working now" only.
+    private var idleMembers: [Member] {
+        MemberDirectory.idle(members, workingIds: Set(runningSessions.map(\.memberId)))
+    }
+
     private var sections: [MemberSection<Member>] {
-        MemberDirectory.sections(for: MemberDirectory.search(members, query: model.searchText))
+        MemberDirectory.sections(for: MemberDirectory.search(idleMembers, query: model.searchText))
     }
 
     private var oftenHere: [Member] {
-        MemberDirectory.oftenHere(from: members, sessionCounts: model.sessionCounts(for: sessions))
+        MemberDirectory.oftenHere(from: idleMembers, sessionCounts: model.sessionCounts(for: sessions))
     }
 
     private var clubName: String {
@@ -355,18 +402,26 @@ struct HomeView: View {
         return String(localized: "Maintenance hours · \(today) · tap your name to start")
     }
 
-    private func runningStart(of member: Member) -> Date? {
-        runningSessions.first { $0.memberId == member.zweefId }?.start
-    }
+}
 
-    private func tap(_ member: Member) {
-        if let running = runningSessions.first(where: { $0.memberId == member.zweefId }) {
-            model.route = .stop(sessionId: running.id)
-        } else {
-            model.route = .start(memberId: member.zweefId)
+#if DEBUG
+extension HomeView {
+    /// `-sampleScreen sync` or `-sampleScreen closeDay`, next to `-sampleClub`:
+    /// opens that screen on launch so it can be looked at on a simulator
+    /// (CONTRIBUTING.md).
+    fileprivate func openSampleScreen() {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-sampleScreen"),
+              arguments.indices.contains(index + 1)
+        else { return }
+        switch arguments[index + 1] {
+        case "sync": path = [.sync]
+        case "closeDay": path = [.closeDay]
+        default: break
         }
     }
 }
+#endif
 
 #Preview("iPad · nobody working", traits: .landscapeLeft) {
     let container = try! SampleData.container()

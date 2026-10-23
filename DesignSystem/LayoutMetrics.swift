@@ -21,6 +21,9 @@ struct LayoutMetrics: Equatable, Sendable {
     var sectionSpacing: CGFloat
     /// Narrowest a member tile may get before the grid drops a column.
     var tileMinimumWidth: CGFloat
+    /// Narrowest a "Working now" tile may get. Wider than a plain tile,
+    /// because the name has to stay readable next to nothing but the avatar.
+    var workingTileMinimumWidth: CGFloat
     var tileHeight: CGFloat
     var tileCornerRadius: CGFloat
     /// Avatar on a member tile.
@@ -28,7 +31,7 @@ struct LayoutMetrics: Equatable, Sendable {
     var cardCornerRadius: CGFloat
     /// Height of a primary action button ("Start", "Stop and save").
     var primaryButtonHeight: CGFloat
-    /// The running timer in the bar.
+    /// The running time on a "Working now" tile.
     var timerFontSize: CGFloat
     /// The big timer on the stop sheet.
     var displayTimerFontSize: CGFloat
@@ -37,6 +40,7 @@ struct LayoutMetrics: Equatable, Sendable {
         gutter: 24,
         sectionSpacing: 28,
         tileMinimumWidth: 200,
+        workingTileMinimumWidth: 280,
         tileHeight: 84,
         tileCornerRadius: 24,
         avatarSize: 52,
@@ -50,6 +54,7 @@ struct LayoutMetrics: Equatable, Sendable {
         gutter: 16,
         sectionSpacing: 20,
         tileMinimumWidth: 150,
+        workingTileMinimumWidth: 220,
         tileHeight: 76,
         tileCornerRadius: 20,
         avatarSize: 44,

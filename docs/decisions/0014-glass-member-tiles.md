@@ -19,8 +19,9 @@ than as things to tap, and the project owner asked for glass tiles.
 Member tiles on the home screen are interactive Liquid Glass
 (`.glassEffect(.regular.interactive())`): they lift and shimmer under a finger
 like any other iOS 26 control. The running timers sit in the same tiles in a
-"Working now" section at the top of the list, with a faint green tint on their
-glass.
+"Working now" section at the top of the list, in the same untinted glass and with
+the time in the primary text colour: the section and the time say what is
+going on, not a colour.
 
 Everything else in ADR 0006 stands. Lists, stat cards and the rows on the
 close-day and sync screens are content and stay opaque.

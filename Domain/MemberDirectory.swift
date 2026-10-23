@@ -17,10 +17,10 @@ protocol MemberListItem {
 /// Pure functions, so the ranking that decides who gets the big tiles can be
 /// tested instead of being eyeballed in a simulator.
 enum MemberDirectory {
-    /// How far back "often here" looks.
+    /// How far back "Recents" looks.
     static let recencyWindow: TimeInterval = 30 * 24 * 60 * 60
 
-    /// How many members get a tile in "often here".
+    /// How many members get a tile in "Recents".
     static let oftenHereLimit = 5
 
     /// Whether a member matches what someone typed.
@@ -34,6 +34,16 @@ enum MemberDirectory {
 
         return [item.firstName, item.lastName, "\(item.firstName) \(item.lastName)"]
             .contains { $0.folded.contains(query.folded) }
+    }
+
+    /// The members without a running timer.
+    ///
+    /// A working member's tile moves to "Working now" rather than appearing
+    /// twice, so the alphabetical list and "Recents" are built from the
+    /// rest — and "Recents" fills its five places with people who can
+    /// actually start.
+    static func idle<Item: MemberListItem>(_ items: [Item], workingIds: Set<Int>) -> [Item] {
+        items.filter { !workingIds.contains($0.memberId) }
     }
 
     static func search<Item: MemberListItem>(_ items: [Item], query: String) -> [Item] {
@@ -65,7 +75,7 @@ enum MemberDirectory {
     ///
     /// Ranked by how many sessions they logged in the last 30 days, then by who
     /// was here most recently. Members who have never been seen are left out:
-    /// on a fresh install "often here" should be empty rather than show five
+    /// on a fresh install "Recents" should be empty rather than show five
     /// arbitrary names.
     static func oftenHere<Item: MemberListItem>(
         from items: [Item],

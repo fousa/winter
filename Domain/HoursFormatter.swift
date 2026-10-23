@@ -32,4 +32,18 @@ enum HoursFormatter {
             .locale(locale)
         )
     }
+
+    /// A running time as short as a tile can take it: "46m", "1h05m",
+    /// "12h30m".
+    ///
+    /// No leading zero on the hours, and no hours at all under one: "00h46m"
+    /// made every tile start with the same two characters. The minutes keep
+    /// their zero once there are hours, so "1h05m" cannot be misread as
+    /// "1h50m". The same in every language — "h" and "m" are what a clock in
+    /// the hangar shows too.
+    static func compactDuration(minutes: Minutes) -> String {
+        let hours = minutes / 60
+        let rest = minutes % 60
+        return hours == 0 ? "\(rest)m" : "\(hours)h" + String(format: "%02dm", rest)
+    }
 }
