@@ -113,6 +113,22 @@
         }
       }
     },
+    "Aircraft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appareil"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toestel"
+          }
+        }
+      }
+    },
     "Also from earlier days": {
       "localizations": {
         "fr": {
@@ -237,6 +253,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Controleert en sluit de uren van vandaag af"
+          }
+        }
+      }
+    },
+    "Choose the aircraft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir l'appareil"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kies het toestel"
           }
         }
       }
@@ -1089,6 +1121,22 @@
         }
       }
     },
+    "No aircraft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun appareil"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen toestel"
+          }
+        }
+      }
+    },
     "No code is set on this device.": {
       "localizations": {
         "fr": {
@@ -1281,6 +1329,22 @@
         }
       }
     },
+    "Opens the list of aircraft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre la liste des appareils"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opent de lijst met toestellen"
+          }
+        }
+      }
+    },
     "Optional": {
       "localizations": {
         "fr": {
@@ -1405,6 +1469,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Refusé : vérifiez la clé API."
+          }
+        }
+      }
+    },
+    "Registration or type": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immatriculation ou type"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registratie of type"
           }
         }
       }
@@ -1767,6 +1847,22 @@
         }
       }
     },
+    "Stop %@'s timer?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter le chronomètre de %@ ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De timer van %@ stoppen?"
+          }
+        }
+      }
+    },
     "Stop and save": {
       "localizations": {
         "fr": {
@@ -1811,6 +1907,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stop ze eerst, sluit daarna de dag af."
+          }
+        }
+      }
+    },
+    "Stop this timer?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter ce chronomètre ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze timer stoppen?"
           }
         }
       }

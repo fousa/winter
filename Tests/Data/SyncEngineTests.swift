@@ -401,6 +401,22 @@ struct SyncEngineTests {
         #expect(aircraft.first { $0.zweefId == 1 }?.typeName == "Schleicher ASK 21")
     }
 
+    @Test("Aircraft stored before types were read are refreshed at once, not after six hours")
+    @MainActor
+    func refreshesAircraftWithoutAType() async throws {
+        let fixture = try makeFixture(now: date(15, 12))
+        fixture.container.mainContext.insert(Aircraft(zweefId: 1, name: "ASK 21"))
+        try fixture.container.mainContext.save()
+
+        let outcome = await fixture.engine.requestSync(.appBecameActive)
+
+        #expect(outcome.refreshed)
+        let aircraft = try fixture.container.mainContext.fetch(FetchDescriptor<Aircraft>())
+        #expect(aircraft.first { $0.zweefId == 1 }?.typeName == "Schleicher ASK 21")
+        // Nothing is left as nil, so the next run does not refresh again.
+        #expect(aircraft.allSatisfy { $0.typeName != nil })
+    }
+
     @Test("A refresh within six hours is skipped")
     @MainActor
     func skipsRefreshWhenRecent() async throws {

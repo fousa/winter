@@ -14,7 +14,8 @@ final class Aircraft {
     var registration: String?
     /// The make and model from zweef.app ("Schleicher ASK 21"), shown under
     /// the name so a member who knows the type but not the registration finds
-    /// the right one.
+    /// the right one. Empty when zweef.app has none, nil when it has not been
+    /// fetched yet; show ``displayType``.
     var typeName: String?
     /// Gliders are offered first, because glider maintenance is what most
     /// workshop hours are spent on.

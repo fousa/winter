@@ -32,7 +32,7 @@ struct StopSheet: View {
 
     @State private var selectedTask: TaskDefinition?
     @State private var selectedAircraft: Aircraft?
-    @State private var isConfirmingShortSession = false
+    @State private var isPickingAircraft = false
 
     /// One column once the width is compact, and also once the text is large:
     /// two columns of accessibility-sized type fit nowhere.
@@ -84,15 +84,10 @@ struct StopSheet: View {
                     discardMenu
                 }
             }
-            .confirmationDialog(
-                shortSessionQuestion,
-                isPresented: $isConfirmingShortSession,
-                titleVisibility: .visible
-            ) {
-                Button("Stop and save") { stop() }
-                Button("Keep working", role: .cancel) {}
-            } message: {
-                Text("That looks short. Saving it is fine — the board sees it marked as a short session.")
+            .sheet(isPresented: $isPickingAircraft) {
+                AircraftPicker(aircraft: aircraft, selected: selectedAircraft) { plane in
+                    selectedAircraft = plane
+                }
             }
         }
         .presentationSizing(.page)
@@ -129,17 +124,31 @@ struct StopSheet: View {
         }
     }
 
+    /// A menu, like the trash button: the question as its header, the
+    /// confirmation and a way out under the finger that tapped. A stopped
+    /// timer is saved and on its way to the board, so one stray tap on a
+    /// shared device should not do it. A short session asks whether the time
+    /// is right instead, since that is the likelier mistake.
     private var stopButton: some View {
-        Button {
-            if isShortSession {
-                isConfirmingShortSession = true
-            } else {
-                stop()
+        Menu {
+            Section {
+                Button {
+                    stop()
+                } label: {
+                    Label("Stop and save", systemImage: "stop.fill")
+                    if isShortSession {
+                        Text("That looks short. Saving it is fine — the board sees it marked as a short session.")
+                    }
+                }
+                Button("Keep working", systemImage: "arrow.uturn.backward") {}
+            } header: {
+                isShortSession ? shortSessionQuestion : stopQuestion
             }
         } label: {
             Label("Stop and save", systemImage: "stop.fill")
                 .frame(maxWidth: .infinity, minHeight: metrics.primaryButtonHeight)
         }
+        .menuStyle(.button)
         .buttonStyle(.glassProminent)
         .tint(.stopAction)
     }
@@ -207,7 +216,7 @@ struct StopSheet: View {
                     .accessibilityAddTraits(selectedTask?.key == task.key ? [.isSelected] : [])
 
                     if selectedTask?.key == task.key, task.asksForAircraft, !aircraft.isEmpty {
-                        aircraftRows
+                        aircraftRow
                     }
 
                     if task.key != tasks.last?.key {
@@ -223,54 +232,45 @@ struct StopSheet: View {
         }
     }
 
-    /// The aircraft, unfolded under the task that asks for one.
-    ///
-    /// Rows in the same table rather than capsules beside it: there is room
-    /// for the type under each registration, and a member who knows "the
-    /// ASK 21" but not "OO-ZXA" can still find it. Indented to the task's
-    /// label, so they read as belonging to it.
-    private var aircraftRows: some View {
+    /// The chosen aircraft, under the task that asks for one; tapping it
+    /// opens the picker again.
+    private var aircraftRow: some View {
         VStack(spacing: 0) {
-            ForEach(aircraft) { plane in
-                Divider().padding(.leading, 56)
-                aircraftRow(plane)
+            Divider().padding(.leading, 56)
+            Button {
+                isPickingAircraft = true
+            } label: {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        if let plane = selectedAircraft {
+                            Text(plane.name)
+                                .font(.body.weight(.medium))
+                            if let type = plane.displayType {
+                                Text(type)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else {
+                            Text("Choose the aircraft")
+                                .foregroundStyle(.tint)
+                        }
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+                .padding(.leading, 56)
+                .padding(.trailing, 14)
+                .padding(.vertical, 8)
+                .frame(minHeight: LayoutMetrics.minimumTapTarget + 8)
+                .contentShape(.rect)
             }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .combine)
+            .accessibilityHint(Text("Opens the list of aircraft"))
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
-    }
-
-    private func aircraftRow(_ plane: Aircraft) -> some View {
-        let isSelected = selectedAircraft?.zweefId == plane.zweefId
-        return Button {
-            withAnimation(.smooth) {
-                selectedAircraft = isSelected ? nil : plane
-            }
-        } label: {
-            HStack(spacing: 12) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(plane.name)
-                        .font(.body.weight(.medium))
-                    if let type = plane.typeName {
-                        Text(type)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-                Spacer()
-                if isSelected {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.tint)
-                }
-            }
-            .padding(.leading, 56)
-            .padding(.trailing, 14)
-            .padding(.vertical, 8)
-            .frame(minHeight: LayoutMetrics.minimumTapTarget + 8)
-            .contentShape(.rect)
-        }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 
     // MARK: - Actions
@@ -284,6 +284,13 @@ struct StopSheet: View {
     private var shortSessionQuestion: Text {
         let minutes = SessionRules.duration(start: session.start, stop: .now)
         return Text("Is \(HoursFormatter.durationText(minutes: minutes, locale: locale)) right?")
+    }
+
+    private var stopQuestion: Text {
+        if let member {
+            return Text("Stop \(member.firstName)'s timer?")
+        }
+        return Text("Stop this timer?")
     }
 
     private var discardQuestion: Text {
@@ -303,6 +310,11 @@ struct StopSheet: View {
                 selectedTask = task
                 if !task.asksForAircraft { selectedAircraft = nil }
             }
+        }
+        // Picking Glider goes straight on to which one: that is the next
+        // question anyway.
+        if selectedTask?.key == task.key, task.asksForAircraft, !aircraft.isEmpty, selectedAircraft == nil {
+            isPickingAircraft = true
         }
     }
 

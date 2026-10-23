@@ -208,11 +208,17 @@ actor SyncEngine {
     private func refreshIfDue(in context: ModelContext, api: any ZweefAPI) async throws -> Bool {
         let settings = try settings(in: context)
         let memberCount = try context.fetchCount(FetchDescriptor<Member>())
+        // Aircraft stored before the type was read have it as nil rather than
+        // a string; fetching once more fills it in, instead of leaving the
+        // picker without types for up to six hours.
+        let aircraftWithoutType = try context.fetchCount(
+            FetchDescriptor<Aircraft>(predicate: #Predicate { $0.typeName == nil })
+        )
 
         guard RefreshPolicy.shouldRefresh(
             lastRefresh: settings.lastRefreshAt,
             now: now(),
-            cacheIsEmpty: memberCount == 0
+            cacheIsEmpty: memberCount == 0 || aircraftWithoutType > 0
         ) else { return false }
 
         // The club name is a nice-to-have: club.json answers 500 for a real
@@ -273,9 +279,9 @@ actor SyncEngine {
             .reduce(into: [Int: Aircraft]()) { $0[$1.zweefId] = $1 }
 
         for item in material where item.isAircraft {
-            // An empty type is as good as none, and should not leave a blank
-            // line under the name.
-            let typeName = item.type.flatMap { $0.isEmpty ? nil : $0 }
+            // Stored as "" when zweef.app has no type: nil is kept for "never
+            // fetched", which makes the next run refresh (`refreshIfDue`).
+            let typeName = item.type ?? ""
             if let aircraft = existing[item.id] {
                 aircraft.name = item.name
                 aircraft.typeName = typeName
