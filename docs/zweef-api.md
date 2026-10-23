@@ -41,6 +41,7 @@ A bare array of aircraft *and* ground equipment.
 | `name` | string | What the aircraft picker shows; usually the registration |
 | `type` | string | The make and model ("Schleicher ASK 21"), shown under the name in the picker |
 | `category` | `kist`, `rollend`, `overig` | `kist` = aircraft, the rest is winches, cars, buildings |
+| `kist_category` | `club`, `prive`, or null | Who owns the aircraft. Only `club` aircraft are offered when stopping a timer: maintenance hours are club work |
 | `kist_configuration` | `Glider`, `TMG`, `Sustainer`, `Self-launching`, `""`, or the key is absent | Gliders are offered first |
 | `status` | `in bedrijf`, `niet inzetbaar` | |
 

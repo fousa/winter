@@ -20,6 +20,7 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
     var zweefId: Int
     var name: String              // what the club calls it, usually the registration ("OO-ZXA")
     var registration: String?
+    var isClubOwned: Bool?        // material.json `kist_category == "club"`; nil before the first fetch
     var typeName: String?         // material.json `type`, e.g. "Schleicher ASK 21"; "" when there is none, nil before the first fetch
     var isGlider: Bool
 }

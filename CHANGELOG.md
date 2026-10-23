@@ -56,6 +56,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - Buttons are the system's standard size everywhere ("Start", "Stop and save", "Upload", "Next", "Test connection"), no longer full-width 56–64 pt slabs. `LayoutMetrics.primaryButtonHeight` is gone.
 - The stop sheet is a smaller form sheet in one column, and puts "Stop and save" right under the time, and writes the time as everywhere else ("46m", "1h05m") in the primary colour instead of a green clock with an "hours : minutes" caption. The tasks are a grid of glass tiles instead of a table, with the chosen aircraft in a glass row under it.
 - Debug builds take `-sampleScreen stop` too, which opens the stop sheet of the first running timer.
+- The aircraft picker offers only the club's own aircraft (`kist_category` "club"), not members' private gliders, and opens as a form sheet the size of the stop sheet.
 
 ### Fixed
 - The sync screen said "This device has no zweef.app connection configured yet" on a connected device, a placeholder from before the setup assistant existed. It now says why hours are waiting. The two counters line up at the top.

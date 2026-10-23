@@ -46,7 +46,7 @@ Each device has its own local database and uploads its own sessions.
 ### Stopping
 1. Someone taps the member's tile in "Working now" at the top of the list (their own timer or someone else's). While a timer runs, that is the member's only tile; search finds it there too.
 2. The "Stop" sheet shows the person, the start time and the running duration.
-3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` a searchable picker of aircraft opens (from `material.json`, each with its registration and type).
+3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` a searchable picker of the club's own aircraft opens (from `material.json`, each with its registration and type; private gliders are left out).
 4. "Stop and save" opens a confirmation menu ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
 5. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
 - Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.

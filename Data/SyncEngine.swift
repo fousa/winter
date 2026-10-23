@@ -208,11 +208,11 @@ actor SyncEngine {
     private func refreshIfDue(in context: ModelContext, api: any ZweefAPI) async throws -> Bool {
         let settings = try settings(in: context)
         let memberCount = try context.fetchCount(FetchDescriptor<Member>())
-        // Aircraft stored before the type was read have it as nil rather than
-        // a string; fetching once more fills it in, instead of leaving the
-        // picker without types for up to six hours.
+        // Aircraft stored before the type and the owner were read have them
+        // as nil; fetching once more fills them in, instead of leaving the
+        // picker incomplete for up to six hours.
         let aircraftWithoutType = try context.fetchCount(
-            FetchDescriptor<Aircraft>(predicate: #Predicate { $0.typeName == nil })
+            FetchDescriptor<Aircraft>(predicate: #Predicate { $0.typeName == nil || $0.isClubOwned == nil })
         )
 
         guard RefreshPolicy.shouldRefresh(
@@ -285,6 +285,7 @@ actor SyncEngine {
             if let aircraft = existing[item.id] {
                 aircraft.name = item.name
                 aircraft.typeName = typeName
+                aircraft.isClubOwned = item.isClubOwned
                 aircraft.isGlider = item.isGlider
             } else {
                 context.insert(Aircraft(
@@ -292,6 +293,7 @@ actor SyncEngine {
                     name: item.name,
                     registration: nil,
                     typeName: typeName,
+                    isClubOwned: item.isClubOwned,
                     isGlider: item.isGlider
                 ))
             }

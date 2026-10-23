@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Picks the aircraft the work was on: a searchable grid of glass tiles.
+/// Picks the aircraft the work was on: a searchable grid of glass tiles, in a
+/// form sheet the size of the stop sheet it opens from.
 ///
 /// A sheet of its own rather than rows under the task, because a club can have
 /// a dozen aircraft or more, and a member who remembers "the Discus" but not
@@ -59,7 +60,7 @@ struct AircraftPicker: View {
                 }
             }
         }
-        .presentationSizing(.page)
+        .presentationSizing(.form)
         .resolvedLayoutMetrics()
     }
 

@@ -17,6 +17,10 @@ final class Aircraft {
     /// the right one. Empty when zweef.app has none, nil when it has not been
     /// fetched yet; show ``displayType``.
     var typeName: String?
+    /// Whether the club owns it rather than a member (`kist_category`). Nil
+    /// until the first refresh that read it; only club aircraft are offered
+    /// when stopping a timer.
+    var isClubOwned: Bool?
     /// Gliders are offered first, because glider maintenance is what most
     /// workshop hours are spent on.
     var isGlider: Bool
@@ -26,12 +30,14 @@ final class Aircraft {
         name: String,
         registration: String? = nil,
         typeName: String? = nil,
+        isClubOwned: Bool? = true,
         isGlider: Bool = true
     ) {
         self.zweefId = zweefId
         self.name = name
         self.registration = registration
         self.typeName = typeName
+        self.isClubOwned = isClubOwned
         self.isGlider = isGlider
     }
 }

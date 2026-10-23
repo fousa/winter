@@ -394,18 +394,22 @@ struct SyncEngineTests {
         let members = try fixture.container.mainContext.fetch(FetchDescriptor<Member>())
         #expect(members.count == 4)
         let aircraft = try fixture.container.mainContext.fetch(FetchDescriptor<Aircraft>())
-        // Three items of material, but the winch is not an aircraft.
-        #expect(aircraft.count == 2)
+        // Three aircraft — the club's two and a member's own — but the winch
+        // is not an aircraft.
+        #expect(aircraft.count == 3)
         #expect(aircraft.allSatisfy { $0.isGlider })
         // The type travels along, so the stop sheet can show it under the name.
         #expect(aircraft.first { $0.zweefId == 1 }?.typeName == "Schleicher ASK 21")
+        // And the owner, so only the club's aircraft are offered.
+        #expect(aircraft.first { $0.zweefId == 1 }?.isClubOwned == true)
+        #expect(aircraft.first { $0.zweefId == 3 }?.isClubOwned == false)
     }
 
     @Test("Aircraft stored before types were read are refreshed at once, not after six hours")
     @MainActor
     func refreshesAircraftWithoutAType() async throws {
         let fixture = try makeFixture(now: date(15, 12))
-        fixture.container.mainContext.insert(Aircraft(zweefId: 1, name: "ASK 21"))
+        fixture.container.mainContext.insert(Aircraft(zweefId: 1, name: "ASK 21", isClubOwned: nil))
         try fixture.container.mainContext.save()
 
         let outcome = await fixture.engine.requestSync(.appBecameActive)

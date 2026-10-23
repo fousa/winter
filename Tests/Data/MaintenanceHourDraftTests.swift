@@ -147,7 +147,7 @@ struct FakeZweefAPITests {
         let api = FakeZweefAPI()
 
         #expect(try await api.accounts(inactiveOnly: false).count == 4)
-        #expect(try await api.material().count == 3)
+        #expect(try await api.material().count == 4)
         #expect(try await api.activePeriodId() == 1)
         #expect(try await api.club().name == "Gliding Club Example")
         #expect(await api.callLog == ["accounts", "material", "hours", "club"])

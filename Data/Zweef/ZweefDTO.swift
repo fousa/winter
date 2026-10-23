@@ -36,6 +36,9 @@ struct ZweefMaterial: Decodable, Equatable, Sendable {
     /// "Glider", "TMG", "Sustainer", "Self-launching", or absent for anything
     /// that is not an aircraft. Absent *and* empty both occur.
     let kistConfiguration: String?
+    /// Who owns the aircraft: "club" for the club's fleet, "prive" for a
+    /// member's own, null for anything that is not an aircraft.
+    let kistCategory: String?
     /// "in bedrijf" or "niet inzetbaar".
     let status: String
     let isVisible: Bool
@@ -46,6 +49,10 @@ struct ZweefMaterial: Decodable, Equatable, Sendable {
     /// Whether it is an unpowered glider, which is what most workshop hours go
     /// into.
     var isGlider: Bool { kistConfiguration == "Glider" }
+
+    /// Whether the club owns it. Maintenance hours are club work, so the
+    /// aircraft picker offers only these.
+    var isClubOwned: Bool { kistCategory == "club" }
 }
 
 /// A maintenance-hour registration as zweef.app stores it, from

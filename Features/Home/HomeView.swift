@@ -305,7 +305,10 @@ struct HomeView: View {
                     session: session,
                     member: membersById[session.memberId],
                     tasks: tasks.filter { !$0.isArchived },
-                    aircraft: aircraft
+                    // Club work on club aircraft: members' own gliders are not
+                    // offered. Unknown ownership (nil, before the refresh that
+                    // reads it) still shows, rather than an empty picker.
+                    aircraft: aircraft.filter { $0.isClubOwned != false }
                 ) { task, plane in
                     model.stop(
                         session,
