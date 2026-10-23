@@ -26,10 +26,14 @@ struct StringCatalogTests {
             let comment: String?
         }
 
-        /// Either one value or a set of plural variations.
+        /// One value, a set of plural variations, or a value with named
+        /// substitutions that carry the variations (the shape Xcode uses when
+        /// a counted string also has a second number, so the plural is tied
+        /// to one argument).
         struct Localisation: Decodable {
             let stringUnit: Unit?
             let variations: Variations?
+            let substitutions: [String: Substitution]?
 
             struct Unit: Decodable {
                 let state: String
@@ -44,11 +48,30 @@ struct StringCatalogTests {
                 }
             }
 
-            /// Whether this language actually has text, in either shape.
+            struct Substitution: Decodable {
+                let argNum: Int?
+                let variations: Variations?
+            }
+
+            /// Every set of plural cases this language carries, wherever
+            /// they sit: a counted string has exactly one.
+            var pluralCases: [[String: Variations.PluralCase]] {
+                var sets: [[String: Variations.PluralCase]] = []
+                if let plural = variations?.plural { sets.append(plural) }
+                for substitution in (substitutions ?? [:]).values {
+                    if let plural = substitution.variations?.plural { sets.append(plural) }
+                }
+                return sets
+            }
+
+            /// Whether this language actually has text, in any shape.
             var hasText: Bool {
-                if let unit = stringUnit { return !unit.value.isEmpty }
-                guard let cases = variations?.plural, !cases.isEmpty else { return false }
-                return cases.values.allSatisfy { $0.stringUnit?.value.isEmpty == false }
+                if let unit = stringUnit, substitutions == nil { return !unit.value.isEmpty }
+                let sets = pluralCases
+                guard !sets.isEmpty else { return false }
+                return sets.allSatisfy { cases in
+                    !cases.isEmpty && cases.values.allSatisfy { $0.stringUnit?.value.isEmpty == false }
+                }
             }
         }
     }
@@ -125,8 +148,8 @@ struct StringCatalogTests {
             .filter { $0.key.contains("inflect: true") && $0.value.extractionState != "stale" }
             .compactMap { key, entry -> String? in
                 let broken = Self.required.filter { language in
-                    guard let cases = entry.localizations?[language]?.variations?.plural else { return true }
-                    return cases["one"] == nil || cases["other"] == nil
+                    guard let sets = entry.localizations?[language]?.pluralCases, !sets.isEmpty else { return true }
+                    return sets.contains { $0["one"] == nil || $0["other"] == nil }
                 }
                 return broken.isEmpty ? nil : "\(key) [\(broken.joined(separator: ", "))]"
             }

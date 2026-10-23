@@ -37,4 +37,5 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.
 
 ### Fixed
+- Build warnings: the setup summary's plural ("3 registrations in period 7") is written with a substitution so the compiler knows which number drives it; the unused accent-colour setting is gone (the app uses the system tint); and the XcodeGen project records Xcode 27 as its last upgrade check.
 - The first upload crashed with `_dispatch_assert_queue_fail`: the flag-label closure handed to the sync engine assumed it was on the main actor to read the reporting language, but the engine calls it from its own executor. The engine now reads the language from its own context and passes it to the closure.

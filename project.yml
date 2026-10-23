@@ -4,6 +4,9 @@ name: Winter
 
 options:
   bundleIdPrefix: com.example
+  # The Xcode version the project was last checked against; Xcode offers
+  # "Update to recommended settings" whenever this falls behind.
+  xcodeVersion: "27.0"
   createIntermediateGroups: true
   deploymentTarget:
     iOS: "26.0"
@@ -59,7 +62,8 @@ targets:
         # (the languages and the background task identifiers). Xcode merges the
         # INFOPLIST_KEY_* settings from the xcconfig into it.
         INFOPLIST_FILE: App/Info.plist
-        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        # No custom accent colour: the app uses the system tint (docs/design.md,
+        # "system colours"), so no ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME.
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         DEVELOPMENT_ASSET_PATHS: ""
 

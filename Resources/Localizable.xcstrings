@@ -2569,43 +2569,57 @@
     },
     "^[%lld registration](inflect: true) in period %lld.": {
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "new",
-            "value": "^[%1$lld registration](inflect: true) in period %2$lld."
-          }
-        },
         "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%1$lld enregistrement dans la période %2$lld."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%1$lld enregistrements dans la période %2$lld."
+          "stringUnit": {
+            "state": "translated",
+            "value": "%#@count@ dans la période %2$lld."
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg enregistrement"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg enregistrements"
+                    }
+                  }
                 }
               }
             }
           }
         },
         "nl": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%1$lld registratie in periode %2$lld."
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%1$lld registraties in periode %2$lld."
+          "stringUnit": {
+            "state": "translated",
+            "value": "%#@count@ in periode %2$lld."
+          },
+          "substitutions": {
+            "count": {
+              "argNum": 1,
+              "formatSpecifier": "lld",
+              "variations": {
+                "plural": {
+                  "one": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg registratie"
+                    }
+                  },
+                  "other": {
+                    "stringUnit": {
+                      "state": "translated",
+                      "value": "%arg registraties"
+                    }
+                  }
                 }
               }
             }
