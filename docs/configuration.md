@@ -38,7 +38,7 @@ Testing the connection is encouraged but not required: a club setting the app up
 ## Changing settings later
 - The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
 - Admin code forgotten → delete the app and reinstall it. Local data goes with it; the Keychain does not, but the setup assistant runs again from the start and its admin-code step replaces the old code.
-- The same fields as the setup, including the club name and the logo, plus "use the name from zweef.app" to hand control of it back. And: "Refresh members now", "Change" for the key, "Erase everything on this device" (with a confirmation; it warns if there are still sessions that have not been uploaded).
+- The same fields as the setup, including the club name and the logo, plus "use the name from zweef.app" to hand control of it back. And: "Change" for the key, "Erase everything on this device" (with a confirmation; it warns if there are still sessions that have not been uploaded).
 
 ## MDM / Managed App Configuration (optional)
 Clubs with Apple Business Manager or an MDM can skip the setup. The app reads `UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed")`:

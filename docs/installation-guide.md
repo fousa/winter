@@ -87,7 +87,7 @@ Press and hold the title (your club's name) for 3 seconds and enter the admin co
 | The status button stays orange | No internet. The hours are safe; open the sync screen to see how many are waiting. |
 | A session is "rejected" on the sync screen | zweef.app did not accept the registration (e.g. the member is no longer active). Fix it in zweef.app and tap "Retry". |
 | The wrong club name | The name comes from zweef.app; change it there. The app picks it up on the next refresh. |
-| A new member is missing | Members are refreshed whenever there is internet. Or: Settings › Refresh members now. |
+| A new member is missing | The app checks zweef.app every six hours. To fetch now, pull down on the member list. |
 | Admin code forgotten | Delete the app and reinstall it. **Careful:** sessions that have not been uploaded yet are lost. Check the sync screen first to see whether everything has been uploaded. |
 | Too many wrong codes | The wait grows to at most five minutes. It does not reset by force-quitting the app; just wait. |
 | The device is stolen or lost | Create a new API key in zweef.app immediately, and enter it on every other device that used the old one. |

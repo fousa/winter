@@ -454,6 +454,19 @@ struct SyncEngineTests {
         #expect(await fixture.api.callLog.contains("accounts") == false)
     }
 
+    @Test("Pulling to refresh fetches at once, even within six hours, and uploads nothing")
+    @MainActor
+    func requestedRefreshIgnoresTheInterval() async throws {
+        let fixture = try makeFixture(now: date(15, 12))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
+
+        let outcome = await fixture.engine.requestSync(.membersRequested)
+
+        #expect(outcome.refreshed)
+        #expect(await fixture.api.callLog.contains("accounts"))
+        #expect(await fixture.api.createdDrafts.isEmpty)
+    }
+
     @Test("Refreshing twice does not duplicate a member")
     @MainActor
     func refreshIsAnUpsert() async throws {

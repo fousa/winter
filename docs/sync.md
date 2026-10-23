@@ -7,12 +7,13 @@ Internet at the club is unreliable. The app always works locally. Hours leave th
 - `NWPathMonitor`: the path becomes `.satisfied` → a run without uploading.
 - The app becomes active (`scenePhase == .active`) → a run without uploading.
 - `BGAppRefreshTask` (best effort; the system decides when) → a run without uploading.
+- Pulling down on the home screen's member list, "Fetch members" on an empty home screen, and the end of setup → a run that refreshes at once, whatever the six-hour rule says, and does not upload.
 
 There is no retry and no backoff. An upload runs because a person is standing at the device; if it fails, the screen says so and the next tap tries again.
 
 ## The order of one sync run (`SyncEngine` is an `actor`, one run at a time)
 1. **Apply auto-stop** (running timers past the closing time).
-2. **Refresh** (at most once every 6 h, or when the cache is empty; `RefreshPolicy`): club → update the club name if `club.json` answers at all; accounts → upsert members (twice: active, then `?inactive=1`); material → aircraft; the active period → read off `current/hours.json`, because `periods.json` 404s. No photos: there are none to fetch ([zweef-api.md](zweef-api.md)).
+2. **Refresh** (at most once every 6 h, or when the cache is empty, `RefreshPolicy`; always for `membersRequested` — pull to refresh, "Fetch members", the end of setup): club → update the club name if `club.json` answers at all; accounts → upsert members (twice: active, then `?inactive=1`); material → aircraft; the active period → read off `current/hours.json`, because `periods.json` 404s. No photos: there are none to fetch ([zweef-api.md](zweef-api.md)).
 3. **Upload** — only for "Upload" — every completed session with `syncState` `.local` or `.ready`. Running sessions are not finished and stay. `.rejected` ones are not sent again.
    - Set `.uploading`, POST, and on success `.uploaded` + `remoteId` + `uploadedAt`.
    - Network error/timeout/5xx → back to `.ready`, `attempts += 1`, `lastError`.

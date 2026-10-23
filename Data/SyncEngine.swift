@@ -19,8 +19,8 @@ actor SyncEngine {
     /// Why a run started: for the log, and for whether it uploads.
     enum Trigger: String, Sendable {
         case appBecameActive
-        /// Setup just finished, or someone asked for the member list: fetch
-        /// the members now rather than at the next activation.
+        /// Setup just finished, someone pulled to refresh, or tapped "Fetch
+        /// members": fetch now, whenever the last refresh was. Never uploads.
         case membersRequested
         case connectivityReturned
         /// "Upload" on the sync screen: the only trigger that sends hours.
@@ -115,7 +115,11 @@ actor SyncEngine {
         }
 
         do {
-            outcome.refreshed = try await refreshIfDue(in: context, api: api)
+            outcome.refreshed = try await refreshIfDue(
+                in: context,
+                api: api,
+                force: trigger == .membersRequested
+            )
         } catch ZweefError.invalidConfiguration {
             // Nothing is set up yet. Not worth a log line on every run: the
             // sync screen already says so, in words a member understands.
@@ -200,8 +204,10 @@ actor SyncEngine {
     // MARK: - Refresh
 
     /// Brings the club name, the members, the material and the active period
-    /// up to date, at most once every six hours.
-    private func refreshIfDue(in context: ModelContext, api: any ZweefAPI) async throws -> Bool {
+    /// up to date, at most once every six hours — or right now when a person
+    /// asked (`force`), because a member just added in zweef.app should not
+    /// have to wait for the clock.
+    private func refreshIfDue(in context: ModelContext, api: any ZweefAPI, force: Bool) async throws -> Bool {
         let settings = try settings(in: context)
         let memberCount = try context.fetchCount(FetchDescriptor<Member>())
         // No material yet — a fresh device, or one updated from the build that
@@ -209,7 +215,7 @@ actor SyncEngine {
         // is fetched now rather than up to six hours later.
         let materialCount = try context.fetchCount(FetchDescriptor<Material>())
 
-        guard RefreshPolicy.shouldRefresh(
+        guard force || RefreshPolicy.shouldRefresh(
             lastRefresh: settings.lastRefreshAt,
             now: now(),
             cacheIsEmpty: memberCount == 0 || materialCount == 0

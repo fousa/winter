@@ -132,6 +132,9 @@ struct HomeView: View {
                 .padding(.horizontal, metrics.gutter)
                 .padding(.vertical, metrics.sectionSpacing)
             }
+            // Pull to fetch the members and material now, rather than at the
+            // next six-hourly refresh; it never uploads hours.
+            .refreshable { await sync.refreshMembers() }
             .overlay(alignment: .trailing) {
                 if model.searchText.isEmpty, sections.count > 1 {
                     LetterIndex(letters: sections.map(\.letter)) { letter in

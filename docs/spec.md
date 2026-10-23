@@ -93,7 +93,7 @@ Flags are shown in orange on the sync screen's tiles. They do not travel to zwee
 - The app is generic: no club name, members or material in the code — the name is configured on the device like everything else.
 
 ### Member list and avatars
-- On an automatic refresh (at most every 6 h, or with an empty cache): `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
+- On a refresh — automatically at most every 6 h (or with an empty cache), or at once when someone pulls down on the home screen's member list: `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
 - **Members always show initials** in a colour derived from their id: `accounts.json` carries no photo, avatar or image field for any member (verified against a real club, see [zweef-api.md](zweef-api.md)). There is nothing to download and no photo cache.
 - "Recents" (nl "Recent", fr "Récents"): the top 5 members by number of sessions in the last 30 days, otherwise by last seen.
 - Search on first and last name, diacritics-insensitive.

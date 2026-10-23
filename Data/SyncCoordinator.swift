@@ -46,9 +46,9 @@ final class SyncCoordinator {
         }
     }
 
-    /// Fetches the members straight away: after setup, and from the empty
-    /// home screen. A refresh is due anyway when the member list is empty,
-    /// so this only says "now" instead of waiting for the next trigger.
+    /// Fetches the members, the material and the club name straight away,
+    /// ignoring the six-hour rule: after setup, on pull to refresh, and from
+    /// the empty home screen's "Fetch members". Never uploads.
     func refreshMembers() async {
         await sync(.membersRequested)
     }
