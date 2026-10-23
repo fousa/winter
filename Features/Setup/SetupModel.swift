@@ -15,6 +15,7 @@ final class SetupModel {
         case welcome
         case connection
         case club
+        case logo
         case adminCode
         case done
 
@@ -87,7 +88,8 @@ final class SetupModel {
             // Testing is encouraged, not required: a club setting the app up in
             // a hangar with no signal must still be able to finish.
             return hasConnectionFields
-        case .club:
+        case .club, .logo:
+            // The logo is optional: "Next" without one is fine.
             return true
         case .adminCode:
             return AdminCodeVerifier.isWellFormed(adminCode) && adminCode == adminCodeRepeat
@@ -108,12 +110,20 @@ final class SetupModel {
         switch step {
         case .connection: saveConnection()
         case .club: saveClub()
+        case .logo: settings.clubLogo = clubLogo
         case .adminCode:
+            // Replaces any code an earlier install left in the Keychain,
+            // which iOS keeps when an app is deleted.
             guard saveAdminCode() else { return }
         default: break
         }
 
         if let next = Step(rawValue: step.rawValue + 1) { step = next }
+    }
+
+    /// "Start using Winter": the device is set up.
+    func finish() {
+        configuration.hasCompletedSetup = true
     }
 
     func goBack() {
@@ -174,7 +184,6 @@ final class SetupModel {
             settings.setClubName(typed: clubName)
         }
 
-        settings.clubLogo = clubLogo
         settings.closingHour = closingHour
         settings.closingMinute = closingMinute
     }
@@ -182,6 +191,12 @@ final class SetupModel {
     private var fetchedClubName: String? {
         guard case .succeeded(let result) = testState else { return nil }
         return result.clubName
+    }
+
+
+    /// Whether setup has produced a usable device.
+    var isComplete: Bool {
+        configuration.isComplete(secrets: secrets)
     }
 
     private func saveAdminCode() -> Bool {
@@ -196,10 +211,5 @@ final class SetupModel {
             adminCodeError = String(localized: "Could not store the code. Try again.")
             return false
         }
-    }
-
-    /// Whether setup has produced a usable device.
-    var isComplete: Bool {
-        configuration.isComplete(secrets: secrets)
     }
 }

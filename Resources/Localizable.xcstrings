@@ -225,6 +225,22 @@
         }
       }
     },
+    "Choose a logo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un logo"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kies een logo"
+          }
+        }
+      }
+    },
     "Choose the aircraft": {
       "localizations": {
         "fr": {
@@ -621,6 +637,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alles is doorgestuurd"
+          }
+        }
+      }
+    },
+    "Fetch members": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récupérer les membres"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leden ophalen"
           }
         }
       }
@@ -1105,6 +1137,22 @@
         }
       }
     },
+    "No members yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore de membres"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen leden"
+          }
+        }
+      }
+    },
     "No task chosen": {
       "localizations": {
         "fr": {
@@ -1553,6 +1601,22 @@
         }
       }
     },
+    "Shown large at the top of the home screen, next to the club name. Optional: you can add or change it later in Settings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affiché en grand en haut de l'écran d'accueil, à côté du nom du club. Facultatif : vous pouvez l'ajouter ou le changer plus tard dans les Réglages."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Groot bovenaan het startscherm, naast de clubnaam. Optioneel: je kunt het later in Instellingen toevoegen of wijzigen."
+          }
+        }
+      }
+    },
     "Six digits": {
       "localizations": {
         "fr": {
@@ -1955,6 +2019,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "De uren blijven op dit toestel tot er weer verbinding is."
+          }
+        }
+      }
+    },
+    "The members come from zweef.app as soon as this device has a connection.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les membres viennent de zweef.app dès que cet appareil est connecté."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De leden komen van zweef.app zodra dit toestel verbinding heeft."
           }
         }
       }
@@ -2363,6 +2443,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Je club"
+          }
+        }
+      }
+    },
+    "Your club's logo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le logo de votre club"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het logo van je club"
           }
         }
       }

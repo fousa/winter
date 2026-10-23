@@ -122,6 +122,7 @@ struct WinterApp: App {
         defaults.removePersistentDomain(forName: "app.winter.sample-club")
         let configuration = AppConfiguration(defaults: defaults)
         configuration.clubSchema = "exampleclub"
+        configuration.hasCompletedSetup = true
         let secrets = InMemorySecretStore([.apiKey: "sample", .adminCode: "sample"])
         return (container, configuration, secrets, ConnectionProvider())
         #else

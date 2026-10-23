@@ -46,6 +46,13 @@ final class SyncCoordinator {
         }
     }
 
+    /// Fetches the members straight away: after setup, and from the empty
+    /// home screen. A refresh is due anyway when the member list is empty,
+    /// so this only says "now" instead of waiting for the next trigger.
+    func refreshMembers() async {
+        await sync(.membersRequested)
+    }
+
     /// Stops forgotten timers and syncs; what the app does when it comes
     /// forward.
     func appBecameActive() async {

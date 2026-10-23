@@ -98,7 +98,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - Search on first and last name, diacritics-insensitive.
 
 ## Configuration (open source)
-- On first launch: the setup assistant (connection, club, admin code). Without a complete configuration the rest of the app is unreachable.
+- On first launch: the setup assistant (connection, club, logo, admin code). Without a complete configuration the rest of the app is unreachable.
 - Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the club schema, the API key, the club name, the closing time, the logo, the tasks and the admin code, test the connection and refresh the members.
 - A changed connection is tested first; on failure the old values stay active until you confirm.
 - Pending sessions are kept when the connection changes; they go to the new connection.

@@ -10,6 +10,7 @@ import SwiftUI
 struct RootView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.locale) private var locale
+    @Environment(SyncCoordinator.self) private var sync
 
     @Query private var tasks: [TaskDefinition]
     @Query private var storedSettings: [AppSettings]
@@ -40,6 +41,10 @@ struct RootView: View {
                 ) {
                     seedTasksIfNeeded()
                     setupGeneration += 1
+                    // Nothing else would fetch the members until the app is
+                    // next brought forward, so the home screen would open
+                    // empty.
+                    Task { await sync.refreshMembers() }
                 }
             }
         }
@@ -111,6 +116,7 @@ extension View {
     let defaults = UserDefaults(suiteName: "preview-root-ready") ?? .standard
     let configuration = AppConfiguration(defaults: defaults)
     configuration.clubSchema = "exampleclub"
+    configuration.hasCompletedSetup = true
 
     return RootView(
         configuration: configuration,

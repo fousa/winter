@@ -87,3 +87,54 @@ struct ClubLogoPicker: View {
         }
     }
 }
+
+/// The large version of the picker, for the setup assistant's logo page: the
+/// logo as the home screen will show it, with one clear button.
+struct ClubLogoChooser: View {
+    @Binding var data: Data?
+
+    @State private var item: PhotosPickerItem?
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Group {
+                if data != nil {
+                    ClubLogo(data: data, size: 136)
+                        .frame(width: 160, height: 160)
+                        .background(.white, in: .circle)
+                        .shadow(color: .black.opacity(0.1), radius: 12, y: 6)
+                } else {
+                    Image(systemName: "photo")
+                        .font(.system(size: 44))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 160, height: 160)
+                        .background(Color.card, in: .circle)
+                        .overlay(Circle().strokeBorder(.secondary.opacity(0.4), style: StrokeStyle(lineWidth: 2, dash: [6, 6])))
+                        .accessibilityHidden(true)
+                }
+            }
+
+            HStack(spacing: 12) {
+                PhotosPicker(selection: $item, matching: .images) {
+                    Label(data == nil ? "Choose a logo" : "Change", systemImage: "photo.on.rectangle")
+                }
+                .buttonStyle(.glassProminent)
+
+                if data != nil {
+                    Button("Remove", role: .destructive) {
+                        data = nil
+                        item = nil
+                    }
+                    .buttonStyle(.glass)
+                }
+            }
+        }
+        .task(id: item) {
+            guard let item,
+                  let picked = try? await item.loadTransferable(type: Data.self),
+                  let prepared = ClubLogo.prepare(picked)
+            else { return }
+            data = prepared
+        }
+    }
+}

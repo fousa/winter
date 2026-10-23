@@ -29,6 +29,7 @@ struct SetupView: View {
                     case .welcome: welcome
                     case .connection: connection
                     case .club: club
+                    case .logo: logo
                     case .adminCode: adminCode
                     case .done: done
                     }
@@ -70,6 +71,7 @@ struct SetupView: View {
 
             Button {
                 if model.step == .done {
+                    model.finish()
                     onFinish()
                 } else {
                     model.advance()
@@ -179,11 +181,6 @@ struct SetupView: View {
             VStack(spacing: 0) {
                 field("Club name", text: $model.clubName, managed: false)
                 Divider()
-                // Optional, and on the device only: zweef.app has no logo to
-                // give.
-                ClubLogoPicker(data: $model.clubLogo)
-                    .padding(14)
-                Divider()
                 HStack {
                     Text("Timers stop automatically at")
                     Spacer()
@@ -198,6 +195,21 @@ struct SetupView: View {
                 .padding(14)
             }
             .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
+        }
+    }
+
+    /// A page of its own, so nobody finishes setup without having seen it;
+    /// still optional, and zweef.app has no logo to give.
+    private var logo: some View {
+        VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
+            header(
+                "Your club's logo",
+                detail: "Shown large at the top of the home screen, next to the club name. Optional: you can add or change it later in Settings."
+            )
+
+            ClubLogoChooser(data: $model.clubLogo)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
         }
     }
 
@@ -254,6 +266,24 @@ struct SetupView: View {
 
     // MARK: - Pieces
 
+    private func codeField(_ label: LocalizedStringKey, text: Binding<String>) -> some View {
+        HStack {
+            Text(label)
+                .frame(width: 140, alignment: .leading)
+            SecureField(label, text: text)
+                .keyboardType(.numberPad)
+                .textContentType(.oneTimeCode)
+                .monospaced()
+                .onChange(of: text.wrappedValue) { _, newValue in
+                    // Six digits, enforced as you type rather than complained
+                    // about afterwards.
+                    let digits = newValue.filter(\.isNumber)
+                    text.wrappedValue = String(digits.prefix(AdminCodeVerifier.length))
+                }
+        }
+        .padding(14)
+    }
+
     private func header(_ title: LocalizedStringKey, detail: LocalizedStringKey) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
@@ -299,23 +329,6 @@ struct SetupView: View {
         .padding(14)
     }
 
-    private func codeField(_ label: LocalizedStringKey, text: Binding<String>) -> some View {
-        HStack {
-            Text(label)
-                .frame(width: 140, alignment: .leading)
-            SecureField(label, text: text)
-                .keyboardType(.numberPad)
-                .textContentType(.oneTimeCode)
-                .monospaced()
-                .onChange(of: text.wrappedValue) { _, newValue in
-                    // Six digits, enforced as you type rather than complained
-                    // about afterwards.
-                    let digits = newValue.filter(\.isNumber)
-                    text.wrappedValue = String(digits.prefix(AdminCodeVerifier.length))
-                }
-        }
-        .padding(14)
-    }
 
     private var closingTime: Binding<Date> {
         Binding {

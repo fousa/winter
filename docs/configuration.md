@@ -7,7 +7,7 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 |---|---|---|---|
 | Club schema (`{club}`) | UserDefaults | yes | from the zweef.app club settings; part of the API's URL |
 | zweef.app API key | **Keychain** | yes | `X-API-KEY`. Opens the club's whole account — see [SECURITY.md](../SECURITY.md) |
-| Club logo | SwiftData `AppSettings` (external storage) | no | Optional, picked from Photos in the setup or in Settings, stored as a PNG of at most 512 px. zweef.app has no logo to give. Shown round at the top left of the home screen; nothing is shown without one |
+| Club logo | SwiftData `AppSettings` (external storage) | no | Optional, picked from Photos in the setup or in Settings, stored as a PNG of at most 512 px. zweef.app has no logo to give. Shown beside the club name in the home screen's header; nothing is shown without one |
 | Club name | SwiftData `AppSettings` | no | Typed in the setup, prefilled from zweef.app (`GET /club.json`) when that endpoint answers — which for a real club it does not, so typing it is the normal case ([ADR 0012](decisions/0012-club-name-may-be-typed.md)). Empty → the app shows "Winter" |
 | Closing time | SwiftData `AppSettings` | yes | 21:00 by default |
 | Tasks | SwiftData | yes | a default list (Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else), seeded in the setup language and editable; edited labels are club data and are not translated |
@@ -24,19 +24,20 @@ Straight to `https://admin.gliding.app/club/{club}/api`, with the club's API key
 The setup and the settings screen both warn about what that key opens, and [SECURITY.md](../SECURITY.md) spells out the consequence: a lost device means rotating the club's key, because there is no per-device token to revoke.
 
 ## First launch: the setup assistant
-It appears for as long as the configuration is incomplete. The steps:
+It appears until someone confirms its last step: a "setup completed" flag in UserDefaults, next to a schema, an API key and an admin code. The flag matters because iOS keeps an app's Keychain items when the app is deleted: after a reinstall the old key and admin code are still there, and without the flag saving the schema in step 2 counted as a finished setup and skipped the rest. UserDefaults are deleted with the app, so a reinstall always starts the assistant from the beginning. A device set up by a build without the flag (it has a schema stored) counts as set up. The steps:
 1. **Welcome** — what the app does, and what you need: the club's schema name and an API key.
 2. **Connection** — the club schema and the API key (a `SecureField`, pasting allowed), with the warning about what the key opens. Tap "Test connection" → `GET /maintenance-hours/current/hours.json` (not `periods.json`, which 404s). On success it shows the active period, and tries `GET /club.json` for the club name — which currently answers 500, so a successful connection without a name is normal; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
-3. **Club** — the club name, and optionally the club's logo from Photos ("Choose", then "Change" or "Remove"): prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter".
-4. **Admin code** — six digits, entered twice.
-5. **Done** — the members are fetched (if there is internet); a tip to turn on Guided Access, and where to find the settings again.
+3. **Club** — the club name: prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter".
+4. **Logo** — a page of its own: the club's logo from Photos, shown large as it will appear, with "Choose a logo", then "Change" or "Remove". Optional.
+5. **Admin code** — six digits, entered twice. It replaces any code an earlier install left in the Keychain.
+6. **Done** — confirming it fetches the members straight away (if there is internet), so the home screen does not open empty; if it still is, it says where the members come from and offers "Fetch members"; a tip to turn on Guided Access, and where to find the settings again.
 
 Testing the connection is encouraged but not required: a club setting the app up in a hangar with no signal must still be able to finish. Secrets are written to the Keychain as the step is left, and the fields are cleared so the values do not sit in a view model for the rest of the session.
 
 ## Changing settings later
 - The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
+- Admin code forgotten → delete the app and reinstall it. Local data goes with it; the Keychain does not, but the setup assistant runs again from the start and its admin-code step replaces the old code.
 - The same fields as the setup, including the club name and the logo, plus "use the name from zweef.app" to hand control of it back. And: "Refresh members now", "Change" for the key, "Erase everything on this device" (with a confirmation; it warns if there are still sessions that have not been uploaded).
-- Admin code forgotten → delete the app and reinstall it (local data and the Keychain go with it; warn about this in the README).
 
 ## MDM / Managed App Configuration (optional)
 Clubs with Apple Business Manager or an MDM can skip the setup. The app reads `UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed")`:

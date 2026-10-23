@@ -59,9 +59,10 @@ mean a review process for a screen full of Dutch member names.
 ## Step 4 — First launch
 The app opens with the setup assistant:
 1. **Connection**: fill in the schema name and the API key. Tap **Test connection**; you should see the active maintenance period.
-2. **Club**: type your club's name — it becomes the title on the home screen. (zweef.app is supposed to supply it, but that endpoint is currently broken, so the field is filled in for you only when it answers.) You can add the club's logo from Photos. After that, set the closing time (when forgotten timers stop automatically).
-3. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings. Three wrong attempts are free, after that the app makes you wait a little longer each time.
-4. **Done**: the members are fetched as soon as there is internet. (zweef.app has no member photos, so the app shows initials.)
+2. **Club**: type your club's name — it becomes the title on the home screen. (zweef.app is supposed to supply it, but that endpoint is currently broken, so the field is filled in for you only when it answers.) After that, set the closing time (when forgotten timers stop automatically).
+3. **Logo**: pick your club's logo from Photos. It is shown large on the home screen. You can skip it and add it later in Settings.
+4. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings. Three wrong attempts are free, after that the app makes you wait a little longer each time.
+5. **Done**: the members are fetched as soon as there is internet. (zweef.app has no member photos, so the app shows initials.)
 
 ## Step 5 — Lock the shared device into the app
 Only for the shared workshop device; skip this on a personal phone.

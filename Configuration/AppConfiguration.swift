@@ -15,6 +15,14 @@ final class AppConfiguration {
     init(defaults: UserDefaults = .standard, managed: ManagedConfiguration = ManagedConfiguration()) {
         self.defaults = defaults
         self.managed = managed
+
+        // Written once, on the first launch of a build that knows the flag. A
+        // device an earlier build set up already has a schema stored, so it
+        // counts as set up; a fresh install, or a reinstall, has none.
+        if defaults.object(forKey: Key.setupCompleted) == nil {
+            let setUpByAnEarlierBuild = !(defaults.string(forKey: Key.clubSchema) ?? "").trimmed.isEmpty
+            defaults.set(setUpByAnEarlierBuild, forKey: Key.setupCompleted)
+        }
     }
 
     // MARK: - Connection
@@ -73,9 +81,24 @@ final class AppConfiguration {
         !clubSchema.trimmed.isEmpty && secrets.hasSecret(for: .apiKey)
     }
 
-    /// Whether setup has been completed, connection and admin code both.
+    /// Set when someone confirms the setup assistant's last step.
+    ///
+    /// The Keychain survives deleting the app, so after a reinstall the old
+    /// API key and admin code are still there; without this flag, saving the
+    /// schema in the connection step completed "setup" on the spot and
+    /// skipped the rest. UserDefaults are deleted with the app, so this flag
+    /// is not left behind.
+    var hasCompletedSetup: Bool {
+        get { defaults.bool(forKey: Key.setupCompleted) }
+        set { defaults.set(newValue, forKey: Key.setupCompleted) }
+    }
+
+    /// Whether setup has been completed: confirmed, with a working connection
+    /// and the settings protected.
     func isComplete(secrets: some SecretStore) -> Bool {
-        isConnectionConfigured(secrets: secrets) && secrets.hasSecret(for: .adminCode)
+        hasCompletedSetup
+            && isConnectionConfigured(secrets: secrets)
+            && secrets.hasSecret(for: .adminCode)
     }
 
     /// For "Erase everything on this device".
@@ -89,9 +112,10 @@ final class AppConfiguration {
         static let status = "zweefStatus"
         static let failedAdminAttempts = "failedAdminAttempts"
         static let adminLockedUntil = "adminLockedUntil"
+        static let setupCompleted = "setupCompleted"
 
         static let all = [
-            clubSchema, category, status, failedAdminAttempts, adminLockedUntil,
+            clubSchema, category, status, failedAdminAttempts, adminLockedUntil, setupCompleted,
         ]
     }
 }

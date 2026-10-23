@@ -12,6 +12,7 @@ struct HomeView: View {
     @Environment(\.metrics) private var metrics
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.locale) private var locale
+    @Environment(SyncCoordinator.self) private var sync
 
     @Query(filter: #Predicate<Member> { $0.isActive }) private var members: [Member]
     @Query private var sessions: [WorkSession]
@@ -21,6 +22,9 @@ struct HomeView: View {
 
     @State private var model = HomeModel()
     @State private var path: [Destination] = []
+    /// Whether the club header at the top of the list is on screen; the
+    /// club name moves into the navigation bar once it has scrolled away.
+    @State private var isHeaderVisible = true
     /// Ties a member's tile in "Working now" to their tile in the letter
     /// sections, so starting or stopping moves the tile instead of swapping it.
     @Namespace private var tiles
@@ -40,7 +44,11 @@ struct HomeView: View {
         NavigationStack(path: $path) {
             memberList
                 .background(Color(.systemGroupedBackground))
+                // The title lives in the header at the top of the list; the
+                // bar shows it only once that has scrolled away. Still set,
+                // for the back button on the sync screen and for VoiceOver.
                 .navigationTitle(clubName)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
                 .searchable(text: $model.searchText, prompt: Text("Search members"))
                 // A safe-area *bar*, not an inset: iOS 26 then draws the
@@ -82,6 +90,8 @@ struct HomeView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: metrics.sectionSpacing) {
+                    header
+
                     // Who is working comes first, with their running time:
                     // stopping is the other half of what this screen is for.
                     // Searched like everyone else, so typing a name finds a
@@ -94,7 +104,9 @@ struct HomeView: View {
                         section(title: Text("Recents"), members: oftenHere, movesTiles: false)
                     }
 
-                    if sections.isEmpty, workingNow.isEmpty {
+                    if members.isEmpty {
+                        noMembersYet
+                    } else if sections.isEmpty, workingNow.isEmpty {
                         ContentUnavailableView.search(text: model.searchText)
                             .frame(maxWidth: .infinity)
                             .padding(.top, 40)
@@ -136,6 +148,74 @@ struct HomeView: View {
     ///   repeats members from the letter sections, and a geometry group with
     ///   two tiles in it has no single place to fly from. Those tiles get an
     ///   id of their own, which matches nothing.
+    /// The club's logo beside its name, large: the device on the workshop
+    /// wall should say whose it is from across the room. On a phone the date
+    /// line drops under the logo, so the name keeps the width.
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: isCompact ? 14 : 20) {
+                if let logo = settings.first?.clubLogo {
+                    let disc: CGFloat = isCompact ? 64 : 88
+                    // A white disc, so a logo drawn for a white page reads the
+                    // same in dark mode.
+                    ClubLogo(data: logo, size: disc * 0.86)
+                        .frame(width: disc, height: disc)
+                        .background(.white, in: .circle)
+                        .shadow(color: .black.opacity(0.1), radius: 10, y: 4)
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(clubName)
+                        .scaledFont(size: isCompact ? 28 : 44, relativeTo: .largeTitle, weight: .heavy)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                    if !isCompact { subtitleText }
+                }
+            }
+            if isCompact { subtitleText }
+        }
+        .padding(.bottom, 4)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .onScrollVisibilityChange(threshold: 0.3) { isVisible in
+            withAnimation(.easeInOut(duration: 0.2)) { isHeaderVisible = isVisible }
+        }
+    }
+
+    /// Right after setup, or on a device that has never reached zweef.app:
+    /// say where the names come from instead of "No results", and offer to
+    /// fetch them now.
+    private var noMembersYet: some View {
+        ContentUnavailableView {
+            Label("No members yet", systemImage: "person.2")
+        } description: {
+            Text("The members come from zweef.app as soon as this device has a connection.")
+        } actions: {
+            Button {
+                Task { await sync.refreshMembers() }
+            } label: {
+                if sync.isSyncing {
+                    ProgressView()
+                } else {
+                    Text("Fetch members")
+                }
+            }
+            .buttonStyle(.glass)
+            .disabled(sync.isSyncing)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 40)
+    }
+
+    private var subtitleText: some View {
+        Text(subtitle)
+            .font(isCompact ? .subheadline : .title3)
+            .foregroundStyle(.secondary)
+            // Wraps on a phone rather than cutting off "tap your name to
+            // start", which is the instruction.
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
     private func section(title: Text?, members: [Member], movesTiles: Bool = true) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             if let title {
@@ -213,26 +293,14 @@ struct HomeView: View {
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
-        // Under the large title, at a size people can read from a step back;
-        // `navigationSubtitle` renders it in caption type.
-        ToolbarItem(placement: .largeSubtitle) {
-            Text(subtitle)
-                .font(isCompact ? .subheadline : .title3)
-                .foregroundStyle(.secondary)
-                // Wraps on a phone rather than cutting off "tap your name to
-                // start", which is the instruction.
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-
-        // The club's own logo, when one was picked during setup: top left,
-        // in the same glass circle as the sync button opposite, so the two
-        // corners of the bar match.
-        if let logo = settings.first?.clubLogo {
-            ToolbarItem(placement: .topBarLeading) {
-                ClubLogo(data: logo, size: 34)
-            }
+        // The club name in the bar, faded in once the header has scrolled
+        // out of view, so the name is never on screen twice.
+        ToolbarItem(placement: .principal) {
+            Text(clubName)
+                .font(.headline)
+                .lineLimit(1)
+                .opacity(isHeaderVisible ? 0 : 1)
+                .accessibilityHidden(isHeaderVisible)
         }
 
         ToolbarItem(placement: .topBarTrailing) {

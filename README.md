@@ -19,7 +19,7 @@ The full step-by-step guide is in [docs/installation-guide.md](docs/installation
 
 1. **Create an API key** in zweef.app's admin pages, and find your club's schema name in its settings.
 2. **Install the app** on the device (TestFlight, Apple Business Manager, or build it yourself — see below).
-3. **First launch**: the setup assistant asks for the schema and the key, your club's name, the closing time and an admin code.
+3. **First launch**: the setup assistant asks for the schema and the key, your club's name, the closing time, the club's logo and an admin code.
 4. **Turn on Guided Access** on the shared workshop device (Settings › Accessibility › Guided Access).
 
 The API key is stored in the device's Keychain and opens your club's whole zweef.app account, so keep the device secured and read [SECURITY.md](SECURITY.md) before you mount it on a wall.

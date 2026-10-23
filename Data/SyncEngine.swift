@@ -19,6 +19,9 @@ actor SyncEngine {
     /// Why a run started: for the log, and for whether it uploads.
     enum Trigger: String, Sendable {
         case appBecameActive
+        /// Setup just finished, or someone asked for the member list: fetch
+        /// the members now rather than at the next activation.
+        case membersRequested
         case connectivityReturned
         /// "Upload" on the sync screen: the only trigger that sends hours.
         case upload

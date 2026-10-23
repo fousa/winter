@@ -48,10 +48,53 @@ struct AppConfigurationTests {
         try? secrets.setSecret("key", for: .apiKey)
         #expect(configuration.isConnectionConfigured(secrets: secrets))
 
-        // Setup is not finished until the settings are protected too.
+        // Setup is not finished until the settings are protected too…
         #expect(!configuration.isComplete(secrets: secrets))
         try? secrets.setSecret("salt:hash", for: .adminCode)
+        #expect(!configuration.isComplete(secrets: secrets))
+
+        // …and someone has confirmed the last step.
+        configuration.hasCompletedSetup = true
         #expect(configuration.isComplete(secrets: secrets))
+    }
+
+    @Test("After a reinstall, secrets left in the Keychain do not skip setup")
+    func reinstallDoesNotSkipSetup() {
+        let (configuration, _) = makeConfiguration()
+        // What the Keychain still holds from the deleted install.
+        let secrets = InMemorySecretStore([.apiKey: "old", .adminCode: "salt:hash"])
+
+        // The connection step saves the schema; setup must carry on.
+        configuration.clubSchema = "exampleclub"
+        #expect(!configuration.isComplete(secrets: secrets))
+    }
+
+    @Test("A device an earlier build set up is still set up after the update")
+    func earlierSetupCounts() {
+        let suite = "winter.tests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.set("exampleclub", forKey: "clubSchema")
+        let secrets = InMemorySecretStore([.apiKey: "key", .adminCode: "salt:hash"])
+
+        let configuration = AppConfiguration(defaults: defaults)
+
+        #expect(configuration.hasCompletedSetup)
+        #expect(configuration.isComplete(secrets: secrets))
+    }
+
+    @Test("Confirming the last step of setup marks the device as set up")
+    func finishingSetupCompletesIt() {
+        let (configuration, _) = makeConfiguration()
+        let model = SetupModel(
+            configuration: configuration,
+            secrets: InMemorySecretStore(),
+            connection: ConnectionProvider(),
+            settings: AppSettings()
+        )
+
+        #expect(!configuration.hasCompletedSetup)
+        model.finish()
+        #expect(configuration.hasCompletedSetup)
     }
 
     @Test("A schema of only whitespace is not a schema")
@@ -76,11 +119,13 @@ struct AppConfigurationTests {
         let (configuration, _) = makeConfiguration()
         configuration.clubSchema = "exampleclub"
         configuration.failedAdminAttempts = 4
+        configuration.hasCompletedSetup = true
 
         configuration.reset()
 
         #expect(configuration.clubSchema.isEmpty)
         #expect(configuration.failedAdminAttempts == 0)
+        #expect(!configuration.hasCompletedSetup)
     }
 }
 
