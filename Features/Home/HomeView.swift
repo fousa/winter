@@ -131,13 +131,15 @@ struct HomeView: View {
                 // time — moves the tile between the sections in one motion.
                 .animation(.smooth, value: runningSessions.map(\.id))
                 .padding(.horizontal, metrics.gutter)
+                // Room for the letter index, so it never covers a tile.
+                .padding(.trailing, showsLetterIndex ? LetterIndex.width : 0)
                 .padding(.vertical, metrics.sectionSpacing)
             }
             // Pull to fetch the members and material now, rather than at the
             // next six-hourly refresh; it never uploads hours.
             .refreshable { await sync.refreshMembers() }
             .overlay(alignment: .trailing) {
-                if model.searchText.isEmpty, sections.count > 1 {
+                if showsLetterIndex {
                     LetterIndex(letters: sections.map(\.letter)) { letter in
                         withAnimation { proxy.scrollTo(letter, anchor: .top) }
                     }
@@ -452,6 +454,11 @@ struct HomeView: View {
     /// "Working now" only.
     private var idleMembers: [Member] {
         MemberDirectory.idle(members, workingIds: Set(runningSessions.map(\.memberId)))
+    }
+
+    /// Only with something to jump between, and not while searching.
+    private var showsLetterIndex: Bool {
+        model.searchText.isEmpty && sections.count > 1
     }
 
     private var sections: [MemberSection<Member>] {
