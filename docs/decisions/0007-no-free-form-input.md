@@ -1,6 +1,6 @@
 # 0007 — No voice notes, free-text field or CSV export
 
-- **Status**: accepted
+- **Status**: accepted, amended by [0019](0019-description-is-times-and-a-comment.md) (an optional comment when stopping)
 - **Date**: 2026-10-18
 
 ## Context

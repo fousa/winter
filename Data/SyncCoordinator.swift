@@ -87,10 +87,7 @@ extension SyncCoordinator {
         return SyncCoordinator(
             engine: SyncEngine(
                 container: container,
-                apiProvider: { FakeZweefAPI() },
-                // The same wiring the app uses: the engine supplies the club's
-                // reporting language, not the UI's wording (ADR 0010).
-                flagLabel: { flag, language in language.label(for: flag) }
+                apiProvider: { FakeZweefAPI() }
             ),
             connectivity: StaticConnectivity(isCurrentlyConnected: connected),
             autoStop: AutoStopService(store: store) { try? store.settings() }

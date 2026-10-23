@@ -59,11 +59,7 @@ struct WinterApp: App {
 
         let engine = SyncEngine(
             container: container,
-            apiProvider: { connection.api() },
-            // The engine reads the reporting language from its own context and
-            // passes it in; this closure runs on the engine's executor, so it
-            // must not reach for the main-actor store.
-            flagLabel: { flag, language in language.label(for: flag) }
+            apiProvider: { connection.api() }
         )
 
         self.autoStop = autoStop

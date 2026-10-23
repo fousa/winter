@@ -42,6 +42,7 @@ final class SetupModel {
     /// Optional; picked from Photos, already scaled down (``ClubLogo/prepare(_:)``).
     var clubLogo: Data?
     var closingHour: Int
+    var requiresComment: Bool
     var closingMinute: Int
 
     // Admin code
@@ -74,6 +75,7 @@ final class SetupModel {
         self.clubName = settings.clubName ?? ""
         self.clubLogo = settings.clubLogo
         self.closingHour = settings.closingHour
+        self.requiresComment = settings.requiresComment
         self.closingMinute = settings.closingMinute
     }
 
@@ -184,6 +186,7 @@ final class SetupModel {
             settings.setClubName(typed: clubName)
         }
 
+        settings.requiresComment = requiresComment
         settings.closingHour = closingHour
         settings.closingMinute = closingMinute
     }

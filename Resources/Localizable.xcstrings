@@ -49,6 +49,22 @@
         }
       }
     },
+    "A comment is required when stopping": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un commentaire est obligatoire à l'arrêt"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een opmerking is verplicht bij het stoppen"
+          }
+        }
+      }
+    },
     "A six-digit code to protect these settings": {
       "localizations": {
         "fr": {
@@ -77,6 +93,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "API-sleutel"
+          }
+        }
+      }
+    },
+    "Add a comment below to stop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez un commentaire ci-dessous pour arrêter"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voeg hieronder een opmerking toe om te stoppen"
           }
         }
       }
@@ -349,6 +381,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Code"
+          }
+        }
+      }
+    },
+    "Comment": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commentaire"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opmerking"
+          }
+        }
+      }
+    },
+    "Comment (optional)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commentaire (facultatif)"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opmerking (optioneel)"
           }
         }
       }
@@ -1281,6 +1345,22 @@
         }
       }
     },
+    "Optional.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facultatif."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optioneel."
+          }
+        }
+      }
+    },
     "Paste the key. It goes straight into the Keychain.": {
       "localizations": {
         "nl": {
@@ -1469,6 +1549,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Geef deze de namen die je club gebruikt. De namen zijn de jouwe en worden nooit vertaald."
+          }
+        }
+      }
+    },
+    "Required by your club.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exigé par votre club."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verplicht door je club."
           }
         }
       }
@@ -2007,6 +2103,22 @@
         }
       }
     },
+    "The comment goes to zweef.app with the hours, so the board can see what was done.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le commentaire part vers zweef.app avec les heures, pour que le comité voie ce qui a été fait."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De opmerking gaat met de uren naar zweef.app, zodat het bestuur ziet wat er gedaan is."
+          }
+        }
+      }
+    },
     "The hours stay on this device until the connection returns.": {
       "localizations": {
         "fr": {
@@ -2351,6 +2463,22 @@
         }
       }
     },
+    "What did you do? For the board in zweef.app": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qu'avez-vous fait ? Pour le comité dans zweef.app"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wat heb je gedaan? Voor het bestuur in zweef.app"
+          }
+        }
+      }
+    },
     "What were you working on?": {
       "localizations": {
         "fr": {
@@ -2615,102 +2743,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "flag.longSession": {
-      "comment": "Flag on a session longer than 10 hours. Uploaded to zweef.app in the club's reporting language.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "long session"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "session longue"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "lange sessie"
-          }
-        }
-      }
-    },
-    "flag.shortSession": {
-      "comment": "Flag on a session shorter than 5 minutes. Uploaded to zweef.app in the club's reporting language.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "short session"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "session courte"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "korte sessie"
-          }
-        }
-      }
-    },
-    "flag.stoppedAutomatically": {
-      "comment": "Flag on a session stopped by the closing time.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "stopped automatically"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "arrêtée automatiquement"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "automatisch gestopt"
-          }
-        }
-      }
-    },
-    "flag.stoppedBySomeoneElse": {
-      "comment": "Flag on a session that another member stopped.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "stopped by someone else"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "arrêtée par quelqu'un d'autre"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "gestopt door iemand anders"
           }
         }
       }

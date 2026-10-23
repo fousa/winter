@@ -17,20 +17,12 @@ struct MaintenanceHourDraftTests {
         calendar.date(from: DateComponents(year: 2026, month: 10, day: day, hour: hour, minute: minute))!
     }
 
-    private func label(_ flag: SessionFlag) -> String {
-        switch flag {
-        case .shortSession: "korte sessie"
-        case .longSession: "lange sessie"
-        case .stoppedAutomatically: "automatisch gestopt"
-        case .stoppedBySomeoneElse: "gestopt door iemand anders"
-        }
-    }
-
     private func session(
         from start: Date,
         to stop: Date?,
         autoStopped: Bool = false,
-        stoppedByOther: Bool = false
+        stoppedByOther: Bool = false,
+        comment: String? = nil
     ) -> WorkSession {
         WorkSession(
             id: sessionId,
@@ -39,14 +31,14 @@ struct MaintenanceHourDraftTests {
             stop: stop,
             status: stop == nil ? .running : .completed,
             autoStopped: autoStopped,
-            stoppedByOther: stoppedByOther
+            stoppedByOther: stoppedByOther,
+            comment: comment
         )
     }
 
     private func draft(
         for session: WorkSession,
         taskLabel: String? = "Zweefvliegtuig",
-        aircraftName: String? = "ASK 21",
         materialId: Int? = 1
     ) -> MaintenanceHourDraft? {
         MaintenanceHourDraft(
@@ -54,10 +46,8 @@ struct MaintenanceHourDraftTests {
             memberId: 101,
             memberName: "Jan Verhoeven",
             taskLabel: taskLabel,
-            aircraftName: aircraftName,
             materialId: materialId,
             periodId: 1,
-            flagLabel: label,
             calendar: calendar
         )
     }
@@ -77,7 +67,9 @@ struct MaintenanceHourDraftTests {
         #expect(draft.isPrivate == false)
         #expect(draft.project == "Zweefvliegtuig")
         #expect(draft.status == "in_aanvraag")
-        #expect(draft.description == "Zweefvliegtuig · ASK 21 · 09:12–11:30 [ou:a1b2c3d4]")
+        // The task is in `project` and the aircraft in `materialId`; the
+        // description is the times (ADR 0019).
+        #expect(draft.description == "09:12–11:30")
     }
 
     @Test("Category is empty, matching what a real club already has")
@@ -98,19 +90,19 @@ struct MaintenanceHourDraftTests {
     @Test("Without a task there is no project, and the times still carry it")
     func mapsWithoutATask() throws {
         let work = session(from: date(15, 9, 12), to: date(15, 10, 12))
-        let draft = try #require(self.draft(for: work, taskLabel: nil, aircraftName: nil, materialId: nil))
+        let draft = try #require(self.draft(for: work, taskLabel: nil, materialId: nil))
 
         #expect(draft.project == "")
         #expect(draft.materialId == nil)
-        #expect(draft.description == "09:12–10:12 [ou:a1b2c3d4]")
+        #expect(draft.description == "09:12–10:12")
     }
 
-    @Test("Flags travel along in the language they are given")
-    func includesFlagsInTheReportingLanguage() throws {
-        let work = session(from: date(15, 14), to: date(15, 21), autoStopped: true)
-        let draft = try #require(self.draft(for: work, taskLabel: "Lier", aircraftName: nil, materialId: 4))
+    @Test("The member's comment goes after the times; flags stay on the device")
+    func includesTheComment() throws {
+        let work = session(from: date(15, 14), to: date(15, 21), autoStopped: true, comment: "Lier nagekeken")
+        let draft = try #require(self.draft(for: work, taskLabel: "Lier", materialId: 4))
 
-        #expect(draft.description == "Lier · 14:00–21:00 · automatisch gestopt [ou:a1b2c3d4]")
+        #expect(draft.description == "14:00–21:00 · Lier nagekeken")
         #expect(draft.hours == 7.0)
     }
 
@@ -131,12 +123,19 @@ struct MaintenanceHourDraftTests {
         #expect(draft.hours == 0.33)
     }
 
-    @Test("The dedup tag is in the description, so a timed-out upload is recognised")
-    func carriesTheDedupTag() throws {
-        let work = session(from: date(15, 9), to: date(15, 10))
+    @Test("A registration zweef.app already holds is recognised by what it says")
+    func recognisesItsOwnRegistration() throws {
+        let work = session(from: date(15, 9), to: date(15, 10), comment: "Banden opgepompt")
         let draft = try #require(self.draft(for: work))
+        func hour(userId: Int = 101, date: String = "2026-10-15", hours: Double = 1.0, description: String) -> ZweefMaintenanceHour {
+            ZweefMaintenanceHour(id: 9, periodId: 1, userId: userId, date: date, hours: hours, materialId: 1, status: "in_aanvraag", description: description)
+        }
 
-        #expect(RegistrationDescription.describes(sessionId: sessionId, description: draft.description))
+        #expect(draft.isSameRegistration(as: hour(description: "09:00–10:00 · Banden opgepompt")))
+        // Anyone else's, another day, or other times are not this one.
+        #expect(!draft.isSameRegistration(as: hour(userId: 102, description: "09:00–10:00 · Banden opgepompt")))
+        #expect(!draft.isSameRegistration(as: hour(date: "2026-10-16", description: "09:00–10:00 · Banden opgepompt")))
+        #expect(!draft.isSameRegistration(as: hour(description: "10:00–11:00 · Banden opgepompt")))
     }
 }
 

@@ -61,8 +61,7 @@ struct SyncEngineTests {
         api: FakeZweefAPI = FakeZweefAPI(),
         periodId: Int? = 1,
         members: [(Int, String, String)] = [(101, "Jan", "Verhoeven")],
-        tasks: Bool = true,
-        language: ReportingLanguage = .english
+        tasks: Bool = true
     ) throws -> Fixture {
         let container = try WinterSchema.inMemoryContainer()
         let context = container.mainContext
@@ -84,10 +83,6 @@ struct SyncEngineTests {
         let engine = SyncEngine(
             container: container,
             apiProvider: { api },
-            // The language is appended so a test can see which one the engine
-            // resolved; the label itself stays the raw flag name.
-            flagLabel: { flag, language in "\(flag.rawValue)@\(language.code)" },
-            reportingLanguage: { language },
             calendar: calendar,
             now: { clock.now }
         )
@@ -296,15 +291,16 @@ struct SyncEngineTests {
     @MainActor
     func recognisesAnUploadThatAlreadyArrived() async throws {
         let fixture = try makeFixture(now: date(15, 18))
-        let session = try addSession(
+        _ = try addSession(
             to: fixture,
             start: date(15, 9),
             stop: date(15, 10),
             attempts: 1
         )
 
-        // The server has the registration, carrying the tag this session put
-        // in its description — the timed-out POST did arrive.
+        // The server has a registration that says exactly what this session
+        // would: same member, day, hours and times. The timed-out POST did
+        // arrive.
         await fixture.api.setHours(.success([
             ZweefMaintenanceHour(
                 id: 99,
@@ -314,7 +310,7 @@ struct SyncEngineTests {
                 hours: 1.0,
                 materialId: nil,
                 status: "in_aanvraag",
-                description: "Glider · 09:00–10:00 \(RegistrationDescription.dedupTag(for: session.id))"
+                description: "09:00–10:00"
             )
         ]))
 
@@ -327,6 +323,24 @@ struct SyncEngineTests {
         #expect(stored.remoteId == 99)
         // Crucially: nothing was posted a second time.
         #expect(await fixture.api.createdDrafts.isEmpty)
+    }
+
+    @Test("Someone else's registration at other times is not mistaken for this one")
+    @MainActor
+    func differentRegistrationIsStillPosted() async throws {
+        let fixture = try makeFixture(now: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), attempts: 1)
+        await fixture.api.setHours(.success([
+            ZweefMaintenanceHour(
+                id: 99, periodId: 1, userId: 101, date: "2026-10-15", hours: 1.0,
+                materialId: nil, status: "in_aanvraag", description: "13:00–14:00"
+            )
+        ]))
+
+        let outcome = await fixture.engine.requestSync(.upload)
+
+        #expect(outcome.uploaded == 1)
+        #expect(await fixture.api.createdDrafts.count == 1)
     }
 
     @Test("A session that was never tried is not dedup-checked")
@@ -357,22 +371,23 @@ struct SyncEngineTests {
         #expect(session.autoStopped)
         #expect(session.syncState == .uploaded)
         let drafts = await fixture.api.createdDrafts
-        #expect(drafts[0].description.contains("stoppedAutomatically"))
+        // The times as stopped by the closing time; the flag itself stays on
+        // the device (ADR 0019).
+        #expect(drafts[0].description == "14:00–21:00")
     }
 
-    @Test("Flags are written in the device's language")
+    @Test("The member's comment travels to zweef.app after the times")
     @MainActor
-    func flagsUseTheReportingLanguage() async throws {
-        let fixture = try makeFixture(now: date(15, 18), language: .french)
-        // Three minutes: under the short-session threshold, so the description
-        // carries a flag.
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 9, 3))
+    func commentIsUploaded() async throws {
+        let fixture = try makeFixture(now: date(15, 18))
+        let session = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
+        session.comment = "Canopy seal replaced"
+        try fixture.container.mainContext.save()
 
         _ = await fixture.engine.requestSync(.upload)
 
         let drafts = await fixture.api.createdDrafts
-        #expect(drafts.count == 1)
-        #expect(drafts.first?.description.contains("shortSession@fr") == true)
+        #expect(drafts.first?.description == "09:00–10:00 · Canopy seal replaced")
     }
 
     // MARK: - Refresh

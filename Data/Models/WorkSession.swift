@@ -50,6 +50,9 @@ final class WorkSession {
     var aircraftId: Int?
     var autoStopped: Bool
     var stoppedByOther: Bool
+    /// What the member typed when stopping; goes into the registration's
+    /// description after the times (ADR 0019). Nil when they typed nothing.
+    var comment: String?
     var syncState: SyncState
     /// The id zweef.app gave the registration, once it has one.
     var remoteId: Int?
@@ -73,6 +76,7 @@ final class WorkSession {
         aircraftId: Int? = nil,
         autoStopped: Bool = false,
         stoppedByOther: Bool = false,
+        comment: String? = nil,
         syncState: SyncState = .local,
         remoteId: Int? = nil,
         lastError: String? = nil,
@@ -89,6 +93,7 @@ final class WorkSession {
         self.aircraftId = aircraftId
         self.autoStopped = autoStopped
         self.stoppedByOther = stoppedByOther
+        self.comment = comment
         self.syncState = syncState
         self.remoteId = remoteId
         self.lastError = lastError

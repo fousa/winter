@@ -107,6 +107,7 @@ final class SessionStore {
         _ session: WorkSession,
         task: TaskDefinition? = nil,
         aircraft: Aircraft? = nil,
+        comment: String? = nil,
         by stoppedBy: StoppedBy = .member
     ) throws {
         guard session.status == .running else { throw StoreError.sessionNotRunning }
@@ -116,6 +117,8 @@ final class SessionStore {
         session.syncState = .local
         session.taskKey = task?.key
         session.aircraftId = aircraft?.zweefId
+        let trimmed = comment?.trimmingCharacters(in: .whitespacesAndNewlines)
+        session.comment = trimmed?.isEmpty == false ? trimmed : nil
         session.stoppedByOther = stoppedBy == .someoneElse
         try context.save()
     }
@@ -151,6 +154,7 @@ final class SessionStore {
         session.syncState = .local
         session.taskKey = nil
         session.aircraftId = nil
+        session.comment = nil
         session.autoStopped = false
         session.stoppedByOther = false
         try context.save()

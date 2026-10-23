@@ -10,7 +10,7 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0004 | [Hours as maintenance hours in zweef.app, approved there](0004-maintenance-hours-endpoint.md) | accepted |
 | 0005 | [Anyone closes the day, only when no timers are running](0005-closing-the-day.md) | closing superseded by 0018; the closing time stays |
 | 0006 | [A native SwiftUI app for iPadOS 26 with Liquid Glass](0006-native-ipados-26.md) | accepted (device and orientation superseded by 0009) |
-| 0007 | [No voice notes, free-text field or CSV export](0007-no-free-form-input.md) | accepted |
+| 0007 | [No voice notes, free-text field or CSV export](0007-no-free-form-input.md) | amended by 0019 (a comment when stopping) |
 | 0008 | [Open source, configured on the device](0008-open-source-configuration.md) | accepted (UI language superseded by 0010, CI by 0011, club name by 0012) |
 | 0009 | [One universal app for iPhone and iPad, fully adaptive](0009-universal-app-iphone-and-ipad.md) | accepted |
 | 0010 | [The app ships in English, Dutch and French only](0010-three-languages-en-nl-fr.md) | accepted |
@@ -20,8 +20,9 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0014 | [Member tiles are Liquid Glass](0014-glass-member-tiles.md) | accepted |
 | 0015 | [Hours are uploaded by hand](0015-manual-upload.md) | accepted |
 | 0016 | [Xcode Cloud builds the releases](0016-xcode-cloud-for-distribution.md) | accepted |
-| 0017 | [Each device writes in its own language](0017-reporting-language-follows-the-device.md) | accepted |
+| 0017 | [Each device writes in its own language](0017-reporting-language-follows-the-device.md) | superseded by 0019 |
 | 0018 | [No closing the day](0018-no-closing-the-day.md) | accepted |
+| 0019 | [The description is the times and a comment](0019-description-is-times-and-a-comment.md) | accepted |
 
 ## Template
 ```markdown

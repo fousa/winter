@@ -46,7 +46,7 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Settings screen behind the admin code (long-press the title), all values editable, connection tested before saving.
 - [x] `ZweefTransport` behind `ZweefAPI` (one connection path; the proxy was dropped by ADR 0013).
 - [x] Configurable task list (TaskDefinition), seeded from the catalog in the setup language.
-- [x] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`.
+- [x] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`. Removed later (ADR 0017, ADR 0019).
 
 ## Phase 6 — Finishing touches
 

@@ -19,11 +19,9 @@ struct FlagBadge: View {
 }
 
 extension SessionFlag {
-    /// The UI wording, in the device's language.
-    ///
-    /// Deliberately separate from ``ReportingLanguage/label(for:)``: what a
-    /// member reads follows their device, while what is uploaded to zweef.app
-    /// follows the club's reporting language (ADR 0010).
+    /// The UI wording, in the device's language. Flags stay on the device:
+    /// the registration in zweef.app carries only the times and the comment
+    /// (ADR 0019).
     var badgeText: String {
         switch self {
         case .shortSession: String(localized: "Short session")

@@ -78,7 +78,7 @@ So the app sends an **empty** `category`, not `"Maintenance"`: matching what the
   "category": "",
   "sub_category": "",
   "project": "Zweefvliegtuig",
-  "description": "Zweefvliegtuig · ASK 21 · 09:12–11:30 [ou:a1b2c3d4]",
+  "description": "09:12–11:30 · Replaced the canopy seal",
   "status": "in_aanvraag"
 }
 ```
@@ -129,7 +129,7 @@ Two things that test also settled:
 | `category` | `""` (see above) |
 | `sub_category` | `""` |
 | `project` | The task label as the club stores it, or `""` |
-| `description` | Composed: task · aircraft · times · flags, then the dedup tag. Flags are in the uploading device's language (ADR 0017) |
+| `description` | The times, then the member's comment if there is one: `09:12–11:30 · Replaced the canopy seal` (ADR 0019). No task, aircraft, flags or tag: those are in `project` and `material_id`, or stay on the device |
 | `status` | `"in_aanvraag"` |
 
 ## Finding the period
@@ -143,7 +143,7 @@ That leaves one hole: a brand-new period with no registrations yet has no `perio
 ## Dedup / idempotency
 The POST has no client-side key. The strategy:
 1. After a successful POST: store the `remoteId` from the response, if there is one.
-2. If the response is unclear (a timeout after sending): before trying again, `GET /maintenance-hours/current/hours.json` and look for a registration with the tag `[ou:xxxxxxxx]` in `description` (fallback: the same `user_id` + `date` + `hours`). Found → mark it as uploaded with that `id`.
+2. If the response is unclear (a timeout after sending): before trying again, `GET /maintenance-hours/current/hours.json` and look for a registration that says what this one would: the same `user_id`, `date`, `hours`, `material_id` and `description` — the times to the minute make it one member's one session (ADR 0019). There is no machine tag any more. Found → mark it as uploaded with that `id`.
 3. Corrections after upload happen in zweef.app, not in the app (PUT/DELETE are only there for future use).
 
 The decoder reads the full record zweef.app returns, and keeps a fallback for a bare id, `{"id": …}`, `{"data": {"id": …}}` or `{"maintenance_hour": {"id": …}}` — not as speculation but because PUT is undocumented too, and an id we can still read beats an upload we cannot confirm. A missing id is not a failure: dedup works off the tag, not off the id.

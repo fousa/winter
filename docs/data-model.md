@@ -48,6 +48,7 @@ enum SyncState: String, Codable {
     var aircraftId: Int?
     var autoStopped: Bool
     var stoppedByOther: Bool
+    var comment: String?           // typed when stopping; goes into the description (ADR 0019)
     var syncState: SyncState
     var remoteId: Int?
     var lastError: String?
@@ -84,6 +85,7 @@ enum SyncState: String, Codable {
     var clubNameIsManual: Bool     // typed names survive a refresh (ADR 0012)
     @Attribute(.externalStorage) var clubLogo: Data?  // PNG, at most 512 px, picked on the device
     var clubFetchedAt: Date?
+    var requiresComment: Bool = false  // no stopping without a comment (ADR 0019)
     var closingHour: Int = 21
     var closingMinute: Int = 0
     var activePeriodId: Int?
@@ -98,5 +100,5 @@ enum SyncState: String, Codable {
 - `decimalHours(minutes:) -> Double` (two decimals)
 - `flags(for:) -> [Flag]` → short (< 5 min), long (> 10 h), stopped automatically, stopped by someone else
 - `autoStopDate(for start: Date, closing: DateComponents) -> Date`: the closing time on the day the session started; a session that starts *after* the closing time gets the next day's closing time
-- `description(for session:, aircraft:) -> String`
+- `description(for session:) -> String`: the times and the comment (ADR 0019)
 - Retention: uploaded sessions stay on the device for 90 days, then get cleaned up.

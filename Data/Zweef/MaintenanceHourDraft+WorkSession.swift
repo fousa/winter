@@ -20,8 +20,6 @@ extension MaintenanceHourDraft {
     /// would put a wrong number in front of the board.
     ///
     /// - Parameters:
-    ///   - flagLabel: Resolves flags in the club's *reporting* language, not the
-    ///     language of whoever tapped Stop (ADR 0010).
     ///   - calendar: Decides which day the hours land on; the device's own time
     ///     zone defines the club's day.
     init?(
@@ -29,10 +27,8 @@ extension MaintenanceHourDraft {
         memberId: Int,
         memberName: String,
         taskLabel: String?,
-        aircraftName: String?,
         materialId: Int?,
         periodId: Int,
-        flagLabel: (SessionFlag) -> String,
         calendar: Calendar = .club,
         category: String = MaintenanceHourDraft.defaultCategory,
         subCategory: String = "",
@@ -53,19 +49,26 @@ extension MaintenanceHourDraft {
             subCategory: subCategory,
             project: taskLabel ?? "",
             description: RegistrationDescription.text(
-                for: RegistrationDescription.Input(
-                    sessionId: session.id,
-                    start: session.start,
-                    stop: stop,
-                    taskLabel: taskLabel,
-                    aircraftName: aircraftName,
-                    flags: session.flags
-                ),
-                flagLabel: flagLabel,
+                for: RegistrationDescription.Input(start: session.start, stop: stop, comment: session.comment),
                 timeZone: calendar.timeZone
             ),
             status: status
         )
+    }
+
+    /// Whether a registration zweef.app already holds is this one.
+    ///
+    /// Used after an upload timed out, when the app cannot tell whether its
+    /// POST arrived. Without a machine tag in the description (ADR 0019) the
+    /// registration is recognised by what it says: the same member, day,
+    /// hours, aircraft and description — and the description holds the start
+    /// and stop time to the minute, which one member cannot have twice.
+    func isSameRegistration(as hour: ZweefMaintenanceHour) -> Bool {
+        hour.userId == userId
+            && hour.date == date
+            && abs(hour.hours - hours) < 0.005
+            && hour.materialId == materialId
+            && hour.description.trimmingCharacters(in: .whitespacesAndNewlines) == description
     }
 
     /// `yyyy-MM-dd`, fixed format and POSIX locale: this is a key in somebody

@@ -193,8 +193,15 @@ struct SetupView: View {
                     .disabled(model.isManaged(.closingTime))
                 }
                 .padding(14)
+                Divider()
+                Toggle("A comment is required when stopping", isOn: $model.requiresComment)
+                    .padding(14)
             }
             .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
+
+            Text("The comment goes to zweef.app with the hours, so the board can see what was done.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
         }
     }
 

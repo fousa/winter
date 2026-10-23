@@ -25,13 +25,16 @@ struct StopSheet: View {
     let member: Member?
     let tasks: [TaskDefinition]
     let aircraft: [Aircraft]
-    var onStop: (TaskDefinition?, Aircraft?) -> Void
+    /// The club's setting: no stopping without a comment (ADR 0019).
+    var requiresComment = false
+    var onStop: (TaskDefinition?, Aircraft?, String?) -> Void
     var onDiscard: () -> Void
     var onDismiss: () -> Void
 
     @State private var selectedTask: TaskDefinition?
     @State private var selectedAircraft: Aircraft?
     @State private var isPickingAircraft = false
+    @State private var comment = ""
 
     var body: some View {
         NavigationStack {
@@ -90,6 +93,14 @@ struct StopSheet: View {
             RunningTimerText(start: session.start, size: metrics.displayTimerFontSize * 0.7)
 
             stopButton
+
+            if isMissingComment {
+                // Said next to the disabled button, so nobody wonders why it
+                // does nothing; the field itself is under the tasks.
+                Label("Add a comment below to stop", systemImage: "text.bubble")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 
@@ -117,6 +128,7 @@ struct StopSheet: View {
             Label("Stop and save", systemImage: "stop.fill")
         }
         .menuStyle(.button)
+        .disabled(isMissingComment)
         .buttonStyle(.glassProminent)
         .tint(.stopAction)
     }
@@ -167,6 +179,8 @@ struct StopSheet: View {
                 aircraftTile
             }
 
+            commentField
+
             Text("Saved on this device, with or without internet.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -181,25 +195,26 @@ struct StopSheet: View {
         return Button {
             select(task)
         } label: {
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top) {
-                    Image(systemName: task.symbolName)
-                        .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
-                        .background(task.color.gradient, in: .rect(cornerRadius: 10))
-                    Spacer(minLength: 0)
-                    if isSelected {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.title3)
-                            .foregroundStyle(.tint)
-                    }
-                }
+            // Icon beside the label rather than above it: half the height,
+            // which leaves the form sheet room for the comment field.
+            HStack(spacing: 10) {
+                Image(systemName: task.symbolName)
+                    .foregroundStyle(.white)
+                    .frame(width: 32, height: 32)
+                    .background(task.color.gradient, in: .rect(cornerRadius: 9))
                 Text(task.label)
                     .font(.headline)
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(2)
                     .multilineTextAlignment(.leading)
+                Spacer(minLength: 0)
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.tint)
+                }
             }
-            .padding(14)
+            .padding(.horizontal, 12)
+            .frame(minHeight: 60)
             .frame(maxWidth: .infinity, alignment: .leading)
             .contentShape(.rect(cornerRadius: metrics.tileCornerRadius))
         }
@@ -303,9 +318,36 @@ struct StopSheet: View {
     private func stop() {
         onStop(
             selectedTask,
-            selectedTask?.asksForAircraft == true ? selectedAircraft : nil
+            selectedTask?.asksForAircraft == true ? selectedAircraft : nil,
+            comment
         )
         dismiss()
+    }
+
+    private var isMissingComment: Bool {
+        requiresComment && comment.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// What the member wants the board to know, in their own words. It goes
+    /// into the registration after the times (ADR 0019). A few lines that
+    /// grow as they type, so the sheet keeps its size until someone writes a
+    /// paragraph.
+    private var commentField: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            TextField(
+                requiresComment ? "Comment" : "Comment (optional)",
+                text: $comment,
+                prompt: Text("What did you do? For the board in zweef.app"),
+                axis: .vertical
+            )
+            .lineLimit(2...5)
+            .padding(14)
+            .background(Color.card, in: .rect(cornerRadius: metrics.tileCornerRadius))
+
+            Text(requiresComment ? "Required by your club." : "Optional.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
     }
 
     private func discard() {
@@ -361,7 +403,7 @@ private struct StopSheetPreview: View {
             member: member,
             tasks: tasks,
             aircraft: planes,
-            onStop: { _, _ in },
+            onStop: { _, _, _ in },
             onDiscard: {},
             onDismiss: {}
         )

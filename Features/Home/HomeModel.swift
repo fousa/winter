@@ -122,11 +122,12 @@ final class HomeModel {
         member: Member?,
         task: TaskDefinition?,
         aircraft: Aircraft?,
+        comment: String? = nil,
         store: SessionStore,
         locale: Locale = .current
     ) {
         do {
-            try store.stop(session, task: task, aircraft: aircraft)
+            try store.stop(session, task: task, aircraft: aircraft, comment: comment)
             feedback += 1
             // A start of this same session can no longer be undone.
             if pendingUndo?.sessionId == session.id { pendingUndo = nil }

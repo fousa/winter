@@ -16,7 +16,7 @@ There is no retry and no backoff. An upload runs because a person is standing at
 3. **Upload** — only for "Upload" — every completed session with `syncState` `.local` or `.ready`. Running sessions are not finished and stay. `.rejected` ones are not sent again.
    - Set `.uploading`, POST, and on success `.uploaded` + `remoteId` + `uploadedAt`.
    - Network error/timeout/5xx → back to `.ready`, `attempts += 1`, `lastError`.
-   - Unclear whether the POST arrived (a timeout after sending) → on the next upload, do a dedup check first (see zweef-api.md).
+   - Unclear whether the POST arrived (a timeout after sending) → on the next upload, first look for a registration with the same member, day, hours, aircraft and description (see zweef-api.md).
    - 401/403 → the run stops; the other sessions are not touched.
    - 4xx (validation, member inactive, period closed) → `.rejected` with the reason. Visible under "Needs attention".
 4. Update `SyncLog` and `AppSettings.last*` ("last attempt" only on an upload).

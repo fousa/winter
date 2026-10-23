@@ -47,8 +47,9 @@ Each device has its own local database and uploads its own sessions.
 1. Someone taps the member's tile in "Working now" at the top of the list (their own timer or someone else's). While a timer runs, that is the member's only tile; search finds it there too.
 2. The "Stop" sheet shows the person, the start time and the running duration.
 3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` a searchable picker of the club's own aircraft opens (from `material.json`, each with its registration and type; private gliders are left out).
-4. "Stop and save" opens a confirmation menu ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
-5. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
+4. Optional: a comment for the board, which goes into the registration after the times; required when the club turned that on (ADR 0019).
+5. "Stop and save" opens a confirmation menu ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
+6. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
 - Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.
 
 ### Deleting instead of stopping
@@ -76,7 +77,7 @@ Each device has its own local database and uploads its own sessions.
 | Stopped automatically | Flag "stopped automatically" |
 | Overlapping sessions for the same member | Impossible: a member can only have one running session |
 
-Flags travel along in `description` to zweef.app and are shown in orange on screen 6.
+Flags are shown in orange on the sync screen's tiles. They do not travel to zweef.app: the description there is the times and the member's comment (ADR 0019).
 
 ### Language
 - The app ships in English, Dutch and French, and nothing else ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)).
@@ -84,7 +85,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - On a device set to any other language, the app falls back to English.
 - Dates, times, durations and decimal hours follow the device locale.
 - What the club typed itself (task labels) and what comes from zweef.app (club name, member names, aircraft) is shown as-is and never translated.
-- Text that goes *to* zweef.app (the task label in `project`, the flags in `description`) is in the language of the device that uploads it (ADR 0017). Task labels are the club's own names and are never translated.
+- Nothing language-dependent goes *to* zweef.app: the task label in `project` is the club's own name, and the description is the times and the member's comment (ADR 0019).
 
 ### Club data
 - The club name comes from zweef.app (`GET /club.json`) when that endpoint answers, fetched during "Test connection" and on every refresh, and cached locally so it stays visible offline.

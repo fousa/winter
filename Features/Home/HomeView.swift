@@ -359,13 +359,15 @@ struct HomeView: View {
                     // Club work on club aircraft: members' own gliders are not
                     // offered. Unknown ownership (nil, before the refresh that
                     // reads it) still shows, rather than an empty picker.
-                    aircraft: aircraft.filter { $0.isClubOwned != false }
-                ) { task, plane in
+                    aircraft: aircraft.filter { $0.isClubOwned != false },
+                    requiresComment: settings.first?.requiresComment ?? false
+                ) { task, plane, comment in
                     model.stop(
                         session,
                         member: membersById[session.memberId],
                         task: task,
                         aircraft: plane,
+                        comment: comment,
                         store: store,
                         locale: locale
                     )

@@ -46,14 +46,6 @@ actor SyncEngine {
     /// assistant creates the connection after launch, and the settings screen
     /// can replace a token the club has revoked.
     private let apiProvider: @Sendable () -> any ZweefAPI
-    /// Resolves a flag in the club's reporting language, which the engine reads
-    /// from its own context at upload time. Injected so tests can pin the
-    /// output; it must never touch the main actor, because it runs on this
-    /// actor's executor.
-    private let flagLabel: @Sendable (SessionFlag, ReportingLanguage) -> String
-    /// The language the flags are written in: the device's (ADR 0017).
-    /// Injected so a test can pin it.
-    private let reportingLanguage: @Sendable () -> ReportingLanguage
     private let calendar: Calendar
     private let now: @Sendable () -> Date
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "winter", category: "sync")
@@ -68,15 +60,11 @@ actor SyncEngine {
     init(
         container: ModelContainer,
         apiProvider: @escaping @Sendable () -> any ZweefAPI,
-        flagLabel: @escaping @Sendable (SessionFlag, ReportingLanguage) -> String,
-        reportingLanguage: @escaping @Sendable () -> ReportingLanguage = { .device },
         calendar: Calendar = .club,
         now: @escaping @Sendable () -> Date = { Date() }
     ) {
         self.container = container
         self.apiProvider = apiProvider
-        self.flagLabel = flagLabel
-        self.reportingLanguage = reportingLanguage
         self.calendar = calendar
         self.now = now
     }
@@ -349,23 +337,21 @@ actor SyncEngine {
         }
 
         for session in candidates {
-            // An upload that timed out may well have arrived. Checking before
-            // re-posting is the only thing standing between a dropped
-            // connection and the same hours counted twice.
-            if session.attempts > 0,
-               let match = alreadyUploaded?.first(where: {
-                   RegistrationDescription.describes(sessionId: session.id, description: $0.description)
-               }) {
-                markUploaded(session, remoteId: match.id)
-                result.uploaded += 1
-                log(.upload, "Recognised a registration that had already arrived", in: context)
-                continue
-            }
-
             guard let draft = draft(for: session, periodId: periodId, in: context) else {
                 session.lastError = "Could not be prepared for upload"
                 session.syncState = .rejected
                 result.rejected += 1
+                continue
+            }
+
+            // An upload that timed out may well have arrived. Checking before
+            // re-posting is the only thing standing between a dropped
+            // connection and the same hours counted twice.
+            if session.attempts > 0,
+               let match = alreadyUploaded?.first(where: draft.isSameRegistration(as:)) {
+                markUploaded(session, remoteId: match.id)
+                result.uploaded += 1
+                log(.upload, "Recognised a registration that had already arrived", in: context)
                 continue
             }
 
@@ -460,19 +446,13 @@ actor SyncEngine {
             ).first
         }
 
-        // Read per upload, not captured at init: the device's language can
-        // change while the app runs, and the next upload should follow it.
-        let language = reportingLanguage()
-
         return MaintenanceHourDraft(
             session: session,
             memberId: session.memberId,
             memberName: member?.fullName ?? "",
             taskLabel: task?.label,
-            aircraftName: aircraft?.name,
             materialId: aircraft?.zweefId,
             periodId: periodId,
-            flagLabel: { flagLabel($0, language) },
             calendar: calendar
         )
     }

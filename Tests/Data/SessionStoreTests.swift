@@ -205,16 +205,33 @@ struct SessionStoreTests {
         fixture.context.insert(task)
         let session = try fixture.store.start(member: member)
         fixture.clock.now = date(15, 11, 30)
-        try fixture.store.stop(session, task: task, by: .someoneElse)
+        try fixture.store.stop(session, task: task, comment: "Wings waxed", by: .someoneElse)
 
         try fixture.store.undoStop(session)
 
         #expect(session.status == .running)
         #expect(session.stop == nil)
         #expect(session.taskKey == nil)
+        #expect(session.comment == nil)
         #expect(session.stoppedByOther == false)
         #expect(session.start == date(15, 9, 12))
         #expect(try fixture.store.runningSessions().count == 1)
+    }
+
+    @Test("The comment is stored trimmed, and an empty one as nothing")
+    func storesTheComment() throws {
+        let fixture = try makeFixture(now: date(15, 9))
+        let jan = try makeMember(fixture.context, id: 1)
+        let koen = try makeMember(fixture.context, id: 2)
+        let first = try fixture.store.start(member: jan)
+        let second = try fixture.store.start(member: koen)
+        fixture.clock.now = date(15, 10)
+
+        try fixture.store.stop(first, comment: "  Wings waxed \n")
+        try fixture.store.stop(second, comment: "   ")
+
+        #expect(first.comment == "Wings waxed")
+        #expect(second.comment == nil)
     }
 
     @Test("A running session cannot have its stop undone")

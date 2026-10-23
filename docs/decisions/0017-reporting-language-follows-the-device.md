@@ -1,6 +1,6 @@
 # 0017 — Each device writes in its own language
 
-- **Status**: accepted
+- **Status**: superseded by [0019](0019-description-is-times-and-a-comment.md): nothing language-dependent is written into zweef.app any more
 - **Date**: 2026-10-23
 - **Amends**: [0010](0010-three-languages-en-nl-fr.md)
 

@@ -27,6 +27,10 @@ final class AppSettings {
     /// and kept outside the database row, so a large picture never slows the
     /// fetch of the settings.
     @Attribute(.externalStorage) var clubLogo: Data?
+    /// Whether stopping a timer needs a comment. Off by default; a club that
+    /// wants every registration explained turns it on in the setup or in
+    /// Settings (ADR 0019).
+    var requiresComment: Bool = false
     var closingHour: Int
     var closingMinute: Int
     var activePeriodId: Int?

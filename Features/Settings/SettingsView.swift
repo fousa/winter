@@ -172,6 +172,11 @@ struct SettingsView: View {
                 displayedComponents: .hourAndMinute
             )
             .disabled(configuration.managedKeys.contains(.closingTime))
+
+            Toggle("A comment is required when stopping", isOn: Binding(
+                get: { settings.requiresComment },
+                set: { settings.requiresComment = $0 }
+            ))
         }
     }
 
