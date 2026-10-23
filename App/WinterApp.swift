@@ -25,23 +25,31 @@ struct WinterApp: App {
 
     init() {
         let container: ModelContainer
-        do {
-            container = try WinterSchema.container()
-        } catch {
-            // Nothing can be recorded without a store, and silently running on
-            // an in-memory one would lose a member's hours without telling
-            // anyone — which is the one thing this app must never do.
-            fatalError("Could not open the Winter database: \(error)")
+        let configuration: AppConfiguration
+        let secrets: any SecretStore
+        let connection: ConnectionProvider
+
+        if let sample = Self.sampleClubLaunch() {
+            (container, configuration, secrets, connection) = sample
+        } else {
+            do {
+                container = try WinterSchema.container()
+            } catch {
+                // Nothing can be recorded without a store, and silently running
+                // on an in-memory one would lose a member's hours without
+                // telling anyone — which is the one thing this app must never
+                // do.
+                fatalError("Could not open the Winter database: \(error)")
+            }
+            configuration = AppConfiguration()
+            secrets = KeychainSecretStore()
+            // Read once at launch and updated whenever the settings change, so
+            // the sync engine always uses the current token.
+            connection = ConnectionProvider(
+                settings: ConnectionSettings(configuration: configuration, secrets: secrets)
+            )
         }
         self.container = container
-
-        let configuration = AppConfiguration()
-        let secrets = KeychainSecretStore()
-        // Read once at launch and updated whenever the settings change, so the
-        // sync engine always uses the current token.
-        let connection = ConnectionProvider(
-            settings: ConnectionSettings(configuration: configuration, secrets: secrets)
-        )
         self.configuration = configuration
         self.secrets = secrets
         self.connection = connection
@@ -90,6 +98,29 @@ struct WinterApp: App {
             await sync.backgroundRefresh()
             scheduleBackgroundRefresh()
         }
+    }
+
+    /// Debug builds only: `-sampleClub 3` launches straight into the home
+    /// screen of the fictional club with three timers running, in memory and
+    /// with no connection, so a screen can be looked at on a simulator without
+    /// a zweef.app key. Nothing is written to disk and nothing is uploaded.
+    private static func sampleClubLaunch() -> (ModelContainer, AppConfiguration, any SecretStore, ConnectionProvider)? {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-sampleClub") else { return nil }
+        let running = arguments.indices.contains(index + 1) ? Int(arguments[index + 1]) ?? 0 : 0
+
+        guard let container = try? SampleData.container(runningSessionCount: running),
+              let defaults = UserDefaults(suiteName: "app.winter.sample-club")
+        else { return nil }
+        defaults.removePersistentDomain(forName: "app.winter.sample-club")
+        let configuration = AppConfiguration(defaults: defaults)
+        configuration.clubSchema = "exampleclub"
+        let secrets = InMemorySecretStore([.apiKey: "sample", .adminCode: "sample"])
+        return (container, configuration, secrets, ConnectionProvider())
+        #else
+        return nil
+        #endif
     }
 
     private nonisolated func scheduleBackgroundRefresh() {
