@@ -10,6 +10,7 @@ Thanks for wanting to help! This app is built by and for gliding clubs. Contribu
 - macOS with Xcode 26 or later, plus [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 - `Winter.xcodeproj` is generated and is not in git. Run `xcodegen generate` after cloning, and again whenever you add a file or change `project.yml`.
 - Optional: copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and fill in `DEVELOPMENT_TEAM` and `BUNDLE_ID_PREFIX`. Without it the project still builds, under `com.example`.
+- Xcode Cloud builds the releases (ADR 0016). It generates the project itself with `ci_scripts/ci_post_clone.sh`; the workflow needs the environment variables `WINTER_BUNDLE_ID_PREFIX` (e.g. `be.example`) and `WINTER_DEVELOPMENT_TEAM`. Xcode's warning that the scheme "may only exist locally" is expected.
 - You do not need a zweef.app key to develop: previews and tests use `FakeZweefAPI`.
 - To look at a screen on a simulator without going through the setup assistant, launch a Debug build with the argument `-sampleClub 3`: the app opens on the home screen of the fictional club with three timers running, in memory and with no connection. In Xcode this goes under Product → Scheme → Edit Scheme → Arguments; from the command line, `xcrun simctl launch <udid> be.fousa.winter -sampleClub 3` (with your own bundle identifier). Add `-sampleScreen sync` or `-sampleScreen closeDay` to open that screen with a few finished sessions in it.
 

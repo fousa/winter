@@ -52,6 +52,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - On the stop sheet, choosing Glider opens a searchable picker of aircraft as glass tiles, the registration large with its type ("Schleicher ASK 21") underneath, instead of a row of capsules; the choice then shows under Glider and reopens the picker. The type comes from `material.json` and is stored as `Aircraft.typeName`; aircraft stored before that are refreshed on the next run rather than after six hours.
 - "Stop and save" asks first, in a menu on the button ("Stop Jan's timer?"). For a short session the menu asks whether the time is right instead, replacing the separate dialog.
 - Debug builds also take `-sampleScreen sync` or `-sampleScreen closeDay`, which opens that screen with finished sample sessions.
+- Xcode Cloud can build the app (ADR 0016, amending 0011): `ci_scripts/ci_post_clone.sh` installs XcodeGen and generates the project, and writes `Config/Local.xcconfig` from the workflow's `WINTER_BUNDLE_ID_PREFIX` and `WINTER_DEVELOPMENT_TEAM`.
 
 ### Fixed
 - The sync screen said "This device has no zweef.app connection configured yet" on a connected device, a placeholder from before the setup assistant existed. It now says why hours are waiting. The two counters line up at the top.

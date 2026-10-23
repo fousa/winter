@@ -1,6 +1,6 @@
 # 0011 — No continuous integration
 
-- **Status**: accepted
+- **Status**: accepted, amended by [0016](0016-xcode-cloud-for-distribution.md) (Xcode Cloud builds the releases)
 - **Date**: 2026-10-18
 - **Supersedes**: the CI secret-scanning consequence of [0008](0008-open-source-configuration.md)
 
