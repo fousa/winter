@@ -38,14 +38,14 @@ struct MaintenanceHourDraftTests {
 
     private func draft(
         for session: WorkSession,
-        taskLabel: String? = "Zweefvliegtuig",
+        project: String? = "ASK 21",
         materialId: Int? = 1
     ) -> MaintenanceHourDraft? {
         MaintenanceHourDraft(
             session: session,
             memberId: 101,
             memberName: "Jan Verhoeven",
-            taskLabel: taskLabel,
+            project: project,
             materialId: materialId,
             periodId: 1,
             calendar: calendar
@@ -65,7 +65,7 @@ struct MaintenanceHourDraftTests {
         #expect(draft.materialId == 1)
         #expect(draft.workorderId == nil)
         #expect(draft.isPrivate == false)
-        #expect(draft.project == "Zweefvliegtuig")
+        #expect(draft.project == "ASK 21")
         #expect(draft.status == "in_aanvraag")
         // The task is in `project` and the aircraft in `materialId`; the
         // description is the times (ADR 0019).
@@ -90,7 +90,7 @@ struct MaintenanceHourDraftTests {
     @Test("Without a task there is no project, and the times still carry it")
     func mapsWithoutATask() throws {
         let work = session(from: date(15, 9, 12), to: date(15, 10, 12))
-        let draft = try #require(self.draft(for: work, taskLabel: nil, materialId: nil))
+        let draft = try #require(self.draft(for: work, project: nil, materialId: nil))
 
         #expect(draft.project == "")
         #expect(draft.materialId == nil)
@@ -100,7 +100,7 @@ struct MaintenanceHourDraftTests {
     @Test("The member's comment goes after the times; flags stay on the device")
     func includesTheComment() throws {
         let work = session(from: date(15, 14), to: date(15, 21), autoStopped: true, comment: "Lier nagekeken")
-        let draft = try #require(self.draft(for: work, taskLabel: "Lier", materialId: 4))
+        let draft = try #require(self.draft(for: work, project: "Lier", materialId: 4))
 
         #expect(draft.description == "14:00–21:00 · Lier nagekeken")
         #expect(draft.hours == 7.0)
@@ -146,7 +146,7 @@ struct FakeZweefAPITests {
         let api = FakeZweefAPI()
 
         #expect(try await api.accounts(inactiveOnly: false).count == 4)
-        #expect(try await api.material().count == 4)
+        #expect(try await api.material().count == 5)
         #expect(try await api.activePeriodId() == 1)
         #expect(try await api.club().name == "Gliding Club Example")
         #expect(await api.callLog == ["accounts", "material", "hours", "club"])

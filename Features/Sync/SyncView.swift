@@ -23,8 +23,7 @@ struct SyncView: View {
     /// The screen's width, to decide whether the status card fits beside the
     /// two columns of tiles.
     @State private var width: CGFloat = 0
-    @Query private var tasks: [TaskDefinition]
-    @Query private var aircraft: [Aircraft]
+    @Query private var material: [Material]
 
     var body: some View {
         ScrollView {
@@ -191,8 +190,7 @@ struct SyncView: View {
                     SessionTile(
                         session: session,
                         member: members.first { $0.zweefId == session.memberId },
-                        task: tasks.first { $0.key == session.taskKey },
-                        aircraft: aircraft.first { $0.zweefId == session.aircraftId },
+                        material: material.first { $0.zweefId == session.materialId },
                         showsReason: showsReason
                     )
                 }

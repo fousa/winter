@@ -199,22 +199,20 @@ actor SyncEngine {
 
     // MARK: - Refresh
 
-    /// Brings the club name, the members, the aircraft and the active period up
-    /// to date, at most once every six hours.
+    /// Brings the club name, the members, the material and the active period
+    /// up to date, at most once every six hours.
     private func refreshIfDue(in context: ModelContext, api: any ZweefAPI) async throws -> Bool {
         let settings = try settings(in: context)
         let memberCount = try context.fetchCount(FetchDescriptor<Member>())
-        // Aircraft stored before the type and the owner were read have them
-        // as nil; fetching once more fills them in, instead of leaving the
-        // picker incomplete for up to six hours.
-        let aircraftWithoutType = try context.fetchCount(
-            FetchDescriptor<Aircraft>(predicate: #Predicate { $0.typeName == nil || $0.isClubOwned == nil })
-        )
+        // No material yet — a fresh device, or one updated from the build that
+        // kept only aircraft — means an empty "what did you work on?", so it
+        // is fetched now rather than up to six hours later.
+        let materialCount = try context.fetchCount(FetchDescriptor<Material>())
 
         guard RefreshPolicy.shouldRefresh(
             lastRefresh: settings.lastRefreshAt,
             now: now(),
-            cacheIsEmpty: memberCount == 0 || aircraftWithoutType > 0
+            cacheIsEmpty: memberCount == 0 || materialCount == 0
         ) else { return false }
 
         // The club name is a nice-to-have: club.json answers 500 for a real
@@ -265,34 +263,42 @@ actor SyncEngine {
         }
     }
 
-    /// Upserts aircraft, skipping everything that does not fly.
+    /// Mirrors zweef.app's material list: every visible item, in the three
+    /// tabs of its own maintenance form (ADR 0020).
     ///
-    /// `material.json` also lists winches, cars and buildings. Those are tasks
-    /// in this app, not aircraft, so only `category == "kist"` ends up in the
-    /// aircraft picker.
+    /// Items zweef.app no longer lists, or hides, are removed, so the picker
+    /// never offers something the board cannot book on. A session that
+    /// already points at one keeps its `materialId`; only the name for
+    /// `project` is then missing.
     private func upsert(material: [ZweefMaterial], in context: ModelContext) throws {
-        let existing = try context.fetch(FetchDescriptor<Aircraft>())
-            .reduce(into: [Int: Aircraft]()) { $0[$1.zweefId] = $1 }
+        let existing = try context.fetch(FetchDescriptor<Material>())
+            .reduce(into: [Int: Material]()) { $0[$1.zweefId] = $1 }
+        let listed = material.filter(\.isVisible)
 
-        for item in material where item.isAircraft {
-            // Stored as "" when zweef.app has no type: nil is kept for "never
-            // fetched", which makes the next run refresh (`refreshIfDue`).
-            let typeName = item.type ?? ""
-            if let aircraft = existing[item.id] {
-                aircraft.name = item.name
-                aircraft.typeName = typeName
-                aircraft.isClubOwned = item.isClubOwned
-                aircraft.isGlider = item.isGlider
+        for item in listed {
+            if let stored = existing[item.id] {
+                stored.name = item.name
+                stored.kindRaw = item.kind.rawValue
+                stored.typeName = item.type ?? ""
+                stored.isClubOwned = item.isClubOwned
+                stored.isGlider = item.isGlider
+                stored.sortOrder = item.order ?? 0
             } else {
-                context.insert(Aircraft(
+                context.insert(Material(
                     zweefId: item.id,
                     name: item.name,
-                    registration: nil,
-                    typeName: typeName,
+                    kind: item.kind,
+                    typeName: item.type ?? "",
                     isClubOwned: item.isClubOwned,
-                    isGlider: item.isGlider
+                    isGlider: item.isGlider,
+                    sortOrder: item.order ?? 0
                 ))
             }
+        }
+
+        let listedIds = Set(listed.map(\.id))
+        for (id, stored) in existing where !listedIds.contains(id) {
+            context.delete(stored)
         }
     }
 
@@ -432,17 +438,10 @@ actor SyncEngine {
             FetchDescriptor<Member>(predicate: #Predicate { $0.zweefId == memberId })
         ).first
 
-        let taskKey = session.taskKey
-        let task = taskKey.flatMap { key in
+        let materialId = session.materialId
+        let material = materialId.flatMap { id in
             try? context.fetch(
-                FetchDescriptor<TaskDefinition>(predicate: #Predicate { $0.key == key })
-            ).first
-        }
-
-        let aircraftId = session.aircraftId
-        let aircraft = aircraftId.flatMap { id in
-            try? context.fetch(
-                FetchDescriptor<Aircraft>(predicate: #Predicate { $0.zweefId == id })
+                FetchDescriptor<Material>(predicate: #Predicate { $0.zweefId == id })
             ).first
         }
 
@@ -450,8 +449,8 @@ actor SyncEngine {
             session: session,
             memberId: session.memberId,
             memberName: member?.fullName ?? "",
-            taskLabel: task?.label,
-            materialId: aircraft?.zweefId,
+            project: material?.name,
+            materialId: materialId,
             periodId: periodId,
             calendar: calendar
         )

@@ -107,10 +107,11 @@ actor FakeZweefAPI: ZweefAPI {
     ]
 
     static let sampleMaterial: [ZweefMaterial] = [
-        ZweefMaterial(id: 1, name: "ASK 21", type: "Schleicher ASK 21", category: "kist", kistConfiguration: "Glider", kistCategory: "club", status: "in bedrijf", isVisible: true),
-        ZweefMaterial(id: 2, name: "LS4", type: "Rolladen-Schneider LS4", category: "kist", kistConfiguration: "Glider", kistCategory: "club", status: "in bedrijf", isVisible: true),
-        ZweefMaterial(id: 3, name: "Discus", type: "Schempp-Hirth Discus b", category: "kist", kistConfiguration: "Glider", kistCategory: "prive", status: "in bedrijf", isVisible: true),
-        ZweefMaterial(id: 4, name: "Lier", type: "Supacat", category: "rollend", kistConfiguration: nil, kistCategory: nil, status: "in bedrijf", isVisible: true),
+        ZweefMaterial(id: 1, name: "ASK 21", type: "Schleicher ASK 21", category: "kist", kistConfiguration: "Glider", kistCategory: "club", status: "in bedrijf", isVisible: true, order: nil),
+        ZweefMaterial(id: 2, name: "LS4", type: "Rolladen-Schneider LS4", category: "kist", kistConfiguration: "Glider", kistCategory: "club", status: "in bedrijf", isVisible: true, order: nil),
+        ZweefMaterial(id: 3, name: "Discus", type: "Schempp-Hirth Discus b", category: "kist", kistConfiguration: "Glider", kistCategory: "prive", status: "in bedrijf", isVisible: true, order: nil),
+        ZweefMaterial(id: 4, name: "Lier", type: "Supacat", category: "rollend", kistConfiguration: nil, kistCategory: nil, status: "in bedrijf", isVisible: true, order: nil),
+        ZweefMaterial(id: 5, name: "Club", type: nil, category: "overig", kistConfiguration: nil, kistCategory: nil, status: "in bedrijf", isVisible: true, order: nil),
     ]
 
     static let sampleHours: [ZweefMaintenanceHour] = [

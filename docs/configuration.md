@@ -11,7 +11,7 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 | Club name | SwiftData `AppSettings` | no | Typed in the setup, prefilled from zweef.app (`GET /club.json`) when that endpoint answers — which for a real club it does not, so typing it is the normal case ([ADR 0012](decisions/0012-club-name-may-be-typed.md)). Empty → the app shows "Winter" |
 | Closing time | SwiftData `AppSettings` | yes | 21:00 by default |
 | Comment required | SwiftData `AppSettings` | no | off by default; when on, "Stop and save" needs a comment (ADR 0019). Set in the setup's club step or in Settings |
-| Tasks | SwiftData | yes | a default list (Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else), seeded in the setup language and editable; edited labels are club data and are not translated |
+| What the work was on | SwiftData `Material` | — | not configured: zweef.app's `material.json`, refreshed with the members (ADR 0020) |
 | `category` / `status` for zweef.app | UserDefaults | yes | `""` / `in_aanvraag` by default — an empty category is what real registrations carry, the documentation's `Maintenance` is not ([zweef-api.md](zweef-api.md)) |
 | Admin code | **Keychain** (hashed) | yes | six digits; protects only the settings screen, not everyday use |
 
@@ -28,7 +28,7 @@ The setup and the settings screen both warn about what that key opens, and [SECU
 It appears until someone confirms its last step: a "setup completed" flag in UserDefaults, next to a schema, an API key and an admin code. The flag matters because iOS keeps an app's Keychain items when the app is deleted: after a reinstall the old key and admin code are still there, and without the flag saving the schema in step 2 counted as a finished setup and skipped the rest. UserDefaults are deleted with the app, so a reinstall always starts the assistant from the beginning. A device set up by a build without the flag (it has a schema stored) counts as set up. The steps:
 1. **Welcome** — what the app does, and what you need: the club's schema name and an API key.
 2. **Connection** — the club schema and the API key (a `SecureField`, pasting allowed), with the warning about what the key opens. Tap "Test connection" → `GET /maintenance-hours/current/hours.json` (not `periods.json`, which 404s). On success it shows the active period, and tries `GET /club.json` for the club name — which currently answers 500, so a successful connection without a name is normal; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
-3. **Club** — the club name, the closing time, and "A comment is required when stopping": the club name is prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter".
+3. **Club** — the club name, the closing time, and "A comment is required when stopping": the club name is prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time, and whether a comment is required when stopping. Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter".
 4. **Logo** — a page of its own: the club's logo from Photos, shown large as it will appear, with "Choose a logo", then "Change" or "Remove". Optional.
 5. **Admin code** — six digits, entered twice. It replaces any code an earlier install left in the Keychain.
 6. **Done** — confirming it fetches the members straight away (if there is internet), so the home screen does not open empty; if it still is, it says where the members come from and offers "Fetch members"; a tip to turn on Guided Access, and where to find the settings again.
@@ -57,7 +57,7 @@ Winter contains nothing tied to a single club:
 - The **members** come from zweef.app. There are no member photos: `accounts.json` has no photo field, so the app shows initials ([zweef-api.md](zweef-api.md)).
 - The **club name** comes from zweef.app when `club.json` works, and is typed otherwise. A typed name is never overwritten by a later refresh ([ADR 0012](decisions/0012-club-name-may-be-typed.md)).
 - The **aircraft** come from `material.json`, the **maintenance period** from the registrations in `maintenance-hours/current/hours.json`.
-- The **task list**, the **closing time** and the zweef.app values for `category`/`status` are configurable, with sensible defaults.
+- The **closing time**, whether a **comment is required**, and the zweef.app values for `category`/`status` are configurable, with sensible defaults.
 - The **UI language** follows the device: English, Dutch or French, with English as the fallback. Not a setting in the app.
 - Copy and examples in the code and the previews use fictional clubs and members.
 

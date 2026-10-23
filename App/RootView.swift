@@ -9,10 +9,8 @@ import SwiftUI
 /// out until the board asked where the hours went.
 struct RootView: View {
     @Environment(\.modelContext) private var context
-    @Environment(\.locale) private var locale
     @Environment(SyncCoordinator.self) private var sync
 
-    @Query private var tasks: [TaskDefinition]
     @Query private var storedSettings: [AppSettings]
 
     let configuration: AppConfiguration
@@ -28,7 +26,6 @@ struct RootView: View {
         Group {
             if configuration.isComplete(secrets: secrets) {
                 HomeView()
-                    .task { seedTasksIfNeeded() }
                     .onLongPressTitle { isAskingAdminCode = true }
             } else {
                 SetupView(
@@ -39,7 +36,6 @@ struct RootView: View {
                         settings: settings
                     )
                 ) {
-                    seedTasksIfNeeded()
                     setupGeneration += 1
                     // Nothing else would fetch the members until the app is
                     // next brought forward, so the home screen would open
@@ -76,16 +72,6 @@ struct RootView: View {
         return created
     }
 
-    /// The default task list is seeded in the language the app is running in,
-    /// after which the labels are the club's own and are never translated
-    /// (ADR 0010).
-    private func seedTasksIfNeeded() {
-        guard tasks.isEmpty else { return }
-        for task in DefaultTasks.seed(locale: locale) {
-            context.insert(task)
-        }
-        try? context.save()
-    }
 }
 
 extension View {

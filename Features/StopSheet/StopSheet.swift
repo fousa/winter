@@ -13,7 +13,8 @@ import SwiftUI
 ///
 /// A form-sized sheet in one column on every device: the person, the running
 /// time and the stop button on top — the button right under the time, since
-/// that is what it stops — and the optional task grid underneath. Smaller
+/// that is what it stops — and underneath, what the work was on and a
+/// comment, both optional unless the club requires the comment. Smaller
 /// than a page sheet, so the home screen stays in view around it; it scrolls
 /// when the text is large (ADR 0009).
 struct StopSheet: View {
@@ -23,17 +24,17 @@ struct StopSheet: View {
 
     let session: WorkSession
     let member: Member?
-    let tasks: [TaskDefinition]
-    let aircraft: [Aircraft]
+    /// zweef.app's material the club can book on, already filtered to what
+    /// is offered (ADR 0020).
+    let material: [Material]
     /// The club's setting: no stopping without a comment (ADR 0019).
     var requiresComment = false
-    var onStop: (TaskDefinition?, Aircraft?, String?) -> Void
+    var onStop: (Material?, String?) -> Void
     var onDiscard: () -> Void
     var onDismiss: () -> Void
 
-    @State private var selectedTask: TaskDefinition?
-    @State private var selectedAircraft: Aircraft?
-    @State private var isPickingAircraft = false
+    @State private var selectedMaterial: Material?
+    @State private var isPickingMaterial = false
     @State private var comment = ""
 
     var body: some View {
@@ -41,7 +42,7 @@ struct StopSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
                     person
-                    taskPicker
+                    workDetails
                 }
                 .padding(metrics.gutter)
             }
@@ -59,9 +60,9 @@ struct StopSheet: View {
                     discardMenu
                 }
             }
-            .sheet(isPresented: $isPickingAircraft) {
-                AircraftPicker(aircraft: aircraft, selected: selectedAircraft) { plane in
-                    selectedAircraft = plane
+            .sheet(isPresented: $isPickingMaterial) {
+                MaterialPicker(material: material, selected: selectedMaterial) { item in
+                    selectedMaterial = item
                 }
             }
         }
@@ -156,12 +157,12 @@ struct StopSheet: View {
         .accessibilityHint(Text("Removes this timer without saving it"))
     }
 
-    // MARK: - Task
+    // MARK: - What and why
 
-    private var taskPicker: some View {
+    private var workDetails: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("What were you working on?")
+                Text("What did you work on?")
                     .font(.title3.weight(.semibold))
                 Spacer()
                 Text("Optional")
@@ -169,14 +170,8 @@ struct StopSheet: View {
                     .foregroundStyle(.secondary)
             }
 
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 10)], spacing: 10) {
-                ForEach(tasks) { task in
-                    taskTile(task)
-                }
-            }
-
-            if selectedTask?.asksForAircraft == true, !aircraft.isEmpty {
-                aircraftTile
+            if !material.isEmpty {
+                materialRow
             }
 
             commentField
@@ -187,69 +182,29 @@ struct StopSheet: View {
         }
     }
 
-    /// A task as a glass tile, like the members on the home screen: these are
-    /// the buttons of this half of the sheet (ADR 0014). The chosen one takes
-    /// on its own colour and a checkmark.
-    private func taskTile(_ task: TaskDefinition) -> some View {
-        let isSelected = selectedTask?.key == task.key
-        return Button {
-            select(task)
-        } label: {
-            // Icon beside the label rather than above it: half the height,
-            // which leaves the form sheet room for the comment field.
-            HStack(spacing: 10) {
-                Image(systemName: task.symbolName)
-                    .foregroundStyle(.white)
-                    .frame(width: 32, height: 32)
-                    .background(task.color.gradient, in: .rect(cornerRadius: 9))
-                Text(task.label)
-                    .font(.headline)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-                Spacer(minLength: 0)
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(.tint)
-                }
-            }
-            .padding(.horizontal, 12)
-            .frame(minHeight: 60)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(.rect(cornerRadius: metrics.tileCornerRadius))
-        }
-        .buttonStyle(.plain)
-        .glassEffect(
-            isSelected ? .regular.tint(task.color.opacity(0.25)).interactive() : .regular.interactive(),
-            in: .rect(cornerRadius: metrics.tileCornerRadius)
-        )
-        .accessibilityElement(children: .combine)
-        // A checkmark is invisible to a listener; the trait is not.
-        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
-    }
-
-    /// The chosen aircraft under the grid, for the task that asks for one;
-    /// tapping it opens the picker again.
-    private var aircraftTile: some View {
+    /// One glass row that opens zweef.app's list, and then shows the pick.
+    /// A row rather than the list itself, so the form sheet stays small and
+    /// the comment stays in view (ADR 0020).
+    private var materialRow: some View {
         Button {
-            isPickingAircraft = true
+            isPickingMaterial = true
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: "airplane")
+                Image(systemName: (selectedMaterial?.kind ?? .flying).symbolName)
                     .font(.title3)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(selectedMaterial == nil ? Color.secondary : Color.accentColor)
                     .frame(width: 36)
                 VStack(alignment: .leading, spacing: 2) {
-                    if let plane = selectedAircraft {
-                        Text(plane.name)
+                    if let item = selectedMaterial {
+                        Text(item.name)
                             .font(.headline)
-                        if let type = plane.displayType {
+                        if let type = item.displayType {
                             Text(type)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
                     } else {
-                        Text("Choose the aircraft")
+                        Text("Choose an aircraft, vehicle or project")
                             .font(.headline)
                             .foregroundStyle(.tint)
                     }
@@ -266,8 +221,7 @@ struct StopSheet: View {
         .buttonStyle(.plain)
         .glassEffect(.regular.interactive(), in: .rect(cornerRadius: metrics.tileCornerRadius))
         .accessibilityElement(children: .combine)
-        .accessibilityHint(Text("Opens the list of aircraft"))
-        .transition(.opacity.combined(with: .move(edge: .top)))
+        .accessibilityHint(Text("Opens the list from zweef.app"))
     }
 
     // MARK: - Actions
@@ -297,30 +251,8 @@ struct StopSheet: View {
         return Text("Delete this timer?")
     }
 
-    private func select(_ task: TaskDefinition) {
-        // Animated, so the aircraft unfold under the task rather than appear.
-        withAnimation(.smooth) {
-            if selectedTask?.key == task.key {
-                selectedTask = nil
-                selectedAircraft = nil
-            } else {
-                selectedTask = task
-                if !task.asksForAircraft { selectedAircraft = nil }
-            }
-        }
-        // Picking Glider goes straight on to which one: that is the next
-        // question anyway.
-        if selectedTask?.key == task.key, task.asksForAircraft, !aircraft.isEmpty, selectedAircraft == nil {
-            isPickingAircraft = true
-        }
-    }
-
     private func stop() {
-        onStop(
-            selectedTask,
-            selectedTask?.asksForAircraft == true ? selectedAircraft : nil,
-            comment
-        )
+        onStop(selectedMaterial, comment)
         dismiss()
     }
 
@@ -356,21 +288,13 @@ struct StopSheet: View {
     }
 }
 
-extension TaskDefinition {
-    /// The task's colour, mapped from the stored name.
-    ///
-    /// Stored as a name rather than components so the list stays editable by a
-    /// club without the app having to migrate colour data.
-    var color: Color {
-        switch colorName {
-        case "blue": .blue
-        case "orange": .orange
-        case "purple": .purple
-        case "green": .green
-        case "teal": .teal
-        case "pink": .pink
-        case "indigo": .indigo
-        default: .gray
+extension MaterialKind {
+    /// The symbol for each of zweef.app's tabs.
+    var symbolName: String {
+        switch self {
+        case .flying: "airplane"
+        case .rolling: "car"
+        case .other: "square.grid.2x2"
         }
     }
 }
@@ -395,15 +319,13 @@ private struct StopSheetPreview: View {
         let context = container.mainContext
         let session = try! context.fetch(FetchDescriptor<WorkSession>()).first!
         let member = try! context.fetch(FetchDescriptor<Member>()).first { $0.zweefId == session.memberId }
-        let tasks = try! context.fetch(FetchDescriptor<TaskDefinition>(sortBy: [SortDescriptor(\.sortOrder)]))
-        let planes = try! context.fetch(FetchDescriptor<Aircraft>(sortBy: [SortDescriptor(\.name)]))
+        let material = try! context.fetch(FetchDescriptor<Material>())
 
         return StopSheet(
             session: session,
             member: member,
-            tasks: tasks,
-            aircraft: planes,
-            onStop: { _, _, _ in },
+            material: material,
+            onStop: { _, _ in },
             onDiscard: {},
             onDismiss: {}
         )

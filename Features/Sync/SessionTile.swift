@@ -12,8 +12,7 @@ struct SessionTile: View {
 
     let session: WorkSession
     let member: Member?
-    let task: TaskDefinition?
-    let aircraft: Aircraft?
+    let material: Material?
     /// Shows why zweef.app refused it, for "Needs attention".
     var showsReason = false
 
@@ -49,7 +48,7 @@ struct SessionTile: View {
             // Always there, one line, so every tile in the grid is the same
             // height and none is left saying nothing about the work.
             HStack(spacing: 8) {
-                Text(what ?? String(localized: "No task chosen"))
+                Text(what ?? String(localized: "Nothing chosen"))
                     .font(.subheadline)
                     .foregroundStyle(what == nil ? .secondary : .primary)
                     .lineLimit(1)
@@ -98,9 +97,9 @@ struct SessionTile: View {
         return "\(day) · \(start)–\(stop)"
     }
 
-    /// "Glider · OO-ZXA", or nil when nothing was picked.
+    /// "OO-ZXA", then the comment if there is one; nil when neither is there.
     private var what: String? {
-        let parts = [task?.label, aircraft?.name].compactMap { $0 }
+        let parts = [material?.name, session.comment].compactMap { $0 }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 }

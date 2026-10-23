@@ -16,8 +16,7 @@ struct HomeView: View {
 
     @Query(filter: #Predicate<Member> { $0.isActive }) private var members: [Member]
     @Query private var sessions: [WorkSession]
-    @Query(sort: \TaskDefinition.sortOrder) private var tasks: [TaskDefinition]
-    @Query(sort: \Aircraft.name) private var aircraft: [Aircraft]
+    @Query private var material: [Material]
     @Query private var settings: [AppSettings]
 
     @State private var model = HomeModel()
@@ -355,18 +354,15 @@ struct HomeView: View {
                 StopSheet(
                     session: session,
                     member: membersById[session.memberId],
-                    tasks: tasks.filter { !$0.isArchived },
-                    // Club work on club aircraft: members' own gliders are not
-                    // offered. Unknown ownership (nil, before the refresh that
-                    // reads it) still shows, rather than an empty picker.
-                    aircraft: aircraft.filter { $0.isClubOwned != false },
+                    // Club work on club material: members' own gliders are
+                    // not offered (ADR 0020).
+                    material: material.filter(\.isOffered),
                     requiresComment: settings.first?.requiresComment ?? false
-                ) { task, plane, comment in
+                ) { item, comment in
                     model.stop(
                         session,
                         member: membersById[session.memberId],
-                        task: task,
-                        aircraft: plane,
+                        material: item,
                         comment: comment,
                         store: store,
                         locale: locale

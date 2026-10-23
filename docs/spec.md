@@ -6,7 +6,7 @@ Members log their maintenance hours on a shared device in the hangar/workshop, w
 ## Roles
 | Role | What | Where |
 |---|---|---|
-| Member | Starts/stops their own session, optionally picks a task and an aircraft | iPhone or iPad |
+| Member | Starts/stops their own session, optionally picks what the work was on and adds a comment | iPhone or iPad |
 | Board / maintenance officer | Approves registrations, corrects them | zweef.app |
 
 ## Environment
@@ -29,8 +29,8 @@ Each device has its own local database and uploads its own sessions.
 1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button.
 2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
 3. **Start** has no confirmation of its own: the tile moves into "Working now", a haptic fires, and an "Undo" chip stays for 10 s.
-4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save"; a trash menu to delete the timer instead, with the confirmation inside the menu.
-5. **Stop confirmation** — duration, task/aircraft, "Undo"; stays until someone taps outside it.
+4. **Stop** (sheet) — the person and the running timer, "Stop and save", what the work was on (zweef.app's material) and a comment; a trash menu to delete the timer instead, with the confirmation inside the menu.
+5. **Stop confirmation** — duration, what it was on, "Undo"; stays until someone taps outside it.
 6. **Close day** — removed ([ADR 0018](decisions/0018-no-closing-the-day.md)); the sync screen lists the waiting sessions.
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, and the prominent "Upload" button: the only way hours leave the device (ADR 0015).
 
@@ -46,7 +46,7 @@ Each device has its own local database and uploads its own sessions.
 ### Stopping
 1. Someone taps the member's tile in "Working now" at the top of the list (their own timer or someone else's). While a timer runs, that is the member's only tile; search finds it there too.
 2. The "Stop" sheet shows the person, the start time and the running duration.
-3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` a searchable picker of the club's own aircraft opens (from `material.json`, each with its registration and type; private gliders are left out).
+3. Optional: pick what the work was on from zweef.app's material list, in zweef.app's own three tabs — Flying (the club's aircraft), Rolling (winch, carts, vehicles) and Other (the club's projects) — searchable (ADR 0020). It is sent as `material_id`, with its name as `project`.
 4. Optional: a comment for the board, which goes into the registration after the times; required when the club turned that on (ADR 0019).
 5. "Stop and save" opens a confirmation menu ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
 6. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
@@ -84,13 +84,13 @@ Flags are shown in orange on the sync screen's tiles. They do not travel to zwee
 - It follows the system language. There is no language picker in the app; iOS's per-app language setting is the override.
 - On a device set to any other language, the app falls back to English.
 - Dates, times, durations and decimal hours follow the device locale.
-- What the club typed itself (task labels) and what comes from zweef.app (club name, member names, aircraft) is shown as-is and never translated.
-- Nothing language-dependent goes *to* zweef.app: the task label in `project` is the club's own name, and the description is the times and the member's comment (ADR 0019).
+- What comes from zweef.app (club name, member names, material) is shown as-is and never translated.
+- Nothing language-dependent goes *to* zweef.app: `project` is the material's name from zweef.app, and the description is the times and the member's comment (ADR 0019).
 
 ### Club data
 - The club name comes from zweef.app (`GET /club.json`) when that endpoint answers, fetched during "Test connection" and on every refresh, and cached locally so it stays visible offline.
 - **It answers 500 for a real club**, so the setup assistant asks for the name as well ([ADR 0012](decisions/0012-club-name-may-be-typed.md)). A typed name wins and is never overwritten by a later refresh; a fetched one is refreshed freely; neither → the app shows "Winter".
-- The app is generic: no club name, members, aircraft or tasks in the code — the name is configured on the device like everything else.
+- The app is generic: no club name, members or material in the code — the name is configured on the device like everything else.
 
 ### Member list and avatars
 - On an automatic refresh (at most every 6 h, or with an empty cache): `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
@@ -100,7 +100,7 @@ Flags are shown in orange on the sync screen's tiles. They do not travel to zwee
 
 ## Configuration (open source)
 - On first launch: the setup assistant (connection, club, logo, admin code). Without a complete configuration the rest of the app is unreachable.
-- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the club schema, the API key, the club name, the closing time, the logo, the tasks and the admin code, test the connection and refresh the members.
+- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the club schema, the API key, the club name, the closing time, the logo, whether a comment is required and the admin code, test the connection and refresh the members.
 - A changed connection is tested first; on failure the old values stay active until you confirm.
 - Pending sessions are kept when the connection changes; they go to the new connection.
 - Details: docs/configuration.md.

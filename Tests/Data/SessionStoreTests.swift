@@ -127,21 +127,18 @@ struct SessionStoreTests {
         #expect(try fixture.store.runningSessions().isEmpty)
     }
 
-    @Test("A task and an aircraft are optional, and stored when picked")
-    func stopStoresTaskAndAircraft() throws {
+    @Test("What the work was on is optional, and stored when picked")
+    func stopStoresTheMaterial() throws {
         let fixture = try makeFixture(now: date(15, 9, 12))
         let member = try makeMember(fixture.context)
-        let task = DefaultTasks.seed(locale: Locale(identifier: "en"))[0]
-        let aircraft = Aircraft(zweefId: 101, name: "ASK 21")
-        fixture.context.insert(task)
-        fixture.context.insert(aircraft)
+        let lier = Material(zweefId: 4, name: "Lier", kind: .rolling)
+        fixture.context.insert(lier)
         let session = try fixture.store.start(member: member)
 
         fixture.clock.now = date(15, 11, 30)
-        try fixture.store.stop(session, task: task, aircraft: aircraft)
+        try fixture.store.stop(session, material: lier)
 
-        #expect(session.taskKey == "glider")
-        #expect(session.aircraftId == 101)
+        #expect(session.materialId == 4)
     }
 
     @Test("Stopping someone else's timer is allowed, and flagged")
@@ -201,17 +198,17 @@ struct SessionStoreTests {
     func undoStopResumesSession() throws {
         let fixture = try makeFixture(now: date(15, 9, 12))
         let member = try makeMember(fixture.context)
-        let task = DefaultTasks.seed(locale: Locale(identifier: "en"))[0]
-        fixture.context.insert(task)
+        let lier = Material(zweefId: 4, name: "Lier", kind: .rolling)
+        fixture.context.insert(lier)
         let session = try fixture.store.start(member: member)
         fixture.clock.now = date(15, 11, 30)
-        try fixture.store.stop(session, task: task, comment: "Wings waxed", by: .someoneElse)
+        try fixture.store.stop(session, material: lier, comment: "Wings waxed", by: .someoneElse)
 
         try fixture.store.undoStop(session)
 
         #expect(session.status == .running)
         #expect(session.stop == nil)
-        #expect(session.taskKey == nil)
+        #expect(session.materialId == nil)
         #expect(session.comment == nil)
         #expect(session.stoppedByOther == false)
         #expect(session.start == date(15, 9, 12))

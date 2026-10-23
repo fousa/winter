@@ -54,7 +54,7 @@ One folder per screen, containing the view, the view model and the previews.
 |---|---|
 | `Home` | Member list with the "Working now" section, search, letter index, the sync status button, the hidden entrance to Settings |
 | `StartSheet` | Confirming that the right member is starting; already working → redirect to stopping |
-| `StopSheet` | Showing the running time, picking a task/aircraft, stopping |
+| `StopSheet` | Showing the running time, picking what the work was on (zweef.app's material), a comment, stopping |
 | `Confirmation` | Confirmation after a stop, with "Undo"; closed by tapping outside it |
 | `Sync` | Sync status, pending/rejected/uploaded sessions, and the "Upload" button |
 | `Setup` | The setup assistant on first launch |
@@ -87,7 +87,7 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 - `RegistrationDescription`: builds the `description` field for zweef.app: the times and the member's comment (ADR 0019).
 
 ### `Data/`
-- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
+- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:material:comment:by:)`, `undo(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
 - `SyncEngine` (`actor`): see [sync.md](sync.md). Creates its own `ModelContext` per run, on its own executor, so nothing is shared with the UI and nothing stale survives between runs. Runs one at a time: actors are reentrant, so a flag guards it and extra triggers merge into a single follow-up.
 - `SyncCoordinator` (`@MainActor`, `@Observable`): the only thing the screens talk to about syncing. Owns the triggers — connectivity returning, the app becoming active and the background task (which only refresh and auto-stop), and "Upload" (the only one that sends hours, ADR 0015) — and publishes `isSyncing`, `isConnected` and the last outcome.
 - `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews). Six calls, only one of which writes. There is no photo cache: zweef.app returns no member photos, so avatars are initials ([zweef-api.md](zweef-api.md)).
@@ -102,7 +102,6 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 - `AdminCodeVerifier`: salt + SHA-256 in the Keychain, with a lockout that grows after wrong attempts. Throws rather than returning a result, so a caller cannot forget to look at the answer.
 - `ConnectionSettings` / `ConnectionProvider`: a `Sendable` snapshot of the connection, and the holder the sync engine reads on every run. The connection changes while the app runs — setup creates it, settings edit it — so an engine that captured an API at launch would keep using a key the club has rotated.
 - `ConnectionTester`: tries a connection without saving it, using `current/hours.json` rather than the `periods.json` that answers 404.
-- `DefaultTasks`: the task list a club starts with.
 - See [configuration.md](configuration.md) for every key.
 
 ### `DesignSystem/`
@@ -128,7 +127,7 @@ Home (tap a member) → StartSheet → SessionStore.start(member)
 
 ### Stop
 ```
-Home (tap a tile in "Working now") → StopSheet → SessionStore.stop(session, task, aircraft)
+Home (tap a tile in "Working now") → StopSheet → SessionStore.stop(session, material, comment)
    → status .completed, syncState .local
    → Confirmation (Undo, until tapped away) → Home
 ```

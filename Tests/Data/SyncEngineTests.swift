@@ -61,7 +61,7 @@ struct SyncEngineTests {
         api: FakeZweefAPI = FakeZweefAPI(),
         periodId: Int? = 1,
         members: [(Int, String, String)] = [(101, "Jan", "Verhoeven")],
-        tasks: Bool = true
+        material: Bool = true
     ) throws -> Fixture {
         let container = try WinterSchema.inMemoryContainer()
         let context = container.mainContext
@@ -69,8 +69,8 @@ struct SyncEngineTests {
         for member in members {
             context.insert(Member(zweefId: member.0, firstName: member.1, lastName: member.2))
         }
-        if tasks {
-            for task in DefaultTasks.seed(locale: Locale(identifier: "en")) { context.insert(task) }
+        if material {
+            context.insert(Material(zweefId: 1, name: "ASK 21", kind: .flying, typeName: "Schleicher ASK 21", isGlider: true))
         }
         let settings = AppSettings(activePeriodId: periodId)
         // Already refreshed, so a test about uploading is not also a test about
@@ -98,14 +98,14 @@ struct SyncEngineTests {
         state: SyncState = .ready,
         status: SessionStatus = .completed,
         attempts: Int = 0,
-        taskKey: String? = "glider"
+        materialId: Int? = 1
     ) throws -> WorkSession {
         let session = WorkSession(
             memberId: memberId,
             start: start,
             stop: stop,
             status: status,
-            taskKey: taskKey,
+            materialId: materialId,
             syncState: state,
             attempts: attempts
         )
@@ -136,13 +136,10 @@ struct SyncEngineTests {
         #expect(drafts[0].userName == "Jan Verhoeven")
         #expect(drafts[0].hours == 2.3)
         #expect(drafts[0].periodId == 1)
-        // The label as the club stores it, whatever language it was seeded in.
-        let gliderLabel = try #require(
-            try fixture.container.mainContext
-                .fetch(FetchDescriptor<TaskDefinition>())
-                .first { $0.key == "glider" }?.label
-        )
-        #expect(drafts[0].project == gliderLabel)
+        // What it was on: the material's id, and its name as the project,
+        // as zweef.app's own form books it (ADR 0020).
+        #expect(drafts[0].materialId == 1)
+        #expect(drafts[0].project == "ASK 21")
     }
 
     @Test("Nothing uploads by itself: only a person tapping Upload sends hours", arguments: [
@@ -308,7 +305,7 @@ struct SyncEngineTests {
                 userId: 101,
                 date: "2026-10-15",
                 hours: 1.0,
-                materialId: nil,
+                materialId: 1,
                 status: "in_aanvraag",
                 description: "09:00–10:00"
             )
@@ -333,7 +330,7 @@ struct SyncEngineTests {
         await fixture.api.setHours(.success([
             ZweefMaintenanceHour(
                 id: 99, periodId: 1, userId: 101, date: "2026-10-15", hours: 1.0,
-                materialId: nil, status: "in_aanvraag", description: "13:00–14:00"
+                materialId: 1, status: "in_aanvraag", description: "13:00–14:00"
             )
         ]))
 
@@ -392,10 +389,10 @@ struct SyncEngineTests {
 
     // MARK: - Refresh
 
-    @Test("An empty device fetches members and aircraft before anything else")
+    @Test("An empty device fetches members and material before anything else")
     @MainActor
     func refreshesAnEmptyDevice() async throws {
-        let fixture = try makeFixture(now: date(15, 12), members: [], tasks: false)
+        let fixture = try makeFixture(now: date(15, 12), members: [], material: false)
         try fixture.settings().lastRefreshAt = nil
         try fixture.container.mainContext.save()
 
@@ -404,32 +401,46 @@ struct SyncEngineTests {
         #expect(outcome.refreshed)
         let members = try fixture.container.mainContext.fetch(FetchDescriptor<Member>())
         #expect(members.count == 4)
-        let aircraft = try fixture.container.mainContext.fetch(FetchDescriptor<Aircraft>())
-        // Three aircraft — the club's two and a member's own — but the winch
-        // is not an aircraft.
-        #expect(aircraft.count == 3)
-        #expect(aircraft.allSatisfy { $0.isGlider })
-        // The type travels along, so the stop sheet can show it under the name.
-        #expect(aircraft.first { $0.zweefId == 1 }?.typeName == "Schleicher ASK 21")
-        // And the owner, so only the club's aircraft are offered.
-        #expect(aircraft.first { $0.zweefId == 1 }?.isClubOwned == true)
-        #expect(aircraft.first { $0.zweefId == 3 }?.isClubOwned == false)
+        let material = try fixture.container.mainContext.fetch(FetchDescriptor<Material>())
+        func item(_ id: Int) -> Material? { material.first { $0.zweefId == id } }
+        // All of zweef.app's list, in its three tabs: three aircraft, the
+        // winch, and the club itself.
+        #expect(material.count == 5)
+        #expect(item(1)?.kind == .flying)
+        #expect(item(4)?.kind == .rolling)
+        #expect(item(5)?.kind == .other)
+        #expect(item(1)?.typeName == "Schleicher ASK 21")
+        // A member's own glider is stored but not offered.
+        #expect(item(1)?.isOffered == true)
+        #expect(item(3)?.isOffered == false)
+        #expect(item(4)?.isOffered == true)
     }
 
-    @Test("Aircraft stored before types were read are refreshed at once, not after six hours")
+    @Test("A device without material refreshes at once, not after six hours")
     @MainActor
-    func refreshesAircraftWithoutAType() async throws {
-        let fixture = try makeFixture(now: date(15, 12))
-        fixture.container.mainContext.insert(Aircraft(zweefId: 1, name: "ASK 21", isClubOwned: nil))
-        try fixture.container.mainContext.save()
+    func refreshesWhenMaterialIsMissing() async throws {
+        // Members are there and the last refresh was just now — as on a device
+        // updated from the build that kept only aircraft.
+        let fixture = try makeFixture(now: date(15, 12), material: false)
 
         let outcome = await fixture.engine.requestSync(.appBecameActive)
 
         #expect(outcome.refreshed)
-        let aircraft = try fixture.container.mainContext.fetch(FetchDescriptor<Aircraft>())
-        #expect(aircraft.first { $0.zweefId == 1 }?.typeName == "Schleicher ASK 21")
-        // Nothing is left as nil, so the next run does not refresh again.
-        #expect(aircraft.allSatisfy { $0.typeName != nil })
+        #expect(try fixture.container.mainContext.fetchCount(FetchDescriptor<Material>()) == 5)
+    }
+
+    @Test("Material zweef.app no longer lists is removed from the device")
+    @MainActor
+    func removesMaterialThatIsGone() async throws {
+        let fixture = try makeFixture(now: date(15, 12))
+        fixture.container.mainContext.insert(Material(zweefId: 99, name: "Sold glider", kind: .flying))
+        try fixture.settings().lastRefreshAt = nil
+        try fixture.container.mainContext.save()
+
+        await fixture.engine.requestSync(.appBecameActive)
+
+        let ids = try fixture.container.mainContext.fetch(FetchDescriptor<Material>()).map(\.zweefId)
+        #expect(!ids.contains(99))
     }
 
     @Test("A refresh within six hours is skipped")

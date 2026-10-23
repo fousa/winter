@@ -42,17 +42,20 @@ struct ZweefMaterial: Decodable, Equatable, Sendable {
     /// "in bedrijf" or "niet inzetbaar".
     let status: String
     let isVisible: Bool
+    /// zweef.app's own ordering. Optional: nothing promises every item has it.
+    let order: Int?
 
-    /// Whether this is an aircraft rather than a winch, a car or a building.
-    var isAircraft: Bool { category == "kist" }
+    /// Which tab of zweef.app's maintenance form it sits in (ADR 0020).
+    var kind: MaterialKind { MaterialKind(rawValue: category) ?? .other }
 
     /// Whether it is an unpowered glider, which is what most workshop hours go
     /// into.
     var isGlider: Bool { kistConfiguration == "Glider" }
 
-    /// Whether the club owns it. Maintenance hours are club work, so the
-    /// aircraft picker offers only these.
-    var isClubOwned: Bool { kistCategory == "club" }
+    /// Whether the club owns it. Maintenance hours are club work, so only the
+    /// club's aircraft are offered; anything that is not an aircraft is the
+    /// club's by definition.
+    var isClubOwned: Bool { kind != .flying || kistCategory == "club" }
 }
 
 /// A maintenance-hour registration as zweef.app stores it, from

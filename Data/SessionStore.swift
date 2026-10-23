@@ -99,14 +99,13 @@ final class SessionStore {
         return session
     }
 
-    /// Stops a running session and saves it, ready to be closed with the day.
+    /// Stops a running session and saves it, ready to upload.
     ///
     /// Stopping someone else's timer is allowed and is recorded rather than
     /// refused (ADR 0005).
     func stop(
         _ session: WorkSession,
-        task: TaskDefinition? = nil,
-        aircraft: Aircraft? = nil,
+        material: Material? = nil,
         comment: String? = nil,
         by stoppedBy: StoppedBy = .member
     ) throws {
@@ -115,8 +114,7 @@ final class SessionStore {
         session.stop = now()
         session.status = .completed
         session.syncState = .local
-        session.taskKey = task?.key
-        session.aircraftId = aircraft?.zweefId
+        session.materialId = material?.zweefId
         let trimmed = comment?.trimmingCharacters(in: .whitespacesAndNewlines)
         session.comment = trimmed?.isEmpty == false ? trimmed : nil
         session.stoppedByOther = stoppedBy == .someoneElse
@@ -144,7 +142,7 @@ final class SessionStore {
 
     /// Undoes a stop: the session runs again, as if Stop had not been tapped.
     ///
-    /// The task and aircraft are cleared too, because they were picked as part
+    /// The material and comment are cleared too, because they were picked as part
     /// of stopping.
     func undoStop(_ session: WorkSession) throws {
         guard session.status == .completed else { throw StoreError.sessionNotCompleted }
@@ -152,8 +150,7 @@ final class SessionStore {
         session.stop = nil
         session.status = .running
         session.syncState = .local
-        session.taskKey = nil
-        session.aircraftId = nil
+        session.materialId = nil
         session.comment = nil
         session.autoStopped = false
         session.stoppedByOther = false

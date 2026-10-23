@@ -23,6 +23,7 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0017 | [Each device writes in its own language](0017-reporting-language-follows-the-device.md) | superseded by 0019 |
 | 0018 | [No closing the day](0018-no-closing-the-day.md) | accepted |
 | 0019 | [The description is the times and a comment](0019-description-is-times-and-a-comment.md) | accepted |
+| 0020 | [What the work was on comes from zweef.app](0020-material-from-zweef-app.md) | accepted |
 
 ## Template
 ```markdown

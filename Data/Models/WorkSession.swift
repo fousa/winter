@@ -44,10 +44,10 @@ final class WorkSession {
     var start: Date
     var stop: Date?
     var status: SessionStatus
-    /// `TaskDefinition.key`, or nil when nobody picked a task — which is
-    /// allowed, since picking one is optional.
-    var taskKey: String?
-    var aircraftId: Int?
+    /// `Material.zweefId` of what the work was on, or nil when nobody picked
+    /// one — which is allowed (ADR 0020). Stored under its old name, from when
+    /// only aircraft could be picked.
+    @Attribute(originalName: "aircraftId") var materialId: Int?
     var autoStopped: Bool
     var stoppedByOther: Bool
     /// What the member typed when stopping; goes into the registration's
@@ -72,8 +72,7 @@ final class WorkSession {
         start: Date,
         stop: Date? = nil,
         status: SessionStatus = .running,
-        taskKey: String? = nil,
-        aircraftId: Int? = nil,
+        materialId: Int? = nil,
         autoStopped: Bool = false,
         stoppedByOther: Bool = false,
         comment: String? = nil,
@@ -89,8 +88,7 @@ final class WorkSession {
         self.start = start
         self.stop = stop
         self.status = status
-        self.taskKey = taskKey
-        self.aircraftId = aircraftId
+        self.materialId = materialId
         self.autoStopped = autoStopped
         self.stoppedByOther = stoppedByOther
         self.comment = comment

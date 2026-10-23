@@ -145,38 +145,6 @@
         }
       }
     },
-    "Aircraft": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appareil"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toestel"
-          }
-        }
-      }
-    },
-    "Asks which aircraft": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Demande quel appareil"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vraagt welk toestel"
-          }
-        }
-      }
-    },
     "Back": {
       "localizations": {
         "fr": {
@@ -273,18 +241,18 @@
         }
       }
     },
-    "Choose the aircraft": {
+    "Choose an aircraft, vehicle or project": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Choisir l'appareil"
+            "value": "Choisir un appareil, un véhicule ou un projet"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kies het toestel"
+            "value": "Kies een toestel, voertuig of project"
           }
         }
       }
@@ -419,16 +387,16 @@
     },
     "Connect to zweef.app": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verbinden met zweef.app"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Se connecter à zweef.app"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinden met zweef.app"
           }
         }
       }
@@ -483,16 +451,16 @@
     },
     "Connection refused: check the API key in Settings": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verbinding geweigerd: controleer de API-sleutel in Instellingen"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Connexion refusée : vérifiez la clé API dans les réglages"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbinding geweigerd: controleer de API-sleutel in Instellingen"
           }
         }
       }
@@ -721,6 +689,22 @@
         }
       }
     },
+    "Flying": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volant"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vliegend"
+          }
+        }
+      }
+    },
     "Forgotten it? The app has to be deleted and set up again, and hours that have not been uploaded are lost with it.": {
       "localizations": {
         "fr": {
@@ -829,6 +813,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verder werken"
+          }
+        }
+      }
+    },
+    "Kind": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soort"
           }
         }
       }
@@ -1009,18 +1009,34 @@
         }
       }
     },
-    "Members, tasks, hours and the connection are all removed.": {
+    "Members, material, hours and the connection are all removed.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les membres, les tâches, les heures et la connexion seront tous supprimés."
+            "value": "Les membres, le matériel, les heures et la connexion sont tous supprimés."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Leden, taken, uren en de verbinding worden allemaal verwijderd."
+            "value": "Leden, materiaal, uren en de verbinding worden allemaal verwijderd."
+          }
+        }
+      }
+    },
+    "Name or type": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom ou type"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naam of type"
           }
         }
       }
@@ -1101,22 +1117,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Volgende"
-          }
-        }
-      }
-    },
-    "No aircraft": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucun appareil"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geen toestel"
           }
         }
       }
@@ -1217,22 +1217,6 @@
         }
       }
     },
-    "No task chosen": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune tâche choisie"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geen taak gekozen"
-          }
-        }
-      }
-    },
     "Not connected yet": {
       "localizations": {
         "fr": {
@@ -1261,6 +1245,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Niet ingesteld"
+          }
+        }
+      }
+    },
+    "Nothing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niets"
+          }
+        }
+      }
+    },
+    "Nothing chosen": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien de choisi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niets gekozen"
           }
         }
       }
@@ -1313,18 +1329,18 @@
         }
       }
     },
-    "Opens the list of aircraft": {
+    "Opens the list from zweef.app": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvre la liste des appareils"
+            "value": "Ouvre la liste de zweef.app"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Opent de lijst met toestellen"
+            "value": "Opent de lijst van zweef.app"
           }
         }
       }
@@ -1361,18 +1377,34 @@
         }
       }
     },
-    "Paste the key. It goes straight into the Keychain.": {
+    "Other": {
       "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autre"
+          }
+        },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plak de sleutel. Die gaat rechtstreeks naar de Keychain."
+            "value": "Overig"
           }
-        },
+        }
+      }
+    },
+    "Paste the key. It goes straight into the Keychain.": {
+      "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Collez la clé. Elle va directement dans le trousseau."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plak de sleutel. Die gaat rechtstreeks naar de Keychain."
           }
         }
       }
@@ -1459,32 +1491,16 @@
     },
     "Refused: check the API key.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geweigerd: controleer de API-sleutel."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Refusé : vérifiez la clé API."
           }
-        }
-      }
-    },
-    "Registration or type": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Immatriculation ou type"
-          }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Registratie of type"
+            "value": "Geweigerd: controleer de API-sleutel."
           }
         }
       }
@@ -1537,22 +1553,6 @@
         }
       }
     },
-    "Rename these to whatever your club calls them. The names are yours and are never translated.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Renommez-les comme votre club les appelle. Ces noms sont les vôtres et ne sont jamais traduits."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geef deze de namen die je club gebruikt. De namen zijn de jouwe en worden nooit vertaald."
-          }
-        }
-      }
-    },
     "Required by your club.": {
       "localizations": {
         "fr": {
@@ -1565,6 +1565,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verplicht door je club."
+          }
+        }
+      }
+    },
+    "Rolling": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roulant"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rollend"
           }
         }
       }
@@ -1991,38 +2007,6 @@
         }
       }
     },
-    "Task": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tâche"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Taak"
-          }
-        }
-      }
-    },
-    "Tasks": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tâches"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Taken"
-          }
-        }
-      }
-    },
     "Test connection": {
       "localizations": {
         "fr": {
@@ -2057,16 +2041,16 @@
     },
     "That club schema cannot be used.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dat clubschema kan niet gebruikt worden."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ce schéma de club n'est pas utilisable."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dat clubschema kan niet gebruikt worden."
           }
         }
       }
@@ -2169,16 +2153,16 @@
     },
     "The schema name is in your club settings in zweef.app, and the API key is created on its admin pages.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "De schema-naam staat in de clubinstellingen van zweef.app, en de API-sleutel maak je aan op de beheerpagina's."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le nom du schéma se trouve dans les réglages de votre club sur zweef.app, et la clé API se crée sur ses pages d'administration."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De schema-naam staat in de clubinstellingen van zweef.app, en de API-sleutel maak je aan op de beheerpagina's."
           }
         }
       }
@@ -2217,32 +2201,32 @@
     },
     "This key opens your club's whole zweef.app account — member data and finances included — and it is stored on this device. Keep the device somewhere safe, and if you lose it, create a new key in zweef.app straight away.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deze sleutel geeft toegang tot het hele zweef.app-account van je club — ledengegevens en financiën inbegrepen — en wordt op dit toestel bewaard. Hou het toestel op een veilige plek, en maak meteen een nieuwe sleutel aan in zweef.app als je het kwijt bent."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Cette clé ouvre tout le compte zweef.app de votre club — données des membres et finances comprises — et elle est stockée sur cet appareil. Gardez l'appareil en sécurité, et si vous le perdez, créez immédiatement une nouvelle clé dans zweef.app."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze sleutel geeft toegang tot het hele zweef.app-account van je club — ledengegevens en financiën inbegrepen — en wordt op dit toestel bewaard. Hou het toestel op een veilige plek, en maak meteen een nieuwe sleutel aan in zweef.app als je het kwijt bent."
           }
         }
       }
     },
     "This key opens your club's whole zweef.app account. If this device is lost, create a new key in zweef.app.": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deze sleutel geeft toegang tot het hele zweef.app-account van je club. Is dit toestel kwijt, maak dan een nieuwe sleutel aan in zweef.app."
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Cette clé ouvre tout le compte zweef.app de votre club. Si cet appareil est perdu, créez une nouvelle clé dans zweef.app."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze sleutel geeft toegang tot het hele zweef.app-account van je club. Is dit toestel kwijt, maak dan een nieuwe sleutel aan in zweef.app."
           }
         }
       }
@@ -2479,18 +2463,18 @@
         }
       }
     },
-    "What were you working on?": {
+    "What did you work on?": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sur quoi travailliez-vous ?"
+            "value": "Sur quoi avez-vous travaillé ?"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Waaraan werkte je?"
+            "value": "Waaraan heb je gewerkt?"
           }
         }
       }
@@ -2593,16 +2577,16 @@
     },
     "Your club's schema name and an API key from zweef.app": {
       "localizations": {
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "De schema-naam van je club en een API-sleutel uit zweef.app"
-          }
-        },
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le nom du schéma de votre club et une clé API de zweef.app"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De schema-naam van je club en een API-sleutel uit zweef.app"
           }
         }
       }
@@ -2743,150 +2727,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "task.clubhouse": {
-      "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clubhouse"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Club-house"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clubhuis"
-          }
-        }
-      }
-    },
-    "task.glider": {
-      "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glider"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Planeur"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zweefvliegtuig"
-          }
-        }
-      }
-    },
-    "task.grounds": {
-      "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Grounds"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terrain"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terrein"
-          }
-        }
-      }
-    },
-    "task.other": {
-      "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Something else"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Autre chose"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Iets anders"
-          }
-        }
-      }
-    },
-    "task.winch": {
-      "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Winch"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Treuil"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lier"
-          }
-        }
-      }
-    },
-    "task.workshop": {
-      "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hangar and workshop"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hangar et atelier"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hangar en werkplaats"
           }
         }
       }

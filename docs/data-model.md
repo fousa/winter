@@ -15,14 +15,17 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
     var updatedAt: Date
 }
 
-@Model final class Aircraft {     // from material.json
-    #Unique<Aircraft>([\.zweefId])
-    var zweefId: Int
-    var name: String              // what the club calls it, usually the registration ("OO-ZXA")
-    var registration: String?
-    var isClubOwned: Bool?        // material.json `kist_category == "club"`; nil before the first fetch
-    var typeName: String?         // material.json `type`, e.g. "Schleicher ASK 21"; "" when there is none, nil before the first fetch
+enum MaterialKind: String { case flying = "kist", rolling = "rollend", other = "overig" }  // zweef.app's three tabs
+
+@Model final class Material {     // every visible item of material.json (ADR 0020)
+    #Unique<Material>([\.zweefId])
+    var zweefId: Int               // sent as material_id
+    var name: String               // shown, and sent as project; for aircraft usually the registration
+    var kindRaw: String            // MaterialKind
+    var typeName: String           // material.json `type`, e.g. "Schleicher ASK 21"; "" when there is none
+    var isClubOwned: Bool          // aircraft: `kist_category == "club"`; always true otherwise
     var isGlider: Bool
+    var sortOrder: Int             // material.json `order`
 }
 
 
@@ -44,8 +47,7 @@ enum SyncState: String, Codable {
     var start: Date
     var stop: Date?
     var status: SessionStatus
-    var taskKey: String?     // TaskDefinition.key
-    var aircraftId: Int?
+    @Attribute(originalName: "aircraftId") var materialId: Int?  // Material.zweefId, or nil when nothing was picked
     var autoStopped: Bool
     var stoppedByOther: Bool
     var comment: String?           // typed when stopping; goes into the description (ADR 0019)
@@ -67,18 +69,6 @@ enum SyncState: String, Codable {
 // - secrets (the API key and the admin code's salted hash) in the Keychain through a SecretStore
 // - the other connection settings in UserDefaults through an AppConfiguration type
 // - managed configuration (MDM) takes precedence and is read-only
-
-@Model final class TaskDefinition {  // the configurable task list
-    #Unique<TaskDefinition>([\.key])
-    var key: String
-    var label: String             // seeded from the catalog in the setup language;
-                                  // once the club edits it, it is club data and is shown as typed
-    var symbolName: String
-    var colorName: String
-    var sortOrder: Int
-    var asksForAircraft: Bool
-    var isArchived: Bool
-}
 
 @Model final class AppSettings {  // singleton
     var clubName: String?          // from GET /club.json or typed; nil → show "Winter"

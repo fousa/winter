@@ -19,7 +19,8 @@ protocol ZweefAPI: Sendable {
     ///   not all of them, so getting everybody means asking twice.
     func accounts(inactiveOnly: Bool) async throws -> [ZweefAccount]
 
-    /// Aircraft and equipment.
+    /// Everything an hour can be booked on: aircraft, rolling stock and the
+    /// club's projects, as in zweef.app's own form (ADR 0020).
     func material() async throws -> [ZweefMaterial]
 
     /// The registrations in the current maintenance period.

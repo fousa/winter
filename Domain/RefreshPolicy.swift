@@ -1,12 +1,12 @@
 import Foundation
 
-/// When the member list, aircraft and club name are fetched again.
+/// When the member list, the material and the club name are fetched again.
 ///
 /// The one thing the app still does with the network by itself: uploading
 /// waits for a person (ADR 0015), but a new member should not have to wait
 /// for anyone before they can find their name.
 enum RefreshPolicy {
-    /// How often the member list, aircraft and club name are refreshed.
+    /// How often the member list, the material and the club name are refreshed.
     ///
     /// Six hours: a club gains a member every few weeks, and a device in a
     /// hangar should not spend its battery asking.

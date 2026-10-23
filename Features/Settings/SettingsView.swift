@@ -10,7 +10,6 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
 
-    @Query(sort: \TaskDefinition.sortOrder) private var tasks: [TaskDefinition]
 
     let configuration: AppConfiguration
     let secrets: any SecretStore
@@ -32,7 +31,6 @@ struct SettingsView: View {
             Form {
                 connectionSection
                 clubSection
-                tasksSection
                 adminSection
                 dataSection
             }
@@ -180,34 +178,6 @@ struct SettingsView: View {
         }
     }
 
-    // MARK: - Tasks
-
-    private var tasksSection: some View {
-        Section {
-            ForEach(tasks) { task in
-                HStack(spacing: 12) {
-                    Image(systemName: task.symbolName)
-                        .foregroundStyle(.white)
-                        .frame(width: 28, height: 28)
-                        .background(task.color.gradient, in: .rect(cornerRadius: 7))
-                    TextField("Task", text: Binding(
-                        get: { task.label },
-                        set: { task.label = $0 }
-                    ))
-                    if task.asksForAircraft {
-                        Image(systemName: "airplane")
-                            .foregroundStyle(.secondary)
-                            .accessibilityLabel(Text("Asks which aircraft"))
-                    }
-                }
-            }
-        } header: {
-            Text("Tasks")
-        } footer: {
-            Text("Rename these to whatever your club calls them. The names are yours and are never translated.")
-        }
-    }
-
     // MARK: - Admin code
 
     private var adminSection: some View {
@@ -241,7 +211,7 @@ struct SettingsView: View {
             } message: {
                 (pendingUploads > 0
                     ? Text("^[\(pendingUploads) session](inflect: true) has not reached zweef.app yet and will be lost.")
-                    : Text("Members, tasks, hours and the connection are all removed."))
+                    : Text("Members, material, hours and the connection are all removed."))
             }
         } header: {
             Text("Data")
@@ -297,8 +267,7 @@ struct SettingsView: View {
     private func erase() {
         try? context.delete(model: WorkSession.self)
         try? context.delete(model: Member.self)
-        try? context.delete(model: Aircraft.self)
-        try? context.delete(model: TaskDefinition.self)
+        try? context.delete(model: Material.self)
         try? context.delete(model: SyncLog.self)
         try? context.delete(model: AppSettings.self)
         try? context.save()

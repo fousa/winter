@@ -10,8 +10,8 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 | Member | `Member` | Lid | Membre | A club member from zweef.app |
 | Session | `WorkSession` | Sessie | Session | One period of work between start and stop |
 | Running session / timer | `status == .running` | Lopende sessie / timer | Session en cours | A session without a stop time |
-| Task | `TaskDefinition` | Taak | Tâche | What was worked on (configurable per club) |
-| Aircraft | `Aircraft` | Toestel | Appareil | An aircraft or piece of equipment from zweef.app `material.json` |
+| Material | `Material` | Materiaal | Matériel | What the work was on: an item of zweef.app `material.json` — an aircraft, rolling stock, or a club project (ADR 0020) |
+| Flying / Rolling / Other | `MaterialKind` | Vliegend / Rollend / Overig | Volant / Roulant / Autre | zweef.app's three tabs: `material.json` `category` `kist`, `rollend`, `overig` |
 | Closing time | `closingTime` | Sluitingsuur | Heure de fermeture | The time at which running timers stop automatically |
 | Stopped automatically | `autoStopped` | Automatisch gestopt | Arrêtée automatiquement | A session stopped by the closing time |
 | Stopped by someone else | `stoppedByOther` | Gestopt door iemand anders | Arrêtée par quelqu'un d'autre | Someone stopped another member's timer |
@@ -26,15 +26,3 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 | Setup assistant | `Setup` | Setup-assistent | Assistant de configuration | Configuration on first launch |
 | Guided Access | Guided Access | Begeleide toegang | Accès guidé | The iOS/iPadOS feature that keeps the shared device in one app; use Apple's own translation |
 | The board | — | Bestuur | Comité | Approves registrations in zweef.app; has no role in the app |
-
-## Default task list
-Seeded during setup in the language the setup ran in, and editable by the club afterwards. Once edited, a label is club data and is shown as typed, in whatever language the club used ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)).
-
-| Key | English | Dutch | French | Asks for an aircraft |
-|---|---|---|---|---|
-| `glider` | Glider | Zweefvliegtuig | Planeur | yes |
-| `winch` | Winch | Lier | Treuil | no |
-| `workshop` | Hangar and workshop | Hangar en werkplaats | Hangar et atelier | no |
-| `grounds` | Grounds | Terrein | Terrain | no |
-| `clubhouse` | Clubhouse | Clubhuis | Club-house | no |
-| `other` | Something else | Iets anders | Autre chose | no |

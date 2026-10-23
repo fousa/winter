@@ -13,7 +13,7 @@ The app is generic: everything club-specific (name, members, aircraft, period) c
 | GET | `/club.json` | **500** | Should give the club name. Answers `500 Server Error` for a real club, so the app cannot rely on it (see below). |
 | GET | `/accounts.json` | 200 | Active members. A bare JSON array. |
 | GET | `/accounts.json?inactive=1` | 200 | **Only** the inactive members, not all of them — getting everybody means two calls. |
-| GET | `/material.json` | 200 | Aircraft and equipment for the aircraft picker. A bare array. |
+| GET | `/material.json` | 200 | Everything an hour can be booked on — aircraft, rolling stock, projects — for the stop sheet's picker (ADR 0020). A bare array. |
 | GET | `/maintenance-hours/periods.json` | **404** | Should give the active period. Answers `404` for a real club (also with `?id=`), so the app derives the period another way (see below). |
 | GET | `/maintenance-hours/current/hours.json` | 200 | The registrations in the current period. A bare array. |
 | GET | `/maintenance-hours/{periodId}/hours.json` | 200 | The registrations in one period. |
@@ -38,9 +38,9 @@ A bare array of aircraft *and* ground equipment.
 |---|---|---|
 | `id` | int | This is what `material_id` on a registration refers to |
 | `kist_id` | int or null | Links to the flights table; null for anything that does not fly. **Not** the id to upload |
-| `name` | string | What the aircraft picker shows; usually the registration |
+| `name` | string | What the picker shows (for aircraft usually the registration), and what is sent as `project` |
 | `type` | string | The make and model ("Schleicher ASK 21"), shown under the name in the picker |
-| `category` | `kist`, `rollend`, `overig` | `kist` = aircraft, the rest is winches, cars, buildings |
+| `category` | `kist`, `rollend`, `overig` | zweef.app's three tabs, Vliegend / Rollend / Overig: aircraft, rolling stock, and the club's projects |
 | `kist_category` | `club`, `prive`, or null | Who owns the aircraft. Only `club` aircraft are offered when stopping a timer: maintenance hours are club work |
 | `kist_configuration` | `Glider`, `TMG`, `Sustainer`, `Self-launching`, `""`, or the key is absent | Gliders are offered first |
 | `status` | `in bedrijf`, `niet inzetbaar` | |
@@ -128,7 +128,7 @@ Two things that test also settled:
 | `is_private` | `false` |
 | `category` | `""` (see above) |
 | `sub_category` | `""` |
-| `project` | The task label as the club stores it, or `""` |
+| `project` | The picked material's name, as zweef.app's own form books it (assumed, ADR 0020), or `""` |
 | `description` | The times, then the member's comment if there is one: `09:12–11:30 · Replaced the canopy seal` (ADR 0019). No task, aircraft, flags or tag: those are in `project` and `material_id`, or stay on the device |
 | `status` | `"in_aanvraag"` |
 

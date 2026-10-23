@@ -120,14 +120,13 @@ final class HomeModel {
     func stop(
         _ session: WorkSession,
         member: Member?,
-        task: TaskDefinition?,
-        aircraft: Aircraft?,
+        material: Material?,
         comment: String? = nil,
         store: SessionStore,
         locale: Locale = .current
     ) {
         do {
-            try store.stop(session, task: task, aircraft: aircraft, comment: comment)
+            try store.stop(session, material: material, comment: comment)
             feedback += 1
             // A start of this same session can no longer be undone.
             if pendingUndo?.sessionId == session.id { pendingUndo = nil }
@@ -135,7 +134,7 @@ final class HomeModel {
                 Confirmation(
                     sessionId: session.id,
                     memberName: member?.firstName ?? "",
-                    summary: summary(for: session, task: task, aircraft: aircraft, locale: locale)
+                    summary: summary(for: session, material: material, locale: locale)
                 )
             ))
         } catch {
@@ -220,16 +219,14 @@ final class HomeModel {
 
     private func summary(
         for session: WorkSession,
-        task: TaskDefinition?,
-        aircraft: Aircraft?,
+        material: Material?,
         locale: Locale
     ) -> String {
         var parts: [String] = []
         if let minutes = session.minutes {
             parts.append(HoursFormatter.durationText(minutes: minutes, locale: locale))
         }
-        if let task { parts.append(task.label) }
-        if let aircraft { parts.append(aircraft.name) }
+        if let material { parts.append(material.name) }
         return parts.joined(separator: " · ")
     }
 }

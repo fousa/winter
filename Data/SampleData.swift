@@ -4,7 +4,7 @@ import UIKit
 
 /// The fictional club used by previews and tests.
 ///
-/// The same members and aircraft as the mockups, so a preview looks like the
+/// The same members as the mockups, and a club's worth of material, so a preview looks like the
 /// design. Fictional on purpose: no real member data belongs in the repository
 /// (SECURITY.md), not even in previews.
 enum SampleData {
@@ -37,12 +37,18 @@ enum SampleData {
         return image.pngData()
     }
 
-    /// Named by registration, as a club does in zweef.app, with the type
-    /// alongside. Fictional registrations.
-    static let aircraft: [(id: Int, name: String, type: String)] = [
-        (101, "OO-ZXA", "Schleicher ASK 21"),
-        (102, "OO-ZXB", "Rolladen-Schneider LS4"),
-        (103, "OO-ZXC", "Schempp-Hirth Discus b"),
+    /// zweef.app's three tabs, as a club fills them: aircraft named by
+    /// registration with their type, rolling stock, and the club's projects.
+    /// Fictional registrations.
+    static let material: [(id: Int, name: String, kind: MaterialKind, type: String, isGlider: Bool)] = [
+        (101, "OO-ZXA", .flying, "Schleicher ASK 21", true),
+        (102, "OO-ZXB", .flying, "Rolladen-Schneider LS4", true),
+        (103, "OO-ZXC", .flying, "Schempp-Hirth Discus b", true),
+        (201, "Lier", .rolling, "Supacat", false),
+        (202, "Golfkar 1", .rolling, "", false),
+        (203, "Jeep 1", .rolling, "", false),
+        (301, "Club", .other, "", false),
+        (302, "Overige projecten", .other, "", false),
     ]
 
     /// An in-memory container with the sample club in it.
@@ -58,11 +64,8 @@ enum SampleData {
         for member in members {
             context.insert(Member(zweefId: member.id, firstName: member.first, lastName: member.last))
         }
-        for plane in aircraft {
-            context.insert(Aircraft(zweefId: plane.id, name: plane.name, typeName: plane.type))
-        }
-        for task in DefaultTasks.seed() {
-            context.insert(task)
+        for item in material {
+            context.insert(Material(zweefId: item.id, name: item.name, kind: item.kind, typeName: item.type, isGlider: item.isGlider))
         }
         let settings = AppSettings(clubName: "Zweefvliegclub Voorbeeld")
         settings.clubLogo = logo
@@ -103,7 +106,7 @@ enum SampleData {
             day: Date,
             fromHour: Int,
             minutes: Int,
-            taskKey: String? = "glider",
+            materialId: Int? = 101,
             autoStopped: Bool = false,
             syncState: SyncState = .local
         ) -> WorkSession {
@@ -113,23 +116,22 @@ enum SampleData {
                 start: start,
                 stop: start.addingTimeInterval(Double(minutes) * 60),
                 status: .completed,
-                taskKey: taskKey,
-                aircraftId: taskKey == "glider" ? aircraft[0].id : nil,
+                materialId: materialId,
                 autoStopped: autoStopped,
                 syncState: syncState
             )
         }
 
         context.insert(session(memberIndex: 0, day: today, fromHour: 9, minutes: 138))
-        context.insert(session(memberIndex: 1, day: today, fromHour: 10, minutes: 45, taskKey: "workshop"))
-        context.insert(session(memberIndex: 2, day: today, fromHour: 13, minutes: 3, taskKey: nil))
+        context.insert(session(memberIndex: 1, day: today, fromHour: 10, minutes: 45, materialId: 301))
+        context.insert(session(memberIndex: 2, day: today, fromHour: 13, minutes: 3, materialId: nil))
         context.insert(
             session(
                 memberIndex: 3,
                 day: yesterday,
                 fromHour: 14,
                 minutes: 420,
-                taskKey: "winch",
+                materialId: 201,
                 autoStopped: true
             )
         )

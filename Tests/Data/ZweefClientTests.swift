@@ -66,14 +66,18 @@ struct ZweefClientTests {
         #expect(material[2].kistCategory == "prive")
         #expect(!material[2].isClubOwned)
         #expect(material[0].isGlider)
-        #expect(material[0].isAircraft)
+        #expect(material[0].kind == .flying)
         // A private glider whose configuration is an empty string is still an
         // aircraft, just not a known glider.
-        #expect(material[2].isAircraft)
+        #expect(material[2].kind == .flying)
         #expect(!material[2].isGlider)
-        // The winch has no configuration key at all, and a null kist_id.
+        // The winch has no configuration key at all, and a null kist_id; it is
+        // rolling stock, and the club's by definition.
         #expect(material[3].kistConfiguration == nil)
-        #expect(!material[3].isAircraft)
+        #expect(material[3].kind == .rolling)
+        #expect(material[3].isClubOwned)
+        // zweef.app's "Overig" tab.
+        #expect(material[4].kind == .other)
     }
 
     @Test("Registrations decode, with their status and the dedup tag intact")

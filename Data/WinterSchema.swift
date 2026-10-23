@@ -6,9 +6,8 @@ import SwiftData
 enum WinterSchema {
     static let models: [any PersistentModel.Type] = [
         Member.self,
-        Aircraft.self,
+        Material.self,
         WorkSession.self,
-        TaskDefinition.self,
         AppSettings.self,
         SyncLog.self,
     ]

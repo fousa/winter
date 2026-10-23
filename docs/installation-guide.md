@@ -75,10 +75,10 @@ Only for the shared workshop device; skip this on a personal phone.
 ## Language
 The app is available in English, Dutch and French and follows the device's language — so set the device to the language your members read. You can change it per app in Settings › Winter › Language. On a device in any other language, the app shows English.
 
-The task list is created in the language of the setup, and you can rename the tasks to whatever your club calls them. The few words the app adds to each registration in zweef.app, such as "short session", are written in the language of the device that uploads them.
+What members pick when they stop is your club's material from zweef.app — aircraft, rolling stock and projects, in the same three tabs as zweef.app's own form — so there is no task list to keep up. Add or rename material in zweef.app; the app follows at the next refresh.
 
 ## Changing settings later
-Press and hold the title (your club's name) for 3 seconds and enter the admin code. You can then change the connection, the token, the closing time, the logo, the tasks and the admin code, and test the connection again.
+Press and hold the title (your club's name) for 3 seconds and enter the admin code. You can then change the connection, the token, the closing time, the logo and the admin code, and test the connection again.
 
 ## Troubleshooting
 | Problem | Solution |

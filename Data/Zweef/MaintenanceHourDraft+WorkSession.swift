@@ -26,7 +26,7 @@ extension MaintenanceHourDraft {
         session: WorkSession,
         memberId: Int,
         memberName: String,
-        taskLabel: String?,
+        project: String?,
         materialId: Int?,
         periodId: Int,
         calendar: Calendar = .club,
@@ -47,7 +47,9 @@ extension MaintenanceHourDraft {
             isPrivate: false,
             category: category,
             subCategory: subCategory,
-            project: taskLabel ?? "",
+            // The material's name, as zweef.app's own form writes it when a
+            // material is picked (ADR 0020).
+            project: project ?? "",
             description: RegistrationDescription.text(
                 for: RegistrationDescription.Input(start: session.start, stop: stop, comment: session.comment),
                 timeZone: calendar.timeZone
