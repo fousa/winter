@@ -76,16 +76,24 @@ struct StopSheet: View {
                 }
             }
             #if DEBUG
-            // `-sampleAlert stop` or `delete`, with `-sampleScreen stop`: opens
-            // the confirmation as if the button had been tapped, so it can be
-            // looked at on a simulator (CONTRIBUTING.md).
+            // `-sampleAlert stop`, `delete` or `picker`, with `-sampleScreen
+            // stop`: opens the confirmation or the material picker as if the
+            // button had been tapped, so it can be looked at on a simulator
+            // (CONTRIBUTING.md).
             .task {
                 let arguments = ProcessInfo.processInfo.arguments
+                // `-sampleFilled`: an aircraft and a comment already filled
+                // in, as for an App Store screenshot.
+                if arguments.contains("-sampleFilled") {
+                    selectedMaterial = material.first { $0.kind == .flying }
+                    comment = "Replaced the canopy seal and checked the tow release."
+                }
                 guard let index = arguments.firstIndex(of: "-sampleAlert"), arguments.indices.contains(index + 1) else { return }
                 try? await Task.sleep(for: .milliseconds(600))
                 switch arguments[index + 1] {
                 case "stop": isConfirmingStop = true
                 case "delete": isConfirmingDelete = true
+                case "picker": isPickingMaterial = true
                 default: break
                 }
             }

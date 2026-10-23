@@ -90,6 +90,20 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
 
+  # Only for scripts/app-store-screenshots.sh, with a scheme of its own so it
+  # stays out of the app's test run and Xcode Cloud.
+  WinterScreenshots:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: ScreenshotTests
+    dependencies:
+      - target: Winter
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: Winter
+
 schemes:
   Winter:
     build:
@@ -108,3 +122,11 @@ schemes:
       config: Debug
     archive:
       config: Release
+  WinterScreenshots:
+    build:
+      targets:
+        WinterScreenshots: [test]
+    test:
+      config: Debug
+      targets:
+        - WinterScreenshots

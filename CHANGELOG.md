@@ -28,6 +28,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - zweef.app client: `ZweefAPI` with `ZweefClient` (URLSession, async/await) and `FakeZweefAPI`, typed errors that say whether to retry, and the `WorkSession` → registration mapping. Anonymised fixtures captured from a real club.
 - App icon and launch screen. The icon is an Icon Composer bundle (`Design/AppIcon/AppIcon.icon`) with Liquid Glass layers; the launch screen is a flat version of it, from a colour and a vector mark in the new asset catalog, named by `UILaunchScreen` in `App/Info.plist`.
 - A running timer can be deleted from the stop sheet instead of saved: a trash menu in the toolbar that asks "Delete Jan's timer?" and says the time is removed from the device and never sent to zweef.app. Only running timers; finished sessions are corrected in zweef.app.
+- App Store screenshots: `scripts/app-store-screenshots.sh` takes five screens of the sample club on the iPhone, the iPad (landscape) and the iPhone Duo with a clean status bar, into `Design/AppStore/Screenshots/<language>/`. A `WinterScreenshots` UI test turns the simulator, which nothing else in Xcode 27 can. Debug builds take `-sampleAlert picker` and `-sampleFilled`.
 
 ### Changed
 - The floating "Working now" bar is gone. Running timers are the first section of the member list, in the same tiles as everyone else, with the time written as "46m" or "1h23m" in the normal text colour; the phone's "which timer?" sheet went with the bar.
