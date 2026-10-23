@@ -24,6 +24,26 @@ extension ShapeStyle where Self == Color {
     /// A flag that the board should notice, never an error. 4.9:1 on white.
     static var flag: Color { .darkenedInLightMode(.systemOrange, by: 0.35) }
 
+    /// Text that supports the main text but still has to be read: last names,
+    /// the date line, section headings, times, notes.
+    ///
+    /// iOS's `.secondary` is about 3.5:1 on white — below the 4.5:1 that body
+    /// text needs, and hard going for the club's older members on a bright
+    /// iPad in a hangar. This is about 9:1 in light mode, a light grey in dark
+    /// mode, and darker still with Increase Contrast.
+    static var supporting: Color {
+        Color(UIColor { traits in
+            let isDark = traits.userInterfaceStyle == .dark
+            let isHighContrast = traits.accessibilityContrast == .high
+            switch (isDark, isHighContrast) {
+            case (false, false): return UIColor(red: 0.29, green: 0.29, blue: 0.31, alpha: 1)
+            case (false, true): return UIColor(red: 0.17, green: 0.17, blue: 0.18, alpha: 1)
+            case (true, false): return UIColor(red: 0.78, green: 0.78, blue: 0.80, alpha: 1)
+            case (true, true): return UIColor(red: 0.90, green: 0.90, blue: 0.92, alpha: 1)
+            }
+        })
+    }
+
     /// Stopping. Red like the Clock app's stop, so the gesture is familiar.
     ///
     /// Darkened just enough that white on it reaches 4.7:1: it is a filled

@@ -30,7 +30,7 @@ struct StartSheet: View {
                         .multilineTextAlignment(.center)
                     Text("Ready to get going?")
                         .font(.title3)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                 }
 
                 Spacer(minLength: 0)
@@ -45,7 +45,7 @@ struct StartSheet: View {
 
                     Text("You pick what you worked on when you stop.")
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                         .multilineTextAlignment(.center)
                 }
             }

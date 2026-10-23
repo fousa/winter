@@ -71,7 +71,7 @@ struct SyncView: View {
                         .font(.headline)
                     statusDetail
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                 }
             }
             .accessibilityElement(children: .combine)
@@ -183,7 +183,7 @@ struct SyncView: View {
         VStack(alignment: .leading, spacing: 10) {
             title
                 .font(.title3.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.supporting)
 
             LazyVGrid(columns: gridColumns, spacing: 10) {
                 ForEach(sessions) { session in

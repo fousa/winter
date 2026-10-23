@@ -16,7 +16,7 @@ struct LetterIndex: View {
                 } label: {
                     Text(verbatim: letter)
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                         .frame(width: 22, height: 16)
                         .contentShape(.rect)
                 }

@@ -73,6 +73,8 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - A demo mode for App Review and for clubs that want to look first (ADR 0021): "Try with a sample club" on the setup's first page opens the fictional club with two timers running, in memory and against a fake zweef.app, with every feature working and nothing saved or sent. Its settings code is 123456; "Demo" on the home screen leads back out. `AppEnvironment` holds one mode's database, configuration, secrets and sync. Debug builds take `-demo`.
 - The setup's welcome text no longer says hours go to zweef.app "as soon as there is a connection"; they go when someone uploads them.
 
+- Easier to read for older members: text that has to be read but is not the main thing — last names, the date line, section headings, times, notes — is a dark grey (`.supporting`, about 9:1) instead of iOS's light `.secondary` (3.5:1) on every screen members use, and last names on the tiles are as large as first names. The installation guide recommends Larger Text, Bold Text and Increase Contrast on the shared iPad.
+
 ### Fixed
 - App Store Connect asked about export compliance for every build. The app declares `ITSAppUsesNonExemptEncryption = NO` (in `Config/Shared.xcconfig`): its only encryption is HTTPS through URLSession, the Keychain, and a CryptoKit hash of the admin code, all the operating system's own.
 - The Xcode Cloud upload to App Store Connect failed with "Could not find CFBundleShortVersionString": the generated Info.plist only carries the version and build number when `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` are set, and they were not. `Config/Shared.xcconfig` now sets 1.0 and 1; Xcode Cloud replaces the build number with its own.

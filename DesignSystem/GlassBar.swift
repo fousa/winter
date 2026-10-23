@@ -45,7 +45,7 @@ struct StatCard: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.supporting)
             Text(value)
                 .font(.system(.title, design: .rounded, weight: .semibold))
                 .monospacedDigit()
@@ -54,7 +54,7 @@ struct StatCard: View {
             if let detail {
                 Text(detail)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.supporting)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

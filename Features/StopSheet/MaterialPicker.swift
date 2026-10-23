@@ -95,7 +95,7 @@ struct MaterialPicker: View {
                     // Always a second line, so the tiles stay one height.
                     Text(item.displayType ?? " ")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                         .lineLimit(1)
                 }
                 Spacer(minLength: 0)

@@ -27,7 +27,7 @@ struct SessionTile: View {
                         .lineLimit(1)
                     Text(when)
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                         .lineLimit(1)
                 }
 
@@ -50,7 +50,7 @@ struct SessionTile: View {
             HStack(spacing: 8) {
                 Text(what ?? String(localized: "Nothing chosen"))
                     .font(.subheadline)
-                    .foregroundStyle(what == nil ? .secondary : .primary)
+                    .foregroundStyle(what == nil ? Color.supporting : Color.primary)
                     .lineLimit(1)
 
                 Spacer(minLength: 0)
@@ -80,7 +80,7 @@ struct SessionTile: View {
         } else {
             Image(systemName: "person.crop.circle.fill")
                 .resizable()
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.supporting)
                 .frame(width: metrics.avatarSize, height: metrics.avatarSize)
                 .accessibilityHidden(true)
         }

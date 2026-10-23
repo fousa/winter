@@ -21,7 +21,9 @@ The mockups show the iPad in landscape, which stays the reference design. Everyt
 | `.stopAction` (red, 15% black) | the stop button's fill | white on it is 4.7:1 |
 | `.avatarBackground` (8 hues, 20% black) | initials, one hue per member id, the same on every launch | carries white initials |
 | `.card` (`secondarySystemGroupedBackground`) | cards and tiles on a grouped page | white on grey, dark grey on black |
+| `.supporting` (dark grey; light grey in dark mode; darker with Increase Contrast) | text that has to be read but is not the main thing: last names, the date line, section headings, times, notes — on every screen members use | about 9:1 on white, where `.secondary` is 3.5:1 |
 
+- **Older eyes are the measure.** Several members are older, on a shared iPad in a bright hangar. iOS's light-grey `.secondary` is too faint for that, so the member screens use `.supporting` instead; the faint grey is left to setup and settings. Last names on the tiles are the same size as first names, a weight lighter.
 - **Dark mode is checked, not assumed.** The darkening above is for light mode only; in dark mode `.runningTimer` and `.flag` are the plain system colours, which read on black where the darkened ones sank into it. Cards use `.card`, never `.background`, which in dark mode is the same black as the page behind it and made the cards disappear.
 - Confirmations: haptics (`.sensoryFeedback(.success, …)`).
 

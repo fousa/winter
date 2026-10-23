@@ -76,6 +76,7 @@ Only for the shared workshop device; skip this on a personal phone.
 2. Open the app and triple-click the side or home button to start Guided Access.
 3. Set Settings › Display & Brightness › Auto-Lock to "Never" (the app dims itself).
 4. Keep the device on its charger.
+5. Make it easy to read for everyone, older members included: Settings › Accessibility › Display & Text Size › **Larger Text** (a step or two up), **Bold Text** and **Increase Contrast**. Winter follows all three.
 
 ## Language
 The app is available in English, Dutch and French and follows the device's language — so set the device to the language your members read. You can change it per app in Settings › Winter › Language. On a device in any other language, the app shows English.

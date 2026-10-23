@@ -62,9 +62,12 @@ struct MemberTile: View {
                 Text(member.firstName)
                     .font(.headline)
                     .lineLimit(1)
+                // The same size as the first name, a weight lighter: a last
+                // name is read as often as a first name, by people whose eyes
+                // are not what they were.
                 Text(member.lastName)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(.body)
+                    .foregroundStyle(.supporting)
                     .lineLimit(1)
             }
         }

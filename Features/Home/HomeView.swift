@@ -213,7 +213,7 @@ struct HomeView: View {
     private var subtitleText: some View {
         Text(subtitle)
             .font(isCompact ? .subheadline : .title3)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.supporting)
             // Wraps on a phone rather than cutting off "tap your name to
             // start", which is the instruction.
             .fixedSize(horizontal: false, vertical: true)
@@ -266,7 +266,7 @@ struct HomeView: View {
     private func sectionTitle(_ title: Text) -> some View {
         title
             .font(.title3.weight(.semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.supporting)
     }
 
     private func tileGrid(

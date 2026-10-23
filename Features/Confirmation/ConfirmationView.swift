@@ -34,7 +34,7 @@ struct ConfirmationView: View {
                         .multilineTextAlignment(.center)
                     Text(confirmation.summary)
                         .font(.title3)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.supporting)
                         .multilineTextAlignment(.center)
                 }
 
@@ -45,7 +45,7 @@ struct ConfirmationView: View {
 
                 Text("Tap outside to close")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.supporting)
             }
         }
         .accessibilityAddTraits(.isModal)

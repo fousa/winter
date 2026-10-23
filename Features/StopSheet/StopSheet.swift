@@ -82,7 +82,7 @@ struct StopSheet: View {
                             .font(.title2.weight(.semibold))
                         Text("Working since \(session.start.formatted(date: .omitted, time: .shortened))")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.supporting)
                     }
                 }
             }
@@ -100,7 +100,7 @@ struct StopSheet: View {
                 // does nothing; the field itself is under the tasks.
                 Label("Add a comment below to stop", systemImage: "text.bubble")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.supporting)
             }
         }
     }
@@ -167,7 +167,7 @@ struct StopSheet: View {
                 Spacer()
                 Text("Optional")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.supporting)
             }
 
             if !material.isEmpty {
@@ -178,7 +178,7 @@ struct StopSheet: View {
 
             Text("Saved on this device, with or without internet.")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.supporting)
         }
     }
 
@@ -192,7 +192,7 @@ struct StopSheet: View {
             HStack(spacing: 12) {
                 Image(systemName: (selectedMaterial?.kind ?? .flying).symbolName)
                     .font(.title3)
-                    .foregroundStyle(selectedMaterial == nil ? Color.secondary : Color.accentColor)
+                    .foregroundStyle(selectedMaterial == nil ? Color.supporting : Color.accentColor)
                     .frame(width: 36)
                 VStack(alignment: .leading, spacing: 2) {
                     if let item = selectedMaterial {
@@ -201,7 +201,7 @@ struct StopSheet: View {
                         if let type = item.displayType {
                             Text(type)
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.supporting)
                         }
                     } else {
                         Text("Choose an aircraft, vehicle or project")
@@ -278,7 +278,7 @@ struct StopSheet: View {
 
             Text(requiresComment ? "Required by your club." : "Optional.")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.supporting)
         }
     }
 
