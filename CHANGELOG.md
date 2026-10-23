@@ -30,6 +30,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - A running timer can be deleted from the stop sheet instead of saved: a trash menu in the toolbar that asks "Delete Jan's timer?" and says the time is removed from the device and never sent to zweef.app. Only running timers; finished sessions are corrected in zweef.app.
 
 ### Changed
+- Three settings Xcode 27 recommends are set in `project.yml`: the analyzer's "Missing Localizability" check, String Catalog symbol generation and asset symbol extensions on `Color` and `Image`.
 - No proxy: the app talks to zweef.app directly with the club's API key in the Keychain (ADR 0013). `proxy/`, the device token and the connection-mode choice are gone. SECURITY.md records what that costs — a lost device now means rotating the club's key.
 - All repository documentation is written in English.
 - Verified the zweef.app API against a real club: `accounts.json` has no member photo (avatars are always initials, and the photo cache is dropped), `category` is sent empty rather than `"Maintenance"`, the active period is read from `current/hours.json` because `periods.json` answers 404, and `club.json` answers 500 so the club name may be unavailable.
