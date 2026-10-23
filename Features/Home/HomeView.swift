@@ -49,7 +49,7 @@ struct HomeView: View {
                 .navigationTitle(clubName)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
-                .searchable(text: $model.searchText, prompt: Text("Search members"))
+                .searchable(text: $model.searchText, isPresented: $model.isSearching, prompt: Text("Search members"))
                 // A safe-area *bar*, not an inset: iOS 26 then draws the
                 // scroll edge effect under the undo chip.
                 .safeAreaBar(edge: .bottom, spacing: 0) { bottomBar }

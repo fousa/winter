@@ -19,6 +19,9 @@ import SwiftUI
 final class HomeModel {
     /// What the member list is filtered by.
     var searchText = ""
+    /// Whether the search field is active; bound to `.searchable`, so the
+    /// model can close it as well as clear it.
+    var isSearching = false
 
     /// Which sheet is up, if any.
     var route: Route?
@@ -109,6 +112,7 @@ final class HomeModel {
                 memberName: member.firstName,
                 expiresAt: .now.addingTimeInterval(Self.undoWindow)
             )
+            endSearch()
             route = nil
         } catch SessionStore.StoreError.memberAlreadyWorking(let sessionId) {
             present(.stop(sessionId: sessionId))
@@ -128,6 +132,7 @@ final class HomeModel {
         do {
             try store.stop(session, material: material, comment: comment)
             feedback += 1
+            endSearch()
             // A start of this same session can no longer be undone.
             if pendingUndo?.sessionId == session.id { pendingUndo = nil }
             present(.confirmation(
@@ -188,6 +193,14 @@ final class HomeModel {
             }
         }
         route = nil
+    }
+
+    /// Back to the full home screen once a member found themselves and
+    /// started or stopped: the next person walking up should see everyone,
+    /// not the last one's search.
+    func endSearch() {
+        searchText = ""
+        isSearching = false
     }
 
     /// Closes whatever is up and queues `next` for when it has gone.

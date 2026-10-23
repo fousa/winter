@@ -68,6 +68,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The description sent to zweef.app is the times and the member's comment, nothing else (ADR 0019, amending 0007 and superseding 0017): no task or aircraft (already in `project` and `material_id`), no flags such as "short session", and no `[ou:…]` tag. A timed-out upload is recognised by member, day, hours, aircraft and description instead. `ReportingLanguage` is gone.
 - The stop sheet has a comment field under the tasks, and a club can require a comment ("A comment is required when stopping", in the setup's club step and in Settings). The task tiles are one row each, so the form sheet fits it without growing.
 - What the work was on comes from zweef.app (ADR 0020): the stop sheet offers the club's `material.json` in zweef.app's own three tabs — Flying, Rolling, Other — in a searchable picker, and sends the pick as `material_id` with its name as `project`, as zweef.app's form does. The invented task list (Glider, Winch, …), its Settings section and `TaskDefinition` are gone; `Aircraft` became `Material`, and `WorkSession.aircraftId` became `materialId`.
+- Starting or stopping a timer from a search clears and closes the search, back to the full home screen.
 
 ### Fixed
 - App Store Connect asked about export compliance for every build. The app declares `ITSAppUsesNonExemptEncryption = NO` (in `Config/Shared.xcconfig`): its only encryption is HTTPS through URLSession, the Keychain, and a CryptoKit hash of the admin code, all the operating system's own.
