@@ -42,12 +42,18 @@ targets:
       - path: Domain
       - path: Features
         excludes: ["**/*.md"]
+      # The string catalog and the asset catalog (launch mark and launch
+      # background, from Design/LaunchScreen).
       - path: Resources
+      # App icon made in Icon Composer (Liquid Glass layers). Source layers and
+      # instructions live next to it; see Design/AppIcon/README.md.
+      - path: Design/AppIcon/AppIcon.icon
+        type: file
+        buildPhase: resources
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Winter
-        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         # The app ships in these three languages only. See ADR 0010.
         # Hand-written, for the keys that have no INFOPLIST_KEY_ equivalent
         # (the languages and the background task identifiers). Xcode merges the

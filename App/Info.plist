@@ -18,6 +18,21 @@
 		<string>fr</string>
 	</array>
 
+	<!-- The launch screen: a flat version of the app icon, so starting the
+	     app feels like opening the icon. The colour and the mark live in the
+	     asset catalog; the sources and the reasoning in Design/LaunchScreen.
+	     Replaces INFOPLIST_KEY_UILaunchScreen_Generation, which gives a bare
+	     white screen. -->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+		<key>UIImageName</key>
+		<string>LaunchMark</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
+
 	<!-- Background refresh only shortens the wait before hours reach
 	     zweef.app; it never decides whether they are safe (ADR 0001). Without
 	     both of these keys, BGTaskScheduler refuses the request outright. -->

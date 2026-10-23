@@ -100,6 +100,11 @@ Fullscreen, one step per page with the progress at the top (a glass capsule with
 ### 9. Settings (no mockup yet)
 Reachable by long-pressing (3 s) on the title (the club name) → the admin code sheet. The standard settings pattern: a `NavigationSplitView` in regular width, a `NavigationStack` with one `Form` in compact width, with the sections Connection, Club, Tasks, Admin code and Data. Fields holding secrets show "••••••• (set)" with a "Change" button. Direct mode shows an orange warning row. Values from MDM are greyed out with "Managed by your organisation". The destructive action "Erase everything on this device" sits in red at the bottom.
 
+## App icon and launch screen
+The icon is a glass glider above glass snow hills, with a winter sun in a clear sky: winter is a gliding club's maintenance season. It is built in Icon Composer as `Design/AppIcon/AppIcon.icon`, four white layers on a gradient, so iOS 26 renders real Liquid Glass and derives the Default, Dark, Clear and Tinted appearances itself. The `.icon` bundle is a resource of the target and `ASSETCATALOG_COMPILER_APPICON_NAME` points at it; the layer sources, flat PNG fallbacks and the generator script sit next to it (`Design/AppIcon/README.md`).
+
+The launch screen is a flat version of the icon, so starting the app feels like opening it: the `LaunchBackground` colour (the middle of the icon's sky, with a dark variant) and the `LaunchMark` vector image (light and dark) live in `Resources/Assets.xcassets`, and `UILaunchScreen` in `App/Info.plist` names them. No text, no glass. The sources are in `Design/LaunchScreen`. iOS caches launch screens: delete and reinstall the app to see a change.
+
 ## Copy and localisation
 The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)). The strings quoted above are the **English source text**: that is what goes in the code and in the base of the String Catalog (`Localizable.xcstrings`), with `nl` and `fr` as translations. The mockups hold the original Dutch copy and stay the reference for tone; the [glossary](glossary.md) lists the terms in all three languages.
 
