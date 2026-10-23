@@ -38,7 +38,8 @@ A bare array of aircraft *and* ground equipment.
 |---|---|---|
 | `id` | int | This is what `material_id` on a registration refers to |
 | `kist_id` | int or null | Links to the flights table; null for anything that does not fly. **Not** the id to upload |
-| `name` | string | What the aircraft picker shows |
+| `name` | string | What the aircraft picker shows; usually the registration |
+| `type` | string | The make and model ("Schleicher ASK 21"), shown under the name in the picker |
 | `category` | `kist`, `rollend`, `overig` | `kist` = aircraft, the rest is winches, cars, buildings |
 | `kist_configuration` | `Glider`, `TMG`, `Sustainer`, `Self-launching`, `""`, or the key is absent | Gliders are offered first |
 | `status` | `in bedrijf`, `niet inzetbaar` | |

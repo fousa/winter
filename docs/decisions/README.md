@@ -18,6 +18,7 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0012 | [The club name may be entered by hand](0012-club-name-may-be-typed.md) | accepted |
 | 0013 | [No proxy: the app talks to zweef.app directly](0013-no-proxy.md) | accepted |
 | 0014 | [Member tiles are Liquid Glass](0014-glass-member-tiles.md) | accepted |
+| 0015 | [Hours are uploaded by hand](0015-manual-upload.md) | accepted |
 
 ## Template
 ```markdown

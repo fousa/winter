@@ -87,9 +87,7 @@ struct SyncEngineTests {
             // resolved; the label itself stays the raw flag name.
             flagLabel: { flag, language in "\(flag.rawValue)@\(language.code)" },
             calendar: calendar,
-            now: { clock.now },
-            // No jitter, so backoff windows are exact in tests.
-            jitter: { 0 }
+            now: { clock.now }
         )
         return Fixture(container: container, api: api, engine: engine, clock: clock)
     }
@@ -129,7 +127,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18))
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 11, 18), closedAt: date(15, 18))
 
-        let outcome = await fixture.engine.requestSync(.dayClosed)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.uploaded == 1)
         #expect(outcome.failed == 0)
@@ -152,29 +150,34 @@ struct SyncEngineTests {
         #expect(drafts[0].project == gliderLabel)
     }
 
-    @Test("A session whose day is not closed is left alone for a day")
+    @Test("Nothing uploads by itself: only a person tapping Upload sends hours", arguments: [
+        SyncEngine.Trigger.appBecameActive, .connectivityReturned, .backgroundRefresh,
+    ])
     @MainActor
-    func leavesUnclosedSessionsAlone() async throws {
-        let fixture = try makeFixture(now: date(15, 18))
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), state: .local)
+    func automaticRunsNeverUpload(trigger: SyncEngine.Trigger) async throws {
+        let fixture = try makeFixture(now: date(17, 12))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(16, 9), stop: date(16, 10), state: .local)
 
-        let outcome = await fixture.engine.requestSync(.appBecameActive)
+        let outcome = await fixture.engine.requestSync(trigger)
 
         #expect(outcome.uploaded == 0)
-        #expect(try fixture.sessions()[0].syncState == .local)
+        #expect(try fixture.sessions().map(\.syncState) == [.ready, .local])
         #expect(await fixture.api.createdDrafts.isEmpty)
     }
 
-    @Test("After a day, an unclosed session is uploaded anyway, so hours never get stuck")
+    @Test("Upload sends a finished session whose day is not closed, next to a running timer")
     @MainActor
-    func uploadsOldUnclosedSessions() async throws {
-        let fixture = try makeFixture(now: date(17, 12))
+    func uploadsUnclosedSessionsAndLeavesRunningOnes() async throws {
+        let fixture = try makeFixture(now: date(15, 12))
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), state: .local)
+        _ = try addSession(to: fixture, start: date(15, 11), stop: nil, state: .local, status: .running)
 
-        let outcome = await fixture.engine.requestSync(.appBecameActive)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.uploaded == 1)
-        #expect(try fixture.sessions()[0].syncState == .uploaded)
+        #expect(try fixture.sessions().map(\.syncState) == [.uploaded, .local])
+        #expect(try fixture.sessions()[1].status == .running)
     }
 
     @Test("A running session is never uploaded")
@@ -183,7 +186,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 12))
         _ = try addSession(to: fixture, start: date(15, 9), stop: nil, state: .local, status: .running)
 
-        let outcome = await fixture.engine.requestSync(.manual)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.uploaded == 0)
         #expect(await fixture.api.createdDrafts.isEmpty)
@@ -195,7 +198,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18), periodId: nil)
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
 
-        let outcome = await fixture.engine.requestSync(.dayClosed)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.uploaded == 0)
         #expect(try fixture.sessions()[0].syncState == .ready)
@@ -212,7 +215,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18), api: api)
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
 
-        let outcome = await fixture.engine.requestSync(.dayClosed)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.failed == 1)
         #expect(outcome.error == .unreachable)
@@ -228,7 +231,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18), api: api)
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
 
-        let outcome = await fixture.engine.requestSync(.dayClosed)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.rejected == 1)
         let session = try #require(try fixture.sessions().first)
@@ -251,7 +254,7 @@ struct SyncEngineTests {
             )
         }
 
-        let outcome = await fixture.engine.requestSync(.dayClosed)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.error == .notAuthorised)
         #expect(outcome.failed == 1)
@@ -261,41 +264,31 @@ struct SyncEngineTests {
         #expect(try fixture.sessions().map(\.attempts) == [1, 0, 0])
     }
 
-    @Test("A failed upload waits for its backoff before being tried again")
+    @Test("A failed upload goes again at the next tap, with no backoff to wait out")
     @MainActor
-    func respectsBackoff() async throws {
+    func failedUploadGoesAgainAtTheNextTap() async throws {
         let api = FakeZweefAPI()
         await api.failNextCreates(1)
         let fixture = try makeFixture(now: date(15, 18), api: api)
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
-
-        await fixture.engine.requestSync(.dayClosed)
-
-        // 20 seconds later: inside the 30 second window, so nothing is sent.
-        fixture.clock.now = date(15, 18).addingTimeInterval(20)
-        let tooSoon = await fixture.engine.requestSync(.connectivityReturned)
-        #expect(tooSoon.uploaded == 0)
-        #expect(await fixture.api.createdDrafts.isEmpty)
-
-        // 31 seconds later: the window has passed.
-        fixture.clock.now = date(15, 18).addingTimeInterval(31)
-        let later = await fixture.engine.requestSync(.connectivityReturned)
-        #expect(later.uploaded == 1)
-    }
-
-    @Test("\"Try again now\" ignores the backoff, because someone is watching")
-    @MainActor
-    func manualRetryIgnoresBackoff() async throws {
-        let api = FakeZweefAPI()
-        await api.failNextCreates(1)
-        let fixture = try makeFixture(now: date(15, 18), api: api)
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
-        await fixture.engine.requestSync(.dayClosed)
+        await fixture.engine.requestSync(.upload)
 
         fixture.clock.now = date(15, 18).addingTimeInterval(5)
-        let outcome = await fixture.engine.requestSync(.manual)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.uploaded == 1)
+    }
+
+    @Test("A rejected session is not sent again: zweef.app would say no again")
+    @MainActor
+    func rejectedSessionsStayOut() async throws {
+        let fixture = try makeFixture(now: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), state: .rejected)
+
+        let outcome = await fixture.engine.requestSync(.upload)
+
+        #expect(outcome.uploaded == 0)
+        #expect(await fixture.api.createdDrafts.isEmpty)
     }
 
     // MARK: - Dedup
@@ -328,7 +321,7 @@ struct SyncEngineTests {
         ]))
 
         fixture.clock.now = date(15, 19)
-        let outcome = await fixture.engine.requestSync(.manual)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.uploaded == 1)
         let stored = try #require(try fixture.sessions().first)
@@ -344,7 +337,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18))
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
 
-        await fixture.engine.requestSync(.dayClosed)
+        await fixture.engine.requestSync(.upload)
 
         // "hours" is only fetched when something has failed before.
         #expect(await fixture.api.callLog.contains("hours") == false)
@@ -358,9 +351,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(16, 9))
         _ = try addSession(to: fixture, start: date(15, 14), stop: nil, state: .local, status: .running)
 
-        // Two days on, so the 24 hour safety net also applies.
-        fixture.clock.now = date(17, 9)
-        let outcome = await fixture.engine.requestSync(.appBecameActive)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(outcome.autoStopped == 1)
         let session = try #require(try fixture.sessions().first)
@@ -381,7 +372,7 @@ struct SyncEngineTests {
         // carries a flag.
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 9, 3), closedAt: date(15, 18))
 
-        _ = await fixture.engine.requestSync(.dayClosed)
+        _ = await fixture.engine.requestSync(.upload)
 
         let drafts = await fixture.api.createdDrafts
         #expect(drafts.count == 1)
@@ -406,6 +397,8 @@ struct SyncEngineTests {
         // Three items of material, but the winch is not an aircraft.
         #expect(aircraft.count == 2)
         #expect(aircraft.allSatisfy { $0.isGlider })
+        // The type travels along, so the stop sheet can show it under the name.
+        #expect(aircraft.first { $0.zweefId == 1 }?.typeName == "Schleicher ASK 21")
     }
 
     @Test("A refresh within six hours is skipped")
@@ -475,7 +468,7 @@ struct SyncEngineTests {
         try fixture.container.mainContext.save()
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
 
-        let outcome = await fixture.engine.requestSync(.dayClosed)
+        let outcome = await fixture.engine.requestSync(.upload)
 
         #expect(!outcome.refreshed)
         #expect(outcome.uploaded == 1)
@@ -498,10 +491,10 @@ struct SyncEngineTests {
 
         // Five triggers at once: one run does the work, and no session is
         // uploaded twice.
-        async let first = fixture.engine.requestSync(.dayClosed)
+        async let first = fixture.engine.requestSync(.upload)
         async let second = fixture.engine.requestSync(.connectivityReturned)
         async let third = fixture.engine.requestSync(.appBecameActive)
-        async let fourth = fixture.engine.requestSync(.manual)
+        async let fourth = fixture.engine.requestSync(.upload)
         async let fifth = fixture.engine.requestSync(.backgroundRefresh)
         let outcomes = await [first, second, third, fourth, fifth]
 
@@ -516,7 +509,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18))
         _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
 
-        await fixture.engine.requestSync(.dayClosed)
+        await fixture.engine.requestSync(.upload)
 
         let messages = try fixture.logMessages()
         #expect(messages.contains { $0.contains("Uploaded 1 session") })

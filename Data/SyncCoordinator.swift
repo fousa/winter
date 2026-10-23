@@ -53,13 +53,10 @@ final class SyncCoordinator {
         await sync(.appBecameActive)
     }
 
-    func dayWasClosed() async {
-        await sync(.dayClosed)
-    }
-
-    /// "Try again now" — ignores backoff, because someone is watching.
-    func retryNow() async {
-        await sync(.manual)
+    /// "Upload" on the sync screen: sends every finished session that is
+    /// still waiting. Nothing else uploads (ADR 0015).
+    func uploadNow() async {
+        await sync(.upload)
     }
 
     func backgroundRefresh() async {

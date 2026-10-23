@@ -27,6 +27,10 @@ struct ZweefAccount: Decodable, Equatable, Sendable {
 struct ZweefMaterial: Decodable, Equatable, Sendable {
     let id: Int
     let name: String
+    /// The make and model, "Schleicher ASK 21", where `name` is what the club
+    /// calls the aircraft — usually its registration. Optional because nothing
+    /// says every club fills it in.
+    let type: String?
     /// "kist" (aircraft), "rollend" (rolling stock) or "overig" (other).
     let category: String
     /// "Glider", "TMG", "Sustainer", "Self-launching", or absent for anything

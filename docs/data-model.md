@@ -18,8 +18,9 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
 @Model final class Aircraft {     // from material.json
     #Unique<Aircraft>([\.zweefId])
     var zweefId: Int
-    var name: String              // e.g. "ASK 21"
+    var name: String              // what the club calls it, usually the registration ("OO-ZXA")
     var registration: String?
+    var typeName: String?         // material.json `type`, e.g. "Schleicher ASK 21"
     var isGlider: Bool
 }
 
@@ -49,7 +50,7 @@ enum SyncState: String, Codable {
     var remoteId: Int?
     var lastError: String?
     var attempts: Int
-    var lastAttemptAt: Date?   // backoff is per session, not per device
+    var lastAttemptAt: Date?   // the last upload someone asked for
     var dayClosedAt: Date?
     var uploadedAt: Date?
 }

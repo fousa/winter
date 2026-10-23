@@ -17,10 +17,12 @@ enum SampleData {
         (7, "Pieter", "De Smet"),
     ]
 
-    static let aircraft: [(id: Int, name: String)] = [
-        (101, "ASK 21"),
-        (102, "LS4"),
-        (103, "Discus"),
+    /// Named by registration, as a club does in zweef.app, with the type
+    /// alongside. Fictional registrations.
+    static let aircraft: [(id: Int, name: String, type: String)] = [
+        (101, "OO-ZXA", "Schleicher ASK 21"),
+        (102, "OO-ZXB", "Rolladen-Schneider LS4"),
+        (103, "OO-ZXC", "Schempp-Hirth Discus b"),
     ]
 
     /// An in-memory container with the sample club in it.
@@ -37,7 +39,7 @@ enum SampleData {
             context.insert(Member(zweefId: member.id, firstName: member.first, lastName: member.last))
         }
         for plane in aircraft {
-            context.insert(Aircraft(zweefId: plane.id, name: plane.name))
+            context.insert(Aircraft(zweefId: plane.id, name: plane.name, typeName: plane.type))
         }
         for task in DefaultTasks.seed() {
             context.insert(task)
@@ -65,8 +67,8 @@ enum SampleData {
     /// This is the state the close-day and sync screens are actually
     /// interesting in: an empty database tells you nothing about the layout.
     @MainActor
-    static func closedDayContainer(now: Date = .now) throws -> ModelContainer {
-        let container = try container(now: now)
+    static func closedDayContainer(runningSessionCount: Int = 0, now: Date = .now) throws -> ModelContainer {
+        let container = try container(runningSessionCount: runningSessionCount, now: now)
         let context = container.mainContext
         let calendar = Calendar.club
         let today = calendar.startOfDay(for: now)

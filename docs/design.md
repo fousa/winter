@@ -41,7 +41,7 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 | Start sheet | Form sheet, ~540×560 | A full-height sheet; the avatar shrinks and the button goes to the bottom |
 | Stop sheet | Two columns: person and timer left, task list right | One scrolling column: person, timer, then the task list; "Stop and save" pinned at the bottom in a glass bar |
 | Confirmations | A centred glass card above the dimmed screen | The same card as a sheet with `.presentationDetents([.medium])` |
-| Sync screen | Two columns | One scrolling column, with the status card first |
+| Sync screen | The status card beside two columns of tiles when the width allows (an iPad in landscape); in portrait the card on top and the two tile columns full width below | One scrolling column, with the status card first and one tile per row |
 | Settings | `NavigationSplitView` | `NavigationStack` with a single `Form`, sections in the same order |
 | Setup assistant | Centred content, one step per page | The same steps full width; the progress capsule stays at the top and the primary button at the bottom |
 
@@ -74,7 +74,7 @@ The mockup's card ("Enjoy the work, Ellen") is not built. Starting already shows
 ### 4. Stop (`Stop.dc.html`)
 A wide sheet (~920×680) in two columns:
 - Left: avatar 96, name, "Working since 09:12", a 76 pt light timer, "hours : minutes", and a "Stop and save" button (red, stop.fill).
-- Right: "What were you working on?" + "Optional"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Glider a row of aircraft capsules; footnote "Saved on this device, with or without internet."
+- Right: "What were you working on?" + "Optional"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Glider the aircraft unfold inside the same list, under the selected task and indented to its label: one row per aircraft with the name (usually the registration) and the type underneath ("OO-ZXA" / "Schleicher ASK 21"), a checkmark on selection. Rows rather than the mockup's capsules, so there is room for the type; footnote "Saved on this device, with or without internet."
 - Toolbar: close (xmark) on the left and a trash menu on the right, which is not in the mockup. The menu is headed "Delete Jan's timer?" and offers "Delete" (destructive, with the consequence as its subtitle) and "Keep working"; "Delete" removes the session without saving it. A menu rather than a confirmation dialog, because the dialog's popover anchored away from the button on the wide sheet. It is a toolbar icon rather than a second big button so that "Stop and save" stays the one obvious action on a shared device.
 
 #### Two things the mockups left open
@@ -85,10 +85,10 @@ A wide sheet (~920×680) in two columns:
 A centred glass card (~480 wide, radius 48) above the dimmed home screen in regular width; a medium-detent sheet in compact. A green circle with a checkmark, "Thanks, Jan", the summary ("2 h 18 min · Glider · ASK 21"), one "Undo" button (glass), and the footnote "Tap outside to close". No Done button and no auto-dismiss: a tap on the dimmed screen (or above the sheet, or VoiceOver's escape gesture) closes it.
 
 ### 6. Close day (`Dagoverzicht.dc.html`)
-A pushed screen. Toolbar: back (glass), the title "Close day" + the date as a subtitle, a status capsule "No running timers". Three stat cards (sessions today, the total, and what is also included from earlier days). An inset grouped list per session (avatar, name, times, task, an orange flag capsule, duration). A floating glass bar at the bottom: a wifi.slash icon, "No internet · 8 sessions ready", "They go to zweef.app by themselves once this device has a connection", and a "Close day" button (prominent).
+A pushed screen. Toolbar: back (glass), the title "Close day" + the date as a subtitle, a status capsule "No running timers". Three stat cards (sessions today, the total, and what is also included from earlier days). An inset grouped list per session (avatar, name, times, task, an orange flag capsule, duration). A floating glass bar at the bottom: "8 sessions ready", "Closing does not send them: upload them from the sync screen", and a "Close day" button (prominent). The mockup's "They go to zweef.app by themselves" no longer holds (ADR 0015).
 
 ### 7. Synchronisation (`Sync.dc.html`)
-A pushed screen in two columns. Left: a status card (icon, "No connection", the last attempt, two counters, "Try again now") and a list with the last upload / members refreshed / the period. Right: the sections "Needs attention", "Waiting to upload" (per day) and "Recently uploaded".
+A pushed screen in two columns. Left: a status card (icon, a status line that says why hours are waiting — "Nothing is sent by itself. Upload when the hours are complete." — two counters, and "Upload 2 sessions": glassProminent, full width, as tall as "Start" and "Stop and save", disabled when nothing waits) and a list with the last upload / members refreshed / the period. Right: the sections "Needs attention", "Waiting to upload" and "Recently uploaded", each a two-column grid of tiles (one column in compact width): per session a tile in two fixed rows, so every tile is the same height: the avatar, the name and "23 Oct · 09:00–11:18" with the duration on the right as on the home screen ("2h18m"); underneath, the task and aircraft ("Glider · OO-ZXA", or "No task chosen" in secondary text) with the flags at the end. A rejected session adds its reason. The tiles are opaque, not glass: they are read, not tapped (ADR 0014).
 
 ### 8. Setup assistant (no mockup yet)
 Fullscreen, one step per page with the progress at the top (a glass capsule with the steps), large fields in inset grouped lists, and a primary "Next" button at the bottom (glassProminent). The steps: Welcome → Connection (club schema and API key, the warning about what that key opens, "Test connection" with a result row "Connected to <club name>" or the period it found) → Club (the club name, typed or prefilled; the closing time; the language hours are written in) → Admin code (a six-digit entry, twice) → Done.
@@ -113,6 +113,6 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 - VoiceOver labels are translated too, including the ones that differ from the visible text (the sync status button, the timer).
 
 ## Sample data for previews
-Members: Jan Verhoeven, Koen Maes, Ellen Peeters, Sofie Claes, Bart Wouters, Lotte Janssens, Pieter De Smet, … Aircraft: ASK 21, LS4, Discus.
+Members: Jan Verhoeven, Koen Maes, Ellen Peeters, Sofie Claes, Bart Wouters, Lotte Janssens, Pieter De Smet, … Aircraft: OO-ZXA (Schleicher ASK 21), OO-ZXB (Rolladen-Schneider LS4), OO-ZXC (Schempp-Hirth Discus b) — named by registration, as clubs do in zweef.app.
 
 Every screen gets at least two previews: an iPad in landscape (the reference) and an iPhone in portrait. Add an iPhone landscape preview for the screens with a compact-height variant (the Stop sheet, the confirmations), one preview at the largest accessibility text size, and one in French (`.environment(\.locale, Locale(identifier: "fr"))`) as the longest language.

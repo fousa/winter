@@ -1,6 +1,6 @@
 # 0005 — Anyone closes the day, only when no timers are running
 
-- **Status**: accepted
+- **Status**: accepted, amended by [0015](0015-manual-upload.md)
 - **Date**: 2026-10-18
 
 ## Context

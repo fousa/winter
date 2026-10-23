@@ -32,7 +32,7 @@ Each device has its own local database and uploads its own sessions.
 4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save"; a trash menu to delete the timer instead, with the confirmation inside the menu.
 5. **Stop confirmation** — duration, task/aircraft, "Undo"; stays until someone taps outside it.
 6. **Close day** — overview of the day, flagged sessions, "Close day".
-7. **Synchronisation** — connection, pending/rejected/uploaded sessions, "Try again now".
+7. **Synchronisation** — connection, pending/rejected/uploaded sessions, and the prominent "Upload" button: the only way hours leave the device (ADR 0015).
 
 ## Flows
 
@@ -46,7 +46,7 @@ Each device has its own local database and uploads its own sessions.
 ### Stopping
 1. Someone taps the member's tile in "Working now" at the top of the list (their own timer or someone else's). While a timer runs, that is the member's only tile; search finds it there too.
 2. The "Stop" sheet shows the person, the start time and the running duration.
-3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` the aircraft picker appears (from `material.json`, plus "Other").
+3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` the aircraft unfold under the task (from `material.json`, each with its registration and type).
 4. "Stop and save" → `stop = now`, `status = .completed`, `syncState = .local`.
 5. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
 - Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.
@@ -63,10 +63,10 @@ Each device has its own local database and uploads its own sessions.
 - Timers running → the button is disabled (glass, grey, with a lock).
 - No running timers → the button is active and opens screen 6.
 - Screen 6 shows, per session on this device: member, times, task/aircraft, duration, flags. Including sessions from earlier days that were never closed ("Also included").
-- "Close day" sets every completed session of that day (or days) to `readyForUpload` and triggers a sync. Works offline.
+- "Close day" sets every completed session of that day (or days) to `readyForUpload`. It does not upload them. Works offline.
 - **If nobody closes the day**: sessions are kept. At the next closing, every open day is included. The home screen shows a reminder "3 days not closed" (a badge on the status button).
 
-> Implementation choice: only sync sessions that are `readyForUpload` (after closing), plus — as a safety net — completed sessions older than 24 h that were never closed. This keeps uploads "per day" as requested, without hours getting stuck.
+> Uploading is by hand ([ADR 0015](decisions/0015-manual-upload.md)): "Upload" on the sync screen sends every finished session still waiting, whether or not its day was closed, and leaves running timers alone. Nothing uploads by itself, so there is no 24-hour safety net any more.
 
 ### Stopping automatically
 - A configurable closing time (21:00 by default, local time).
@@ -97,7 +97,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - The app is generic: no club name, members, aircraft or tasks in the code — the name is configured on the device like everything else.
 
 ### Member list and avatars
-- On every successful sync: `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
+- On an automatic refresh (at most every 6 h, or with an empty cache): `GET /accounts.json` → upsert members. `?inactive=1` returns *only* the inactive members, so keeping old names for history takes a second call.
 - **Members always show initials** in a colour derived from their id: `accounts.json` carries no photo, avatar or image field for any member (verified against a real club, see [zweef-api.md](zweef-api.md)). There is nothing to download and no photo cache.
 - "Recents" (nl "Recent", fr "Récents"): the top 5 members by number of sessions in the last 30 days, otherwise by last seen.
 - Search on first and last name, diacritics-insensitive.

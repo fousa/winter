@@ -206,6 +206,10 @@ struct StopSheet: View {
                     // A checkmark is invisible to a listener; the trait is not.
                     .accessibilityAddTraits(selectedTask?.key == task.key ? [.isSelected] : [])
 
+                    if selectedTask?.key == task.key, task.asksForAircraft, !aircraft.isEmpty {
+                        aircraftRows
+                    }
+
                     if task.key != tasks.last?.key {
                         Divider().padding(.leading, 56)
                     }
@@ -213,49 +217,60 @@ struct StopSheet: View {
             }
             .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
 
-            if selectedTask?.asksForAircraft == true, !aircraft.isEmpty {
-                aircraftPicker
-            }
-
             Text("Saved on this device, with or without internet.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
     }
 
-    private var aircraftPicker: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                ForEach(aircraft) { plane in
-                    aircraftChip(plane)
-                }
+    /// The aircraft, unfolded under the task that asks for one.
+    ///
+    /// Rows in the same table rather than capsules beside it: there is room
+    /// for the type under each registration, and a member who knows "the
+    /// ASK 21" but not "OO-ZXA" can still find it. Indented to the task's
+    /// label, so they read as belonging to it.
+    private var aircraftRows: some View {
+        VStack(spacing: 0) {
+            ForEach(aircraft) { plane in
+                Divider().padding(.leading, 56)
+                aircraftRow(plane)
             }
         }
-        .scrollIndicators(.hidden)
+        .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
-    /// The selected capsule is prominent, the rest are plain glass.
-    ///
-    /// Written as two branches rather than a ternary on `buttonStyle`, because
-    /// the two styles are different concrete types.
-    @ViewBuilder
-    private func aircraftChip(_ plane: Aircraft) -> some View {
+    private func aircraftRow(_ plane: Aircraft) -> some View {
         let isSelected = selectedAircraft?.zweefId == plane.zweefId
-        let chip = Button {
-            selectedAircraft = isSelected ? nil : plane
+        return Button {
+            withAnimation(.smooth) {
+                selectedAircraft = isSelected ? nil : plane
+            }
         } label: {
-            Text(plane.name)
-                .font(.subheadline.weight(.medium))
-                .padding(.horizontal, 14)
-                .frame(minHeight: LayoutMetrics.minimumTapTarget)
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(plane.name)
+                        .font(.body.weight(.medium))
+                    if let type = plane.typeName {
+                        Text(type)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(.tint)
+                }
+            }
+            .padding(.leading, 56)
+            .padding(.trailing, 14)
+            .padding(.vertical, 8)
+            .frame(minHeight: LayoutMetrics.minimumTapTarget + 8)
+            .contentShape(.rect)
         }
-
-        if isSelected {
-            chip.buttonStyle(.glassProminent)
-                .accessibilityAddTraits(.isSelected)
-        } else {
-            chip.buttonStyle(.glass)
-        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
     }
 
     // MARK: - Actions
@@ -279,12 +294,15 @@ struct StopSheet: View {
     }
 
     private func select(_ task: TaskDefinition) {
-        if selectedTask?.key == task.key {
-            selectedTask = nil
-            selectedAircraft = nil
-        } else {
-            selectedTask = task
-            if !task.asksForAircraft { selectedAircraft = nil }
+        // Animated, so the aircraft unfold under the task rather than appear.
+        withAnimation(.smooth) {
+            if selectedTask?.key == task.key {
+                selectedTask = nil
+                selectedAircraft = nil
+            } else {
+                selectedTask = task
+                if !task.asksForAircraft { selectedAircraft = nil }
+            }
         }
     }
 

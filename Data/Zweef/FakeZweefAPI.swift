@@ -107,9 +107,9 @@ actor FakeZweefAPI: ZweefAPI {
     ]
 
     static let sampleMaterial: [ZweefMaterial] = [
-        ZweefMaterial(id: 1, name: "ASK 21", category: "kist", kistConfiguration: "Glider", status: "in bedrijf", isVisible: true),
-        ZweefMaterial(id: 2, name: "LS4", category: "kist", kistConfiguration: "Glider", status: "in bedrijf", isVisible: true),
-        ZweefMaterial(id: 4, name: "Lier", category: "rollend", kistConfiguration: nil, status: "in bedrijf", isVisible: true),
+        ZweefMaterial(id: 1, name: "ASK 21", type: "Schleicher ASK 21", category: "kist", kistConfiguration: "Glider", status: "in bedrijf", isVisible: true),
+        ZweefMaterial(id: 2, name: "LS4", type: "Rolladen-Schneider LS4", category: "kist", kistConfiguration: "Glider", status: "in bedrijf", isVisible: true),
+        ZweefMaterial(id: 4, name: "Lier", type: "Supacat", category: "rollend", kistConfiguration: nil, status: "in bedrijf", isVisible: true),
     ]
 
     static let sampleHours: [ZweefMaintenanceHour] = [

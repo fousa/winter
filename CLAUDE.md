@@ -11,7 +11,7 @@ Full index: `docs/README.md`.
 - `docs/spec.md` — functional specification and every decision
 - `docs/design.md` — screens, components, Liquid Glass, colours, copy
 - `docs/data-model.md` — SwiftData models
-- `docs/sync.md` — sync engine (offline-first, retries, dedup)
+- `docs/sync.md` — sync engine (offline-first, upload by hand, dedup)
 - `docs/zweef-api.md` — zweef.app endpoints and field mapping
 - `PLAN.md` — build plan; work through it top to bottom and tick items off
 - `mockups/*.dc.html` — the mockup source files (reference for layout, sizes and colours; they do not run standalone, they need the design-canvas runtime)
@@ -21,7 +21,7 @@ Full index: `docs/README.md`.
 - **One device, one set of sessions**: running timers and the day overview are about the device they live on. No syncing of running timers between devices.
 - **Look & feel**: iOS 26 HIG. Liquid Glass on the navigation/control layer (toolbar, sheets, buttons) and on the member tiles, which are the home screen's buttons (ADR 0014). Other content (lists, cards) stays opaque. System font, system colours, inset grouped lists.
 - **No login** for members. Members pick their name; no PIN for everyday use. Only the settings screen sits behind an admin code. Checking and corrections happen in zweef.app by the board (registrations arrive with status `in_aanvraag`).
-- **Fully usable offline**. Starting, stopping and closing the day work without a network. Internet at the club is unreliable; syncing happens automatically whenever there is a connection.
+- **Fully usable offline**. Starting, stopping and closing the day work without a network. Internet at the club is unreliable. Hours are uploaded only when someone taps "Upload" on the sync screen; nothing uploads by itself (ADR 0015). The members are still refreshed automatically.
 - **Two taps** to start (name → Start) and two to stop (card → Stop and save). Picking a task and an aircraft is optional.
 - **No** voice notes/dictation, **no** free-text field, **no** CSV export.
 - **Closing the day** is open to everyone, but only when no timers are running. Anyone may stop someone else's forgotten timer. At the closing time (configurable, 21:00 suggested) the app stops running timers automatically and flags them "stopped automatically".
@@ -39,7 +39,7 @@ SwiftUI views ──▶ ViewModels (@Observable, @MainActor)
                     ▼
             SyncEngine (actor) ──▶ ZweefAPI ──▶ ZweefTransport (X-API-KEY from the Keychain) ──▶ admin.gliding.app/club/{club}/api
                     ▲
-            NWPathMonitor + BGAppRefreshTask + a timer while the app is active
+            "Upload" on the sync screen (hours) · NWPathMonitor + BGAppRefreshTask (member refresh)
 ```
 
 ## Conventions

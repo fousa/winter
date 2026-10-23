@@ -7,35 +7,51 @@ import SwiftUI
 /// *visible* (ADR 0001): a member who closed the day in a hangar without
 /// signal can check that nothing was lost.
 ///
-/// It reads the stored sync state and asks ``SyncCoordinator`` to try again.
-/// What it cannot yet show is a configured connection: until the setup
-/// assistant exists (phase 4b) the app runs against a stub, so nothing actually
-/// leaves the device and the counters only ever grow.
+/// It is also the only place hours leave the device: "Upload" sends every
+/// finished session that is still waiting (ADR 0015). Running timers stay,
+/// because they are not finished yet.
 struct SyncView: View {
     @Environment(\.metrics) private var metrics
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.locale) private var locale
     @Environment(SyncCoordinator.self) private var sync
 
     @Query private var sessions: [WorkSession]
     @Query private var members: [Member]
     @Query private var settings: [AppSettings]
+    /// The screen's width, to decide whether the status card fits beside the
+    /// two columns of tiles.
+    @State private var width: CGFloat = 0
+    @Query private var tasks: [TaskDefinition]
+    @Query private var aircraft: [Aircraft]
 
     var body: some View {
         ScrollView {
-            ViewThatFits(in: .horizontal) {
-                HStack(alignment: .top, spacing: metrics.sectionSpacing) {
-                    VStack(spacing: metrics.sectionSpacing) { statusColumn }
-                        .frame(maxWidth: 380)
-                    VStack(spacing: metrics.sectionSpacing) { listColumn }
-                }
-                VStack(spacing: metrics.sectionSpacing) {
-                    statusColumn
-                    listColumn
+            // Chosen from the width rather than `ViewThatFits`: a grid has no
+            // natural width to measure, so the old fit test left the content
+            // narrower than the screen.
+            Group {
+                if !isSideBySide {
+                    VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
+                        statusColumn
+                        listColumn
+                    }
+                } else {
+                    HStack(alignment: .top, spacing: metrics.sectionSpacing) {
+                        statusColumn
+                            .frame(width: 380)
+                        VStack(alignment: .leading, spacing: metrics.sectionSpacing) { listColumn }
+                    }
                 }
             }
             .padding(metrics.gutter)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
-        .background(Color(.systemGroupedBackground))
+        // Edge to edge, under the navigation bar too, so no white strip shows
+        // beside or above the content.
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .navigationTitle("Sync")
         .resolvedLayoutMetrics()
     }
@@ -61,7 +77,9 @@ struct SyncView: View {
             }
             .accessibilityElement(children: .combine)
 
-            HStack(spacing: 10) {
+            // Top-aligned: "3 hrs, 31 min" may wrap where "2" does not, and the
+            // titles should still line up.
+            HStack(alignment: .top, spacing: 10) {
                 StatCard(
                     title: String(localized: "Sessions waiting"),
                     value: waiting.count.formatted()
@@ -72,19 +90,7 @@ struct SyncView: View {
                 )
             }
 
-            Button {
-                Task { await sync.retryNow() }
-            } label: {
-                if sync.isSyncing {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
-                } else {
-                    Label("Try again now", systemImage: "arrow.clockwise")
-                        .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
-                }
-            }
-            .buttonStyle(.glass)
-            .disabled(sync.isSyncing)
+            uploadButton
 
             VStack(alignment: .leading, spacing: 6) {
                 LabeledContent(String(localized: "Last upload")) {
@@ -109,6 +115,33 @@ struct SyncView: View {
         .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
     }
 
+    /// The screen's one action, sized and coloured like "Start" and "Stop
+    /// and save": uploading is a deliberate step now, not something to retry.
+    private var uploadButton: some View {
+        Button {
+            Task { await sync.uploadNow() }
+        } label: {
+            Group {
+                if sync.isSyncing {
+                    ProgressView()
+                } else {
+                    Label {
+                        waiting.isEmpty
+                            ? Text("Upload")
+                            : Text("Upload ^[\(waiting.count) session](inflect: true)")
+                    } icon: {
+                        Image(systemName: "icloud.and.arrow.up")
+                    }
+                    .font(.headline)
+                }
+            }
+            .frame(maxWidth: .infinity, minHeight: metrics.primaryButtonHeight)
+        }
+        .buttonStyle(.glassProminent)
+        .disabled(sync.isSyncing || waiting.isEmpty)
+        .accessibilityHint(Text("Sends the finished hours to zweef.app"))
+    }
+
     // MARK: - Lists
 
     @ViewBuilder
@@ -131,42 +164,40 @@ struct SyncView: View {
         }
     }
 
+    /// Two columns of tiles, except where one is all a tile has room for.
+    private var gridColumns: [GridItem] {
+        let isNarrow = horizontalSizeClass == .compact || dynamicTypeSize.isAccessibilitySize
+        return Array(repeating: GridItem(.flexible(), spacing: 10, alignment: .top), count: isNarrow ? 1 : 2)
+    }
+
+    /// The status card beside the tiles only when two tiles still get about
+    /// 280 pt each next to it — an iPad in landscape. In portrait the card
+    /// goes on top, and the tiles get the full width.
+    private var isSideBySide: Bool {
+        horizontalSizeClass != .compact
+            && !dynamicTypeSize.isAccessibilitySize
+            && width >= 380 + 2 * 280 + 10 + metrics.sectionSpacing + 2 * metrics.gutter
+    }
+
+    /// The same tiles as the home screen, with a session in each tile instead
+    /// of a member.
     private func group(title: Text, sessions: [WorkSession], showsReason: Bool) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             title
                 .font(.title3.weight(.semibold))
                 .foregroundStyle(.secondary)
 
-            VStack(spacing: 0) {
+            LazyVGrid(columns: gridColumns, spacing: 10) {
                 ForEach(sessions) { session in
-                    HStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(name(for: session))
-                                .font(.subheadline.weight(.medium))
-                            Text(session.start.formatted(date: .abbreviated, time: .shortened))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            if showsReason, let reason = session.lastError {
-                                Text(reason)
-                                    .font(.caption)
-                                    .foregroundStyle(.flag)
-                            }
-                        }
-                        Spacer(minLength: 0)
-                        if let minutes = session.minutes {
-                            Text(HoursFormatter.durationText(minutes: minutes, locale: locale))
-                                .font(.subheadline)
-                                .monospacedDigit()
-                        }
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .accessibilityElement(children: .combine)
-
-                    if session.id != sessions.last?.id { Divider() }
+                    SessionTile(
+                        session: session,
+                        member: members.first { $0.zweefId == session.memberId },
+                        task: tasks.first { $0.key == session.taskKey },
+                        aircraft: aircraft.first { $0.zweefId == session.aircraftId },
+                        showsReason: showsReason
+                    )
                 }
             }
-            .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
         }
     }
 
@@ -182,7 +213,8 @@ struct SyncView: View {
         return waiting.isEmpty ? Text("Everything uploaded") : Text("Waiting to upload")
     }
 
-    /// Honest about the one thing that is not wired up yet.
+    /// Why the hours are where they are. They wait until someone uploads
+    /// them (ADR 0015), so the screen says so rather than implying a fault.
     private var statusDetail: Text {
         if let error = sync.lastOutcome?.error {
             switch error {
@@ -197,7 +229,10 @@ struct SyncView: View {
         if !sync.isConnected {
             return Text("The hours stay on this device until the connection returns.")
         }
-        return Text("This device has no zweef.app connection configured yet.")
+        if waiting.isEmpty {
+            return Text("Everything is in zweef.app.")
+        }
+        return Text("Nothing is sent by itself. Upload when the hours are complete.")
     }
 
     // MARK: - Derived state
@@ -218,11 +253,6 @@ struct SyncView: View {
 
     private var waitingMinutes: Minutes {
         waiting.compactMap(\.minutes).reduce(0, +)
-    }
-
-    private func name(for session: WorkSession) -> String {
-        members.first { $0.zweefId == session.memberId }?.fullName
-            ?? String(localized: "Unknown member")
     }
 
     private func relative(_ date: Date?) -> String {

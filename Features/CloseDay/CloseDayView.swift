@@ -1,7 +1,10 @@
 import SwiftData
 import SwiftUI
 
-/// The day's hours, and the button that hands them to zweef.app.
+/// The day's hours, checked and closed.
+///
+/// Closing marks the day's sessions ready; it does not send them. Hours leave
+/// the device only when someone taps "Upload" on the sync screen (ADR 0015).
 ///
 /// Anyone can close the day, but only once nothing is running (ADR 0005), so
 /// this screen is reachable with the button disabled and says why. Sessions
@@ -12,7 +15,6 @@ struct CloseDayView: View {
     @Environment(\.metrics) private var metrics
     @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
-    @Environment(SyncCoordinator.self) private var sync
 
     @Query private var sessions: [WorkSession]
     @Query private var members: [Member]
@@ -135,7 +137,7 @@ struct CloseDayView: View {
                         .font(.subheadline.weight(.semibold))
                     (runningCount > 0
                         ? Text("Stop them first, then close the day.")
-                        : Text("They go to zweef.app by themselves once this device has a connection."))
+                        : Text("Closing does not send them: upload them from the sync screen."))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -201,9 +203,6 @@ struct CloseDayView: View {
         do {
             try store.closeDay()
             feedback += 1
-            // Closing the day is a sync trigger (docs/sync.md): the hours go up
-            // now if there is a connection, and wait if there is not.
-            Task { await sync.dayWasClosed() }
             dismiss()
         } catch {
             // The only reason closing fails is a timer that started while this

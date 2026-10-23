@@ -49,6 +49,8 @@ struct StatCard: View {
             Text(value)
                 .font(.system(.title, design: .rounded, weight: .semibold))
                 .monospacedDigit()
+                // A long duration shrinks a little before it wraps.
+                .minimumScaleFactor(0.75)
             if let detail {
                 Text(detail)
                     .font(.caption)

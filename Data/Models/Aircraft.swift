@@ -12,14 +12,25 @@ final class Aircraft {
     var zweefId: Int
     var name: String
     var registration: String?
+    /// The make and model from zweef.app ("Schleicher ASK 21"), shown under
+    /// the name so a member who knows the type but not the registration finds
+    /// the right one.
+    var typeName: String?
     /// Gliders are offered first, because glider maintenance is what most
     /// workshop hours are spent on.
     var isGlider: Bool
 
-    init(zweefId: Int, name: String, registration: String? = nil, isGlider: Bool = true) {
+    init(
+        zweefId: Int,
+        name: String,
+        registration: String? = nil,
+        typeName: String? = nil,
+        isGlider: Bool = true
+    ) {
         self.zweefId = zweefId
         self.name = name
         self.registration = registration
+        self.typeName = typeName
         self.isGlider = isGlider
     }
 }

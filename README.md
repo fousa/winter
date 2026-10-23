@@ -4,7 +4,7 @@
 
 ## Features
 - Start and stop in two taps, with member photos
-- Fully offline; automatic sync when connected, with a sync status screen
+- Fully offline; hours are uploaded with one tap on the sync screen, which shows what is still waiting
 - Anyone can close the day once no timers are running; forgotten timers stop automatically at the closing time
 - Registrations arrive in zweef.app as "pending approval", so the board approves them
 - One universal app for iPhone and iPad, in any orientation, designed for iOS 26 with Liquid Glass

@@ -273,6 +273,22 @@
         }
       }
     },
+    "Closing does not send them: upload them from the sync screen.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clôture ne les envoie pas : envoyez-les depuis l'écran de synchronisation."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afsluiten verstuurt ze niet: upload ze vanuit het synchronisatiescherm."
+          }
+        }
+      }
+    },
     "Club": {
       "localizations": {
         "fr": {
@@ -605,6 +621,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alles wissen op dit toestel?"
+          }
+        }
+      }
+    },
+    "Everything is in zweef.app.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout est dans zweef.app."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles staat in zweef.app."
           }
         }
       }
@@ -1137,6 +1169,22 @@
         }
       }
     },
+    "No task chosen": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune tâche choisie"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen taak gekozen"
+          }
+        }
+      }
+    },
     "Not connected yet": {
       "localizations": {
         "fr": {
@@ -1165,6 +1213,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Niet ingesteld"
+          }
+        }
+      }
+    },
+    "Nothing is sent by itself. Upload when the hours are complete.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien n'est envoyé automatiquement. Envoyez quand les heures sont complètes."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er wordt niets vanzelf verstuurd. Upload wanneer de uren volledig zijn."
           }
         }
       }
@@ -1437,6 +1501,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zoek leden"
+          }
+        }
+      }
+    },
+    "Sends the finished hours to zweef.app": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoie les heures terminées à zweef.app"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verstuurt de afgewerkte uren naar zweef.app"
           }
         }
       }
@@ -2007,38 +2087,6 @@
         }
       }
     },
-    "They go to zweef.app by themselves once this device has a connection.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Elles partiront vers zweef.app dès que cet appareil aura une connexion."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ze gaan vanzelf naar zweef.app zodra dit toestel verbinding heeft."
-          }
-        }
-      }
-    },
-    "This device has no zweef.app connection configured yet.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cet appareil n'a pas encore de connexion zweef.app configurée."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dit toestel heeft nog geen zweef.app-verbinding ingesteld."
-          }
-        }
-      }
-    },
     "This key opens your club's whole zweef.app account — member data and finances included — and it is stored on this device. Keep the device somewhere safe, and if you lose it, create a new key in zweef.app straight away.": {
       "localizations": {
         "nl": {
@@ -2167,22 +2215,6 @@
         }
       }
     },
-    "Try again now": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réessayer maintenant"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nu opnieuw proberen"
-          }
-        }
-      }
-    },
     "Undo": {
       "localizations": {
         "fr": {
@@ -2227,6 +2259,62 @@
           "stringUnit": {
             "state": "translated",
             "value": "Onbekend lid"
+          }
+        }
+      }
+    },
+    "Upload": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploaden"
+          }
+        }
+      }
+    },
+    "Upload ^[%lld session](inflect: true)": {
+      "localizations": {
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Envoyer %lld session"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Envoyer %lld sessions"
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessie uploaden"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sessies uploaden"
+                }
+              }
+            }
           }
         }
       }

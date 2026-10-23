@@ -57,7 +57,7 @@ One folder per screen, containing the view, the view model and the previews.
 | `StopSheet` | Showing the running time, picking a task/aircraft, stopping |
 | `Confirmation` | Confirmation after a stop, with "Undo"; closed by tapping outside it |
 | `CloseDay` | Overview of the day and closing it |
-| `Sync` | Sync status, pending/rejected/uploaded sessions, retrying |
+| `Sync` | Sync status, pending/rejected/uploaded sessions, and the "Upload" button |
 | `Setup` | The setup assistant on first launch |
 | `Settings` | Settings behind the admin code |
 
@@ -90,7 +90,7 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 ### `Data/`
 - `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
 - `SyncEngine` (`actor`): see [sync.md](sync.md). Creates its own `ModelContext` per run, on its own executor, so nothing is shared with the UI and nothing stale survives between runs. Runs one at a time: actors are reentrant, so a flag guards it and extra triggers merge into a single follow-up.
-- `SyncCoordinator` (`@MainActor`, `@Observable`): the only thing the screens talk to about syncing. Owns the triggers — connectivity returning, the app becoming active, the background task, "try again now" — and publishes `isSyncing`, `isConnected` and the last outcome.
+- `SyncCoordinator` (`@MainActor`, `@Observable`): the only thing the screens talk to about syncing. Owns the triggers — connectivity returning, the app becoming active and the background task (which only refresh and auto-stop), and "Upload" (the only one that sends hours, ADR 0015) — and publishes `isSyncing`, `isConnected` and the last outcome.
 - `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews). Six calls, only one of which writes. There is no photo cache: zweef.app returns no member photos, so avatars are initials ([zweef-api.md](zweef-api.md)).
 - `ZweefTransport`: builds the requests, with the club schema in the URL and the API key in the header. One concrete type, because there is one way to connect (ADR 0013).
 - `AutoStopService`: calls `SessionStore.applyAutoStop` when the app becomes active and every minute in the foreground. Separate from the sync engine because it must work with no network at all.
@@ -138,8 +138,10 @@ Home (tap a tile in "Working now") → StopSheet → SessionStore.stop(session, 
 ```
 Home → CloseDay (only if SessionRules.canCloseDay) → SessionStore.closeDay
    → syncState .ready for every completed session of that day (or days)
-   → SyncEngine.requestSync(reason: .dayClosed)
-   → (online) POST per session → .uploaded   |   (offline) stays .ready, retried later
+
+Sync screen → "Upload" → SyncEngine.requestSync(.upload)
+   → POST every completed .local/.ready session → .uploaded
+   → (offline or failed) stays waiting until the next tap
 ```
 
 ## Concurrency
@@ -156,7 +158,7 @@ Home → CloseDay (only if SessionRules.canCloseDay) → SessionStore.closeDay
 | No network | No message; the status is visible through the status button and the sync screen |
 | 401/403 from zweef.app | Syncing stops, the sync screen shows "Connection refused: check the API key in Settings" |
 | 4xx on a registration | The session becomes `.rejected` with the reason, with no automatic retry |
-| 5xx or a timeout | Retry with backoff |
+| 5xx or a timeout | The session stays waiting; the next tap on "Upload" tries again |
 | Incomplete configuration | The app shows the setup assistant |
 
 Errors are logged with `os.Logger` (subsystem = the bundle id, categories `sync`, `store`, `config`). Never log tokens, keys or personal data; use `privacy: .private` for names.

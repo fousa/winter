@@ -104,13 +104,19 @@ struct WinterApp: App {
     /// screen of the fictional club with three timers running, in memory and
     /// with no connection, so a screen can be looked at on a simulator without
     /// a zweef.app key. Nothing is written to disk and nothing is uploaded.
+    ///
+    /// With `-sampleScreen sync` or `-sampleScreen closeDay` the club also has
+    /// finished sessions, and the home screen opens that screen on launch.
     private static func sampleClubLaunch() -> (ModelContainer, AppConfiguration, any SecretStore, ConnectionProvider)? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
         guard let index = arguments.firstIndex(of: "-sampleClub") else { return nil }
         let running = arguments.indices.contains(index + 1) ? Int(arguments[index + 1]) ?? 0 : 0
 
-        guard let container = try? SampleData.container(runningSessionCount: running),
+        let wantsFinishedHours = arguments.contains("-sampleScreen")
+        guard let container = try? (wantsFinishedHours
+            ? SampleData.closedDayContainer(runningSessionCount: running)
+            : SampleData.container(runningSessionCount: running)),
               let defaults = UserDefaults(suiteName: "app.winter.sample-club")
         else { return nil }
         defaults.removePersistentDomain(forName: "app.winter.sample-club")

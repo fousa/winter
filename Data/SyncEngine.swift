@@ -6,22 +6,22 @@ import SwiftData
 ///
 /// Everything here is best-effort and interruptible: the app has already done
 /// its job by the time a session is stored (ADR 0001), so a failed run is not
-/// an error a member needs to see — it is a state the sync screen reports and
-/// the next trigger retries.
+/// an error a member needs to see — it is a state the sync screen reports.
+///
+/// Only a person uploads (ADR 0015). The automatic triggers stop forgotten
+/// timers and refresh the members; hours leave the device when someone taps
+/// "Upload" on the sync screen, so the club decides when they reach zweef.app.
 ///
 /// An `actor` with its own `ModelContext` per run, so a long upload never
 /// blocks the UI and never shares a context with it. Model objects are loaded
 /// by id inside the run and never handed across the boundary.
 actor SyncEngine {
-    /// Why a run started. Only used for the log and for whether backoff
-    /// applies.
+    /// Why a run started: for the log, and for whether it uploads.
     enum Trigger: String, Sendable {
         case appBecameActive
         case connectivityReturned
-        case dayClosed
-        /// "Try again now" on the sync screen: ignores backoff, because
-        /// someone is standing there watching.
-        case manual
+        /// "Upload" on the sync screen: the only trigger that sends hours.
+        case upload
         case backgroundRefresh
     }
 
@@ -50,7 +50,6 @@ actor SyncEngine {
     private let flagLabel: @Sendable (SessionFlag, ReportingLanguage) -> String
     private let calendar: Calendar
     private let now: @Sendable () -> Date
-    private let jitter: @Sendable () -> Double
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "winter", category: "sync")
 
     /// Guards against two runs at once. Actors are reentrant, so a flag is
@@ -65,15 +64,13 @@ actor SyncEngine {
         apiProvider: @escaping @Sendable () -> any ZweefAPI,
         flagLabel: @escaping @Sendable (SessionFlag, ReportingLanguage) -> String,
         calendar: Calendar = .club,
-        now: @escaping @Sendable () -> Date = { Date() },
-        jitter: @escaping @Sendable () -> Double = { .random(in: 0...1) }
+        now: @escaping @Sendable () -> Date = { Date() }
     ) {
         self.container = container
         self.apiProvider = apiProvider
         self.flagLabel = flagLabel
         self.calendar = calendar
         self.now = now
-        self.jitter = jitter
     }
 
     // MARK: - Running
@@ -86,9 +83,9 @@ actor SyncEngine {
     @discardableResult
     func requestSync(_ trigger: Trigger) async -> Outcome {
         if isRunning {
-            // A manual request outranks an automatic one, so pressing the
-            // button never waits behind a background refresh's follow-up.
-            if queuedTrigger == nil || trigger == .manual { queuedTrigger = trigger }
+            // An upload outranks an automatic run, so pressing the button is
+            // never swallowed by a background refresh's follow-up.
+            if queuedTrigger == nil || trigger == .upload { queuedTrigger = trigger }
             return .nothingToDo
         }
 
@@ -121,11 +118,6 @@ actor SyncEngine {
             logger.error("Auto-stop failed: \(String(describing: error), privacy: .public)")
         }
 
-        if let settings = try? settings(in: context) {
-            settings.lastAttemptAt = now()
-            try? context.save()
-        }
-
         do {
             outcome.refreshed = try await refreshIfDue(in: context, api: api)
         } catch ZweefError.invalidConfiguration {
@@ -141,8 +133,20 @@ actor SyncEngine {
             outcome.error = .unreachable
         }
 
+        guard trigger == .upload else {
+            logger.info("Sync run finished without uploading (\(trigger.rawValue, privacy: .public))")
+            return outcome
+        }
+
+        // "Last attempt" on the sync screen means the last upload someone
+        // asked for, not the last time the members were checked.
+        if let settings = try? settings(in: context) {
+            settings.lastAttemptAt = now()
+            try? context.save()
+        }
+
         do {
-            let upload = try await uploadReadySessions(in: context, api: api, trigger: trigger)
+            let upload = try await uploadWaitingSessions(in: context, api: api)
             outcome.uploaded = upload.uploaded
             outcome.rejected = upload.rejected
             outcome.failed = upload.failed
@@ -168,8 +172,7 @@ actor SyncEngine {
     /// uploaded.
     ///
     /// First in the run on purpose: a forgotten timer stopped at the closing
-    /// time can be uploaded in the same pass, instead of waiting for the next
-    /// one.
+    /// time is uploaded in the same pass as the rest.
     private func applyAutoStop(in context: ModelContext) throws -> Int {
         let settings = try settings(in: context)
         let closing = settings.closingComponents
@@ -206,7 +209,7 @@ actor SyncEngine {
         let settings = try settings(in: context)
         let memberCount = try context.fetchCount(FetchDescriptor<Member>())
 
-        guard RetryPolicy.shouldRefresh(
+        guard RefreshPolicy.shouldRefresh(
             lastRefresh: settings.lastRefreshAt,
             now: now(),
             cacheIsEmpty: memberCount == 0
@@ -270,14 +273,19 @@ actor SyncEngine {
             .reduce(into: [Int: Aircraft]()) { $0[$1.zweefId] = $1 }
 
         for item in material where item.isAircraft {
+            // An empty type is as good as none, and should not leave a blank
+            // line under the name.
+            let typeName = item.type.flatMap { $0.isEmpty ? nil : $0 }
             if let aircraft = existing[item.id] {
                 aircraft.name = item.name
+                aircraft.typeName = typeName
                 aircraft.isGlider = item.isGlider
             } else {
                 context.insert(Aircraft(
                     zweefId: item.id,
                     name: item.name,
                     registration: nil,
+                    typeName: typeName,
                     isGlider: item.isGlider
                 ))
             }
@@ -293,12 +301,14 @@ actor SyncEngine {
         var error: ZweefError?
     }
 
-    /// Uploads what the day closed, plus anything finished that has been
-    /// waiting more than a day.
-    private func uploadReadySessions(
+    /// Uploads every finished session that has not reached zweef.app yet.
+    ///
+    /// Whether its day was closed does not matter: the person who tapped
+    /// "Upload" asked for the hours to go, and running timers are simply not
+    /// finished yet, so they stay.
+    private func uploadWaitingSessions(
         in context: ModelContext,
-        api: any ZweefAPI,
-        trigger: Trigger
+        api: any ZweefAPI
     ) async throws -> UploadResult {
         let settings = try settings(in: context)
         var result = UploadResult()
@@ -311,9 +321,7 @@ actor SyncEngine {
             return result
         }
 
-        // A person pressing "try again" outranks the backoff: they are
-        // standing in front of the device and want an answer now.
-        let candidates = try uploadable(in: context, ignoringBackoff: trigger == .manual)
+        let candidates = try uploadable(in: context)
         guard !candidates.isEmpty else { return result }
 
         // Fetched once per run, and only when something has failed before:
@@ -398,33 +406,16 @@ actor SyncEngine {
         return result
     }
 
-    /// The sessions worth trying right now.
+    /// The finished sessions still waiting to upload, oldest first.
     ///
-    /// Closed days first and foremost; a finished session that nobody closed
-    /// joins after a day so hours never get stuck. Anything that failed
-    /// recently waits for its backoff — except when a person asked.
-    private func uploadable(in context: ModelContext, ignoringBackoff: Bool) throws -> [WorkSession] {
-        let moment = now()
-        let jitterFraction = jitter()
-
-        return try context.fetch(FetchDescriptor<WorkSession>(sortBy: [SortDescriptor(\.start)]))
+    /// No backoff: an upload only ever runs because someone asked for it, and
+    /// they want an answer now. Rejected sessions stay out — zweef.app said no,
+    /// and sending them again would get the same answer.
+    private func uploadable(in context: ModelContext) throws -> [WorkSession] {
+        try context.fetch(FetchDescriptor<WorkSession>(sortBy: [SortDescriptor(\.start)]))
             .filter { session in
-                guard session.status == .completed else { return false }
-                guard session.syncState == .ready || session.syncState == .local else { return false }
-
-                if session.syncState == .local {
-                    guard let stop = session.stop,
-                          moment.timeIntervalSince(stop) >= RetryPolicy.unclosedSessionGrace
-                    else { return false }
-                }
-
-                if ignoringBackoff { return true }
-                return RetryPolicy.mayRetry(
-                    attempts: session.attempts,
-                    lastAttempt: session.lastAttemptAt,
-                    now: moment,
-                    jitterFraction: jitterFraction
-                )
+                session.status == .completed
+                    && (session.syncState == .ready || session.syncState == .local)
             }
     }
 

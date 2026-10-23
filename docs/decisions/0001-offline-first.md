@@ -1,6 +1,6 @@
 # 0001 — Offline-first, with local storage as the source of truth
 
-- **Status**: accepted
+- **Status**: accepted, amended by [0015](0015-manual-upload.md)
 - **Date**: 2026-10-18
 
 ## Context

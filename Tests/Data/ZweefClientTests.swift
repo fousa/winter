@@ -60,6 +60,7 @@ struct ZweefClientTests {
 
         #expect(material.count == 5)
         #expect(material[0].name == "ASK 21")
+        #expect(material[0].type == "Schleicher ASK 21")
         #expect(material[0].isGlider)
         #expect(material[0].isAircraft)
         // A private glider whose configuration is an empty string is still an
