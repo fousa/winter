@@ -129,38 +129,6 @@
         }
       }
     },
-    "Also from earlier days": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aussi des jours précédents"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ook van eerdere dagen"
-          }
-        }
-      }
-    },
-    "Also included": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Également inclus"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gaat ook mee"
-          }
-        }
-      }
-    },
     "Asks which aircraft": {
       "localizations": {
         "fr": {
@@ -241,18 +209,18 @@
         }
       }
     },
-    "Checks and closes today's hours": {
+    "Choose": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vérifie et clôture les heures du jour"
+            "value": "Choisir"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Controleert en sluit de uren van vandaag af"
+            "value": "Kiezen"
           }
         }
       }
@@ -289,38 +257,6 @@
         }
       }
     },
-    "Close day": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clôturer la journée"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dag afsluiten"
-          }
-        }
-      }
-    },
-    "Closing does not send them: upload them from the sync screen.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La clôture ne les envoie pas : envoyez-les depuis l'écran de synchronisation."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afsluiten verstuurt ze niet: upload ze vanuit het synchronisatiescherm."
-          }
-        }
-      }
-    },
     "Club": {
       "localizations": {
         "fr": {
@@ -333,6 +269,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Club"
+          }
+        }
+      }
+    },
+    "Club logo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logo du club"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clublogo"
           }
         }
       }
@@ -577,22 +529,6 @@
         }
       }
     },
-    "English": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "English"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "English"
-          }
-        }
-      }
-    },
     "Enter the admin code": {
       "localizations": {
         "fr": {
@@ -705,22 +641,6 @@
         }
       }
     },
-    "Français": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Français"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Français"
-          }
-        }
-      }
-    },
     "Hours already in zweef.app stay there.": {
       "localizations": {
         "fr": {
@@ -737,50 +657,18 @@
         }
       }
     },
-    "Hours appear here once someone has worked and the day is closed.": {
+    "Hours appear here once someone has stopped a timer.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les heures apparaissent ici dès que quelqu'un a travaillé et que la journée est clôturée."
+            "value": "Les heures apparaissent ici dès que quelqu'un a arrêté un chronomètre."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uren verschijnen hier zodra iemand gewerkt heeft en de dag afgesloten is."
-          }
-        }
-      }
-    },
-    "Hours are written in": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les heures sont écrites en"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uren worden geschreven in"
-          }
-        }
-      }
-    },
-    "Hours are written to zweef.app in": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les heures sont envoyées à zweef.app en"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Uren gaan naar zweef.app in"
+            "value": "Uren verschijnen hier zodra iemand een timer heeft gestopt."
           }
         }
       }
@@ -877,6 +765,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Laatste upload"
+          }
+        }
+      }
+    },
+    "Logo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logo"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logo"
           }
         }
       }
@@ -1021,22 +925,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Leden, taken, uren en de verbinding worden allemaal verwijderd."
-          }
-        }
-      }
-    },
-    "Nederlands": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nederlands"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nederlands"
           }
         }
       }
@@ -1281,22 +1169,6 @@
         }
       }
     },
-    "Nothing logged yet.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rien d'enregistré pour l'instant."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nog niets geregistreerd."
-          }
-        }
-      }
-    },
     "On a shared device, turn on Guided Access so the app cannot be left: Settings › Accessibility › Guided Access": {
       "localizations": {
         "fr": {
@@ -1489,6 +1361,22 @@
         }
       }
     },
+    "Remove": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijderen"
+          }
+        }
+      }
+    },
     "Removed from this device, never sent to zweef.app": {
       "localizations": {
         "fr": {
@@ -1597,22 +1485,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verstuurt de afgewerkte uren naar zweef.app"
-          }
-        }
-      }
-    },
-    "Sessions today": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sessions aujourd'hui"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sessies vandaag"
           }
         }
       }
@@ -1879,38 +1751,6 @@
         }
       }
     },
-    "Stop the running timers first": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arrêtez d'abord les minuteries en cours"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop eerst de lopende timers"
-          }
-        }
-      }
-    },
-    "Stop them first, then close the day.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arrêtez-les d'abord, puis clôturez la journée."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stop ze eerst, sluit daarna de dag af."
-          }
-        }
-      }
-    },
     "Stop this timer?": {
       "localizations": {
         "fr": {
@@ -2103,22 +1943,6 @@
         }
       }
     },
-    "The board reads one consistent list, whichever language a member's own device is in.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le comité lit une liste cohérente, quelle que soit la langue de l'appareil d'un membre."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Het bestuur leest één consistente lijst, in welke taal het toestel van een lid ook staat."
-          }
-        }
-      }
-    },
     "The hours stay on this device until the connection returns.": {
       "localizations": {
         "fr": {
@@ -2263,22 +2087,6 @@
         }
       }
     },
-    "Today": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aujourd'hui"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vandaag"
-          }
-        }
-      }
-    },
     "Too many attempts.": {
       "localizations": {
         "fr": {
@@ -2291,22 +2099,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Te veel pogingen."
-          }
-        }
-      }
-    },
-    "Total": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Totaal"
           }
         }
       }
@@ -2691,46 +2483,6 @@
         }
       }
     },
-    "^[%lld session](inflect: true) ready": {
-      "localizations": {
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld session prête"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld sessions prêtes"
-                }
-              }
-            }
-          }
-        },
-        "nl": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld sessie klaar"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld sessies klaar"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "^[%lld session](inflect: true) waiting to upload": {
       "localizations": {
         "fr": {
@@ -2764,46 +2516,6 @@
                 "stringUnit": {
                   "state": "translated",
                   "value": "%lld sessies wachten op upload"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "^[%lld timer](inflect: true) still running": {
-      "localizations": {
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld minuterie encore en cours"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld minuteries encore en cours"
-                }
-              }
-            }
-          }
-        },
-        "nl": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld timer loopt nog"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld timers lopen nog"
                 }
               }
             }

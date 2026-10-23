@@ -272,78 +272,6 @@ struct SessionStoreTests {
         #expect(try fixture.store.sessions(onDayOf: date(15, 12)).count == 1)
     }
 
-    // MARK: - Closing the day
-
-    @Test("The day cannot be closed while a timer is running")
-    func closeDayRefusedWhileRunning() throws {
-        let fixture = try makeFixture(now: date(15, 18))
-        let member = try makeMember(fixture.context)
-        try fixture.store.start(member: member)
-
-        #expect(try fixture.store.canCloseDay() == false)
-        #expect(throws: SessionStore.StoreError.dayHasRunningSessions) {
-            try fixture.store.closeDay()
-        }
-    }
-
-    @Test("Closing the day marks finished sessions ready to upload")
-    func closeDayMarksSessionsReady() throws {
-        let fixture = try makeFixture(now: date(15, 9, 12))
-        let member = try makeMember(fixture.context)
-        let session = try fixture.store.start(member: member)
-        fixture.clock.now = date(15, 11, 30)
-        try fixture.store.stop(session)
-
-        fixture.clock.now = date(15, 18)
-        let count = try fixture.store.closeDay()
-
-        #expect(count == 1)
-        #expect(session.syncState == .ready)
-        #expect(session.dayClosedAt == date(15, 18))
-    }
-
-    @Test("A day nobody closed is taken along by the next closing")
-    func closeDayIncludesEarlierUnclosedDays() throws {
-        let fixture = try makeFixture(now: date(13, 9))
-        let jan = try makeMember(fixture.context, id: 1)
-        let koen = try makeMember(fixture.context, id: 2)
-
-        // Monday: Jan works, nobody closes the day.
-        let monday = try fixture.store.start(member: jan)
-        fixture.clock.now = date(13, 11)
-        try fixture.store.stop(monday)
-
-        // Wednesday: Koen works and closes up.
-        fixture.clock.now = date(15, 9)
-        let wednesday = try fixture.store.start(member: koen)
-        fixture.clock.now = date(15, 10)
-        try fixture.store.stop(wednesday)
-
-        fixture.clock.now = date(15, 18)
-        let count = try fixture.store.closeDay()
-
-        #expect(count == 2)
-        #expect(monday.syncState == .ready)
-        #expect(wednesday.syncState == .ready)
-    }
-
-    @Test("Closing twice does not touch what was already ready")
-    func closeDayIsIdempotent() throws {
-        let fixture = try makeFixture(now: date(15, 9))
-        let member = try makeMember(fixture.context)
-        let session = try fixture.store.start(member: member)
-        fixture.clock.now = date(15, 10)
-        try fixture.store.stop(session)
-        fixture.clock.now = date(15, 18)
-        try fixture.store.closeDay()
-
-        fixture.clock.now = date(15, 19)
-        let second = try fixture.store.closeDay()
-
-        #expect(second == 0)
-        #expect(session.dayClosedAt == date(15, 18))
-    }
-
     // MARK: - Automatic stop
 
     @Test("A forgotten timer is stopped at the closing time, not when it is noticed")
@@ -388,19 +316,6 @@ struct SessionStoreTests {
 
         #expect(stopped == 0)
         #expect(session.status == .running)
-    }
-
-    @Test("After an automatic stop, the day can be closed again")
-    func autoStopUnblocksClosingTheDay() throws {
-        let fixture = try makeFixture(now: date(15, 14))
-        let member = try makeMember(fixture.context)
-        try fixture.store.start(member: member)
-
-        fixture.clock.now = date(16, 9)
-        try fixture.store.applyAutoStop(closing: closing)
-
-        #expect(try fixture.store.canCloseDay())
-        #expect(try fixture.store.closeDay() == 1)
     }
 
     // MARK: - Settings

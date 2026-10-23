@@ -48,6 +48,9 @@ actor SyncEngine {
     /// output; it must never touch the main actor, because it runs on this
     /// actor's executor.
     private let flagLabel: @Sendable (SessionFlag, ReportingLanguage) -> String
+    /// The language the flags are written in: the device's (ADR 0017).
+    /// Injected so a test can pin it.
+    private let reportingLanguage: @Sendable () -> ReportingLanguage
     private let calendar: Calendar
     private let now: @Sendable () -> Date
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "winter", category: "sync")
@@ -63,12 +66,14 @@ actor SyncEngine {
         container: ModelContainer,
         apiProvider: @escaping @Sendable () -> any ZweefAPI,
         flagLabel: @escaping @Sendable (SessionFlag, ReportingLanguage) -> String,
+        reportingLanguage: @escaping @Sendable () -> ReportingLanguage = { .device },
         calendar: Calendar = .club,
         now: @escaping @Sendable () -> Date = { Date() }
     ) {
         self.container = container
         self.apiProvider = apiProvider
         self.flagLabel = flagLabel
+        self.reportingLanguage = reportingLanguage
         self.calendar = calendar
         self.now = now
     }
@@ -311,9 +316,10 @@ actor SyncEngine {
 
     /// Uploads every finished session that has not reached zweef.app yet.
     ///
-    /// Whether its day was closed does not matter: the person who tapped
-    /// "Upload" asked for the hours to go, and running timers are simply not
-    /// finished yet, so they stay.
+    /// The person who tapped "Upload" asked for the hours to go; running
+    /// timers are simply not finished yet, so they stay. Sessions that an
+    /// older version marked ready by closing the day count as waiting too
+    /// (ADR 0018).
     private func uploadWaitingSessions(
         in context: ModelContext,
         api: any ZweefAPI
@@ -451,10 +457,9 @@ actor SyncEngine {
             ).first
         }
 
-        // Read per upload, not captured at init: a club can change the
-        // language its hours are written in, and the next upload should use
-        // it (ADR 0010).
-        let language = ReportingLanguage(code: (try? settings(in: context))?.reportingLanguageCode ?? "en")
+        // Read per upload, not captured at init: the device's language can
+        // change while the app runs, and the next upload should follow it.
+        let language = reportingLanguage()
 
         return MaintenanceHourDraft(
             session: session,

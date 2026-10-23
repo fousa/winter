@@ -73,9 +73,4 @@ struct SessionRulesTests {
         #expect(SessionRules.flags(for: facts) == [.shortSession])
     }
 
-    @Test("The day can only be closed when nothing is running")
-    func canCloseDay() {
-        #expect(SessionRules.canCloseDay(runningCount: 0))
-        #expect(!SessionRules.canCloseDay(runningCount: 1))
-    }
 }

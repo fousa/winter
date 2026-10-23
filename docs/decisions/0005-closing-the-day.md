@@ -1,6 +1,6 @@
 # 0005 — Anyone closes the day, only when no timers are running
 
-- **Status**: accepted, amended by [0015](0015-manual-upload.md)
+- **Status**: amended by [0015](0015-manual-upload.md); closing the day superseded by [0018](0018-no-closing-the-day.md) — the closing time and stopping someone else's timer stay
 - **Date**: 2026-10-18
 
 ## Context

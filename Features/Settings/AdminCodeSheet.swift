@@ -34,7 +34,7 @@ struct AdminCodeSheet: View {
                     .font(.title)
                     .multilineTextAlignment(.center)
                     .padding(14)
-                    .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
+                    .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
                     .onChange(of: code) { _, newValue in
                         let digits = newValue.filter(\.isNumber)
                         code = String(digits.prefix(AdminCodeVerifier.length))

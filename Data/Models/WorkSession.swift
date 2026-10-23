@@ -12,9 +12,11 @@ enum SessionStatus: String, Codable, Sendable {
 /// The states are deliberately linear and stored, not derived: after a crash or
 /// a flat battery the app has to know exactly what it had already uploaded.
 enum SyncState: String, Codable, Sendable {
-    /// Finished, but the day has not been closed yet.
+    /// Finished, and never tried: waiting for someone to upload it.
     case local
-    /// The day was closed; ready to upload.
+    /// An upload was tried and did not get through; waiting for the next
+    /// tap on "Upload". (Before ADR 0018 this also meant "the day was
+    /// closed", which is why stored sessions may have it without a try.)
     case ready
     /// A POST is in flight.
     case uploading
@@ -59,7 +61,6 @@ final class WorkSession {
     /// zweef.app keeps refusing must not hold back an hour that has never been
     /// tried.
     var lastAttemptAt: Date?
-    var dayClosedAt: Date?
     var uploadedAt: Date?
 
     init(
@@ -77,7 +78,6 @@ final class WorkSession {
         lastError: String? = nil,
         attempts: Int = 0,
         lastAttemptAt: Date? = nil,
-        dayClosedAt: Date? = nil,
         uploadedAt: Date? = nil
     ) {
         self.id = id
@@ -94,7 +94,6 @@ final class WorkSession {
         self.lastError = lastError
         self.attempts = attempts
         self.lastAttemptAt = lastAttemptAt
-        self.dayClosedAt = dayClosedAt
         self.uploadedAt = uploadedAt
     }
 

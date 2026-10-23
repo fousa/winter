@@ -59,7 +59,7 @@ struct StatCard: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(metrics.gutter * 0.7)
-        .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
+        .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
         // One stop in VoiceOver: "sessions today, 8" rather than two separate
         // fragments a listener has to reassemble.
         .accessibilityElement(children: .combine)

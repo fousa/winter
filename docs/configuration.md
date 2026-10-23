@@ -7,10 +7,10 @@ The app is open source and has to be usable by any club on zweef.app. That is wh
 |---|---|---|---|
 | Club schema (`{club}`) | UserDefaults | yes | from the zweef.app club settings; part of the API's URL |
 | zweef.app API key | **Keychain** | yes | `X-API-KEY`. Opens the club's whole account — see [SECURITY.md](../SECURITY.md) |
+| Club logo | SwiftData `AppSettings` (external storage) | no | Optional, picked from Photos in the setup or in Settings, stored as a PNG of at most 512 px. zweef.app has no logo to give. Shown round at the top left of the home screen; nothing is shown without one |
 | Club name | SwiftData `AppSettings` | no | Typed in the setup, prefilled from zweef.app (`GET /club.json`) when that endpoint answers — which for a real club it does not, so typing it is the normal case ([ADR 0012](decisions/0012-club-name-may-be-typed.md)). Empty → the app shows "Winter" |
 | Closing time | SwiftData `AppSettings` | yes | 21:00 by default |
 | Tasks | SwiftData | yes | a default list (Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else), seeded in the setup language and editable; edited labels are club data and are not translated |
-| Reporting language | SwiftData `AppSettings` | yes | `en`/`nl`/`fr` for the text sent to zweef.app; defaults to the device language during setup ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)) |
 | `category` / `status` for zweef.app | UserDefaults | yes | `""` / `in_aanvraag` by default — an empty category is what real registrations carry, the documentation's `Maintenance` is not ([zweef-api.md](zweef-api.md)) |
 | Admin code | **Keychain** (hashed) | yes | six digits; protects only the settings screen, not everyday use |
 
@@ -27,7 +27,7 @@ The setup and the settings screen both warn about what that key opens, and [SECU
 It appears for as long as the configuration is incomplete. The steps:
 1. **Welcome** — what the app does, and what you need: the club's schema name and an API key.
 2. **Connection** — the club schema and the API key (a `SecureField`, pasting allowed), with the warning about what the key opens. Tap "Test connection" → `GET /maintenance-hours/current/hours.json` (not `periods.json`, which 404s). On success it shows the active period, and tries `GET /club.json` for the club name — which currently answers 500, so a successful connection without a name is normal; on failure a clear error (401, wrong URL, no internet). Skipping it while offline is allowed: the app works, syncing follows later.
-3. **Club** — the club name: prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter". The reporting language for zweef.app is set here too, defaulting to the current device language.
+3. **Club** — the club name, and optionally the club's logo from Photos ("Choose", then "Change" or "Remove"): prefilled and shown for confirmation ("Is this your club?") when `club.json` answered, and an empty field to type it in when it did not. Then the closing time and the task list (pre-filled in the language the setup is running in). Without internet during setup the club name appears after the first successful connection; until then the app shows "Winter".
 4. **Admin code** — six digits, entered twice.
 5. **Done** — the members are fetched (if there is internet); a tip to turn on Guided Access, and where to find the settings again.
 
@@ -35,7 +35,7 @@ Testing the connection is encouraged but not required: a club setting the app up
 
 ## Changing settings later
 - The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
-- The same fields as the setup, including the club name, plus "use the name from zweef.app" to hand control of it back. And: "Refresh members now", "Change" for the key, "Erase everything on this device" (with a confirmation; it warns if there are still sessions that have not been uploaded).
+- The same fields as the setup, including the club name and the logo, plus "use the name from zweef.app" to hand control of it back. And: "Refresh members now", "Change" for the key, "Erase everything on this device" (with a confirmation; it warns if there are still sessions that have not been uploaded).
 - Admin code forgotten → delete the app and reinstall it (local data and the Keychain go with it; warn about this in the README).
 
 ## MDM / Managed App Configuration (optional)
@@ -55,7 +55,7 @@ Winter contains nothing tied to a single club:
 - The **members** come from zweef.app. There are no member photos: `accounts.json` has no photo field, so the app shows initials ([zweef-api.md](zweef-api.md)).
 - The **club name** comes from zweef.app when `club.json` works, and is typed otherwise. A typed name is never overwritten by a later refresh ([ADR 0012](decisions/0012-club-name-may-be-typed.md)).
 - The **aircraft** come from `material.json`, the **maintenance period** from the registrations in `maintenance-hours/current/hours.json`.
-- The **task list**, the **closing time**, the **reporting language** and the zweef.app values for `category`/`status` are configurable, with sensible defaults.
+- The **task list**, the **closing time** and the zweef.app values for `category`/`status` are configurable, with sensible defaults.
 - The **UI language** follows the device: English, Dutch or French, with English as the fallback. Not a setting in the app.
 - Copy and examples in the code and the previews use fictional clubs and members.
 

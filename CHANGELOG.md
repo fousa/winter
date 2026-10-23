@@ -57,8 +57,15 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The stop sheet is a smaller form sheet in one column, and puts "Stop and save" right under the time, and writes the time as everywhere else ("46m", "1h05m") in the primary colour instead of a green clock with an "hours : minutes" caption. The tasks are a grid of glass tiles instead of a table, with the chosen aircraft in a glass row under it.
 - Debug builds take `-sampleScreen stop` too, which opens the stop sheet of the first running timer.
 - The aircraft picker offers only the club's own aircraft (`kist_category` "club"), not members' private gliders, and opens as a form sheet the size of the stop sheet.
+- The club's logo can be picked from Photos in the setup assistant's club step and in Settings ("Choose", "Change", "Remove"). It is stored as a PNG of at most 512 px and shown round at the top left of the home screen.
+- Dark mode: cards and tiles use the secondary grouped background instead of `.background`, which was the same black as the page and made the sync, close-day and setup cards vanish; `.flag` and `.runningTimer` are only darkened in light mode, so badges and status icons stay readable on black.
+- Builds need the iOS 27.1 SDK (Xcode 27.1) to fill the iPhone Duo's screen; with 27.0 the app ran in a compatibility window.
+- No reporting-language setting any more (ADR 0017, amending 0010): the words the app writes into zweef.app, such as the flags, are in the language of the device that uploads them. The setup assistant and Settings no longer ask, and `AppSettings.reportingLanguageCode` is gone.
+- The club logo is shown whole, never cropped, inside the same glass circle as the sync button opposite it.
+- No closing the day (ADR 0018, superseding that part of 0005). The "Close day" button, the close-day screen, `SessionStore.closeDay` and `WorkSession.dayClosedAt` are gone: since uploading became manual, closing only marked sessions and the sync screen already lists them. The closing time still stops forgotten timers, and anyone may still stop anyone's timer. Debug builds no longer take `-sampleScreen closeDay`.
 
 ### Fixed
+- A member's avatar colour changed every time the app started: it came from `id.hashValue`, which Swift seeds afresh per launch. It now comes from the id itself.
 - The sync screen said "This device has no zweef.app connection configured yet" on a connected device, a placeholder from before the setup assistant existed. It now says why hours are waiting. The two counters line up at the top.
 - Starting or stopping a timer no longer glitches: the sheet used to be swapped for its confirmation in one step, so SwiftUI dismissed and presented at the same time. The confirmation now waits for the sheet to finish closing.
 - Build warnings: the setup summary's plural ("3 registrations in period 7") is written with a substitution so the compiler knows which number drives it; the unused accent-colour setting is gone (the app uses the system tint); and the XcodeGen project records Xcode 27 as its last upgrade check.

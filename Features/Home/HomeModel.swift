@@ -44,7 +44,7 @@ final class HomeModel {
 
     /// What is presented on top of the home screen.
     ///
-    /// Only the modal routes: "close day" and "sync" are pushed screens and
+    /// Only the modal routes: "sync" is a pushed screen and
     /// live in the navigation path instead, which is where SwiftUI wants
     /// navigation state to be.
     enum Route: Identifiable, Hashable {
@@ -215,10 +215,6 @@ final class HomeModel {
         if let pendingUndo, pendingUndo.expiresAt <= now {
             self.pendingUndo = nil
         }
-    }
-
-    func canCloseDay(runningCount: Int) -> Bool {
-        SessionRules.canCloseDay(runningCount: runningCount)
     }
 
     private func summary(

@@ -4,7 +4,7 @@ import SwiftUI
 /// What is still on this device and what already reached zweef.app.
 ///
 /// The point of this screen is that hours sitting on a device for days are
-/// *visible* (ADR 0001): a member who closed the day in a hangar without
+/// *visible* (ADR 0001): a member who stopped a timer in a hangar without
 /// signal can check that nothing was lost.
 ///
 /// It is also the only place hours leave the device: "Upload" sends every
@@ -112,7 +112,7 @@ struct SyncView: View {
             .font(.subheadline)
         }
         .padding(metrics.gutter * 0.7)
-        .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
+        .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
     }
 
     /// The screen's one action, coloured like "Start" and "Stop and save":
@@ -158,7 +158,7 @@ struct SyncView: View {
             ContentUnavailableView(
                 String(localized: "No hours yet"),
                 systemImage: "clock",
-                description: Text("Hours appear here once someone has worked and the day is closed.")
+                description: Text("Hours appear here once someone has stopped a timer.")
             )
         }
     }
@@ -261,14 +261,14 @@ struct SyncView: View {
 }
 
 #Preview("iPad · waiting", traits: .landscapeLeft) {
-    let container = try! SampleData.closedDayContainer()
+    let container = try! SampleData.finishedSessionsContainer()
     NavigationStack { SyncView() }
         .modelContainer(container)
         .environment(SyncCoordinator.preview(container: container))
 }
 
 #Preview("iPhone · no connection") {
-    let container = try! SampleData.closedDayContainer()
+    let container = try! SampleData.finishedSessionsContainer()
     NavigationStack { SyncView() }
         .modelContainer(container)
         .environment(SyncCoordinator.preview(container: container, connected: false))

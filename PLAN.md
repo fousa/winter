@@ -15,15 +15,15 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 1 — Domain and storage
 - [x] SwiftData models from `docs/data-model.md`.
-- [x] Domain rules as pure functions + tests (duration, decimal hours, flags, closing time, canCloseDay, description).
-- [x] `SessionStore`: start, stop (including someone else's timer), undo, close the day, auto-stop. The 10-second undo *window* is a UI concern and lands with `Confirmation` in phase 2.
+- [x] Domain rules as pure functions + tests (duration, decimal hours, flags, closing time, description).
+- [x] `SessionStore`: start, stop (including someone else's timer), undo, auto-stop. (Closing the day was built here and removed later, ADR 0018.) The 10-second undo *window* is a UI concern and lands with `Confirmation` in phase 2.
 - [x] Seed with sample members for previews and first tests.
 
 ## Phase 2 — UI with fake data
 - [x] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.
 - [x] Home screen including search, letter index, "Recents", and "Working now" (now a section at the top of the list, with the running times).
 - [x] Start and Stop sheets, the stop confirmation and the start's undo chip, haptics.
-- [x] Close day.
+- [x] Close day. Removed later (ADR 0018).
 - [x] Sync screen (shows the stored sync state; the engine behind it lands in phase 4).
 - [x] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets. No `userInterfaceIdiom` or `UIScreen.main` anywhere. (Settings as one `Form` comes with the screen itself in phase 4b.)
 - [x] Previews per screen for iPad landscape, iPhone portrait, iPhone landscape (compact height) and the largest accessibility text size.
@@ -59,7 +59,7 @@ Needs a device or a simulator, which the development machine does not have:
 - [ ] Look at it. Nobody has yet seen this app run: not a preview, not a screenshot. The home screen has now been seen on the iPad and iPhone simulators (Debug launch argument `-sampleClub`); the stop sheet, the confirmations and real hardware have not.
 - [ ] Rotation pass on both devices: no clipping, no layout jumps, nothing hidden behind the undo chip or a safe area.
 - [ ] French at the largest accessibility text size, on the four labels the catalog test flags.
-- [ ] VoiceOver pass with the screen curtain on: start, stop, close the day.
+- [ ] VoiceOver pass with the screen curtain on: start, stop, upload.
 
 Needs people:
 - [ ] A native Dutch and a native French speaker read their language. The translations are mine and have not been reviewed.

@@ -20,12 +20,15 @@ final class AppSettings {
     /// (ADR 0012).
     var clubNameIsManual: Bool
     var clubFetchedAt: Date?
+    /// The club's logo, picked on the device during setup or in Settings.
+    ///
+    /// zweef.app has none to give (`club.json` answers 500), so it is chosen
+    /// from Photos. Stored as a PNG of at most 512 px (``ClubLogo/prepare(_:)``)
+    /// and kept outside the database row, so a large picture never slows the
+    /// fetch of the settings.
+    @Attribute(.externalStorage) var clubLogo: Data?
     var closingHour: Int
     var closingMinute: Int
-    /// The language of the text uploaded to zweef.app, so the board reads one
-    /// consistent list instead of whatever language each member's device is in
-    /// (ADR 0010).
-    var reportingLanguageCode: String
     var activePeriodId: Int?
     var lastSuccessfulUploadAt: Date?
     var lastRefreshAt: Date?
@@ -37,7 +40,6 @@ final class AppSettings {
         clubFetchedAt: Date? = nil,
         closingHour: Int = 21,
         closingMinute: Int = 0,
-        reportingLanguageCode: String = "en",
         activePeriodId: Int? = nil,
         lastSuccessfulUploadAt: Date? = nil,
         lastRefreshAt: Date? = nil,
@@ -48,7 +50,6 @@ final class AppSettings {
         self.clubFetchedAt = clubFetchedAt
         self.closingHour = closingHour
         self.closingMinute = closingMinute
-        self.reportingLanguageCode = reportingLanguageCode
         self.activePeriodId = activePeriodId
         self.lastSuccessfulUploadAt = lastSuccessfulUploadAt
         self.lastRefreshAt = lastRefreshAt

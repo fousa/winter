@@ -6,7 +6,7 @@ Members log their maintenance hours on a shared device in the hangar/workshop, w
 ## Roles
 | Role | What | Where |
 |---|---|---|
-| Member | Starts/stops their own session, optionally picks a task and an aircraft, closes the day if they are the last to leave | iPhone or iPad |
+| Member | Starts/stops their own session, optionally picks a task and an aircraft | iPhone or iPad |
 | Board / maintenance officer | Approves registrations, corrects them | zweef.app |
 
 ## Environment
@@ -20,18 +20,18 @@ The app is one universal app for iPhone and iPad, in any orientation ([ADR 0009]
 Each device has its own local database and uploads its own sessions.
 
 - A running timer is only visible — and can only be stopped — on the device it was started on. zweef.app has no concept of a running timer, so there is nothing to sync it through.
-- Closing the day closes the sessions on *that* device. Another device can still have open sessions of its own; it closes them itself.
-- "Working now", the day overview and the pending-upload counts are therefore always about the current device. The copy says so explicitly.
+- Uploading sends the sessions on *that* device. Another device uploads its own.
+- "Working now" and the pending-upload counts are therefore always about the current device. The copy says so explicitly.
 - Once uploaded, every device's hours end up in the same place in zweef.app, where the board sees the full picture.
 
 ## Screens (see docs/design.md for the layouts per size class)
 0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
-1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button, "Close day" button.
+1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button.
 2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
 3. **Start** has no confirmation of its own: the tile moves into "Working now", a haptic fires, and an "Undo" chip stays for 10 s.
 4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save"; a trash menu to delete the timer instead, with the confirmation inside the menu.
 5. **Stop confirmation** — duration, task/aircraft, "Undo"; stays until someone taps outside it.
-6. **Close day** — overview of the day, flagged sessions, "Close day".
+6. **Close day** — removed ([ADR 0018](decisions/0018-no-closing-the-day.md)); the sync screen lists the waiting sessions.
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, and the prominent "Upload" button: the only way hours leave the device (ADR 0015).
 
 ## Flows
@@ -58,15 +58,10 @@ Each device has its own local database and uploads its own sessions.
 - For the timer that was started by mistake, or under the wrong name, once the ten-second undo after starting has passed. Like stopping, it is open to everyone.
 - Only a running timer can be deleted. A finished session is on its way to the board; corrections to those happen in zweef.app.
 
-### Closing the day
-- The button is always visible in the top right of the home screen.
-- Timers running → the button is disabled (glass, grey, with a lock).
-- No running timers → the button is active and opens screen 6.
-- Screen 6 shows, per session on this device: member, times, task/aircraft, duration, flags. Including sessions from earlier days that were never closed ("Also included").
-- "Close day" sets every completed session of that day (or days) to `readyForUpload`. It does not upload them. Works offline.
-- **If nobody closes the day**: sessions are kept. At the next closing, every open day is included. The home screen shows a reminder "3 days not closed" (a badge on the status button).
+### Uploading
+- There is no closing the day ([ADR 0018](decisions/0018-no-closing-the-day.md)). A finished session waits on the device until someone uploads it.
 
-> Uploading is by hand ([ADR 0015](decisions/0015-manual-upload.md)): "Upload" on the sync screen sends every finished session still waiting, whether or not its day was closed, and leaves running timers alone. Nothing uploads by itself, so there is no 24-hour safety net any more.
+> Uploading is by hand ([ADR 0015](decisions/0015-manual-upload.md)): "Upload" on the sync screen sends every finished session still waiting and leaves running timers alone. Nothing uploads by itself, so there is no 24-hour safety net any more.
 
 ### Stopping automatically
 - A configurable closing time (21:00 by default, local time).
@@ -89,7 +84,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 - On a device set to any other language, the app falls back to English.
 - Dates, times, durations and decimal hours follow the device locale.
 - What the club typed itself (task labels) and what comes from zweef.app (club name, member names, aircraft) is shown as-is and never translated.
-- Text that goes *to* zweef.app (the task label in `project`, the flags in `description`) uses the club's reporting language, not the language of the member who stopped the timer, so the board reads one consistent list.
+- Text that goes *to* zweef.app (the task label in `project`, the flags in `description`) is in the language of the device that uploads it (ADR 0017). Task labels are the club's own names and are never translated.
 
 ### Club data
 - The club name comes from zweef.app (`GET /club.json`) when that endpoint answers, fetched during "Test connection" and on every refresh, and cached locally so it stays visible offline.
@@ -104,7 +99,7 @@ Flags travel along in `description` to zweef.app and are shown in orange on scre
 
 ## Configuration (open source)
 - On first launch: the setup assistant (connection, club, admin code). Without a complete configuration the rest of the app is unreachable.
-- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the club schema, the API key, the club name, the closing time, the reporting language, the tasks and the admin code, test the connection and refresh the members.
+- Changeable afterwards in the app: long-press the title → admin code → Settings. There you can change the club schema, the API key, the club name, the closing time, the logo, the tasks and the admin code, test the connection and refresh the members.
 - A changed connection is tested first; on failure the old values stay active until you confirm.
 - Pending sessions are kept when the connection changes; they go to the new connection.
 - Details: docs/configuration.md.

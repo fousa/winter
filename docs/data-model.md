@@ -29,8 +29,9 @@ Every tap is written out immediately (`modelContext.save()`), so a crash, a flat
 enum SessionStatus: String, Codable { case running, completed }
 
 enum SyncState: String, Codable {
-    case local            // completed, the day is not closed yet
-    case ready            // the day is closed, ready to upload
+    case local            // completed, never tried: waiting for "Upload"
+    case ready            // an upload was tried and failed: waiting for the next "Upload"
+                          // (older versions also set it when the day was closed, ADR 0018)
     case uploading
     case uploaded
     case rejected         // 4xx from zweef.app, with a reason
@@ -52,7 +53,6 @@ enum SyncState: String, Codable {
     var lastError: String?
     var attempts: Int
     var lastAttemptAt: Date?   // the last upload someone asked for
-    var dayClosedAt: Date?
     var uploadedAt: Date?
 }
 
@@ -82,10 +82,10 @@ enum SyncState: String, Codable {
 @Model final class AppSettings {  // singleton
     var clubName: String?          // from GET /club.json or typed; nil → show "Winter"
     var clubNameIsManual: Bool     // typed names survive a refresh (ADR 0012)
+    @Attribute(.externalStorage) var clubLogo: Data?  // PNG, at most 512 px, picked on the device
     var clubFetchedAt: Date?
     var closingHour: Int = 21
     var closingMinute: Int = 0
-    var reportingLanguage: String  // "en"/"nl"/"fr": the language of the text sent to zweef.app
     var activePeriodId: Int?
     var lastSuccessfulUploadAt: Date?
     var lastRefreshAt: Date?
@@ -98,6 +98,5 @@ enum SyncState: String, Codable {
 - `decimalHours(minutes:) -> Double` (two decimals)
 - `flags(for:) -> [Flag]` → short (< 5 min), long (> 10 h), stopped automatically, stopped by someone else
 - `autoStopDate(for start: Date, closing: DateComponents) -> Date`: the closing time on the day the session started; a session that starts *after* the closing time gets the next day's closing time
-- `canCloseDay(runningCount:) -> Bool`
 - `description(for session:, aircraft:) -> String`
 - Retention: uploaded sessions stay on the device for 90 days, then get cleaned up.

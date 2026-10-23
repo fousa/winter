@@ -19,7 +19,10 @@ The mockups show the iPad in landscape, which stays the reference design. Everyt
 | `.runningTimer` (green, 35% black) | running timers, "connected", the working dot | 4.9:1 on white |
 | `.flag` (orange, 35% black) | flag badges, "needs attention" | 4.9:1 on white, 4.3:1 on the badge's own tint |
 | `.stopAction` (red, 15% black) | the stop button's fill | white on it is 4.7:1 |
-| `.avatarBackground` (8 hues, 20% black) | initials | carries white initials |
+| `.avatarBackground` (8 hues, 20% black) | initials, one hue per member id, the same on every launch | carries white initials |
+| `.card` (`secondarySystemGroupedBackground`) | cards and tiles on a grouped page | white on grey, dark grey on black |
+
+- **Dark mode is checked, not assumed.** The darkening above is for light mode only; in dark mode `.runningTimer` and `.flag` are the plain system colours, which read on black where the darkened ones sank into it. Cards use `.card`, never `.background`, which in dark mode is the same black as the page behind it and made the cards disappear.
 - Confirmations: haptics (`.sensoryFeedback(.success, …)`).
 
 ## Adaptive layout
@@ -29,6 +32,7 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 - Grids use `LazyVGrid` with `.adaptive(minimum:)` so the number of columns follows the available width instead of a hardcoded count.
 - Spacing and padding come from a small scale that has a compact and a regular value; the mockup numbers are the regular ones.
 - Dynamic Type at accessibility sizes effectively makes any layout compact: test the largest size in both size classes, and let two-column layouts fall back to one column when the text no longer fits (`ViewThatFits`).
+- The iPhone Duo puts the status bar and the toolbar in a rail beside the content and lets apps run in resizable windows. Nothing in the app special-cases it: the window's size class decides the layout, and the system moves the toolbar into the rail. It does need the iOS 27.1 SDK; built with 27.0, the app runs in a compatibility window that does not fill the screen.
 - Safe areas are respected on every edge (the home indicator, Dynamic Island, and the iPad's rounded corners). The undo chip sits in a bottom safe-area bar, so the content scrolls clear of it.
 
 ### Per size class
@@ -36,7 +40,7 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 |---|---|---|
 | Home grid | 5-column grid, member tiles with first and last name | `.adaptive(minimum: 150)`, roughly 2 columns in portrait; the letter index stays on the trailing edge |
 | Search | A search field in the toolbar | `.searchable` on the navigation stack, so it collapses into the title area |
-| Toolbar | Sync status, search and "Close day" side by side | Sync status stays visible; "Close day" moves into the bottom bar, where the primary action belongs on a phone |
+| Toolbar | The club logo on the left; sync status and search on the right | The same, with search collapsing into the title area |
 | "Working now" | A section at the top of the grid, the same tiles with the running time | The same section, one tile per row like the rest of the grid |
 | Start sheet | Form sheet, ~540×560 | A full-height sheet; the avatar shrinks and the button goes to the bottom |
 | Stop sheet | A form sheet in one column: person, time and "Stop and save", then the task grid | The same column, scrolling if it has to |
@@ -59,7 +63,8 @@ Running timers belong to the device they were started on. The "Working now" sect
 
 ### 1. Home (`Main.dc.html`, `Druk.dc.html`)
 - A navigation bar with the large title = the club name from zweef.app (falling back to "Winter" while it is unknown), subtitle "Maintenance hours · Thursday 1 October · tap your name to start". The subtitle is a `.largeSubtitle` toolbar item in title 3 (subheadline on a phone, wrapping to two lines) rather than `navigationSubtitle`, whose caption size was too small to read from a step back. The mockups still show "Onderhoudsuren" as the title.
-- Toolbar on the right (glass): the sync status button ("8 waiting", an orange cloud when there is no connection) → screen 7; a search field; "Close day" (prominent when allowed, otherwise disabled with a lock).
+- Top left, when the club picked one: the club's logo, fitted whole (never cropped — many club logos are round badges already) inside the same glass circle as the sync button opposite, so the bar's two corners match (see `configuration.md`).
+- Toolbar on the right (glass): the sync status button ("8 waiting", an orange cloud when there is no connection) → screen 7; a search field. No "Close day" any more (ADR 0018).
 - Content: a "Working now" section, a "Recents" section (5 tiles) and the members under letter headings (a 5-column grid). While searching, the letters give way to one "Members" heading over the results, under "Working now" when a working member matches too. A tile: interactive Liquid Glass, radius 24, height 84, avatar 52 pt round (initials — zweef.app has no member photos, see [zweef-api.md](zweef-api.md)), first name 17 semibold, last name 15 secondary. Glass because the tiles are the screen's buttons and should lift under a finger like one ([ADR 0014](decisions/0014-glass-member-tiles.md)).
 - A letter index on the right (as in Contacts).
 - "Working now", the first section while anything runs on this device: the same tiles as the rest of the grid, oldest timer first, in a wider column (280 pt minimum, 220 compact) and two rows: avatar and name on top with the full width to themselves, the running time underneath at 28 pt (22 compact), in the primary text colour, written "46m" under an hour and "1h23m" after. No colour on the tile or the time: the section title and the time itself say what is going on. Tapping one opens the stop sheet. It replaces the floating bar of earlier versions, so there is one way to see who is working and it scrolls with everything else. A working member is *only* here: their tile leaves "Often here" and the letter sections while the timer runs, so each person has one tile. Search filters this section like the others, so typing a name finds a member whether or not they are working.
@@ -84,8 +89,8 @@ A form sheet (the system's form size, smaller than the mockup's ~920×680 so the
 ### 5. Stop confirmation (`Gestopt.dc.html`)
 A centred glass card (~480 wide, radius 48) above the dimmed home screen in regular width; a medium-detent sheet in compact. A green circle with a checkmark, "Thanks, Jan", the summary ("2 h 18 min · Glider · ASK 21"), one "Undo" button (glass), and the footnote "Tap outside to close". No Done button and no auto-dismiss: a tap on the dimmed screen (or above the sheet, or VoiceOver's escape gesture) closes it.
 
-### 6. Close day (`Dagoverzicht.dc.html`)
-A pushed screen. Toolbar: back (glass), the title "Close day" + the date as a subtitle, a status capsule "No running timers". Three stat cards (sessions today, the total, and what is also included from earlier days). An inset grouped list per session (avatar, name, times, task, an orange flag capsule, duration). A floating glass bar at the bottom: "8 sessions ready", "Closing does not send them: upload them from the sync screen", and a "Close day" button (prominent). The mockup's "They go to zweef.app by themselves" no longer holds (ADR 0015).
+### 6. Close day (`Dagoverzicht.dc.html`) — removed
+There is no closing the day any more ([ADR 0018](decisions/0018-no-closing-the-day.md)): uploading is a manual step on the sync screen, which lists every waiting session, so a separate end-of-day screen had nothing left to do.
 
 ### 7. Synchronisation (`Sync.dc.html`)
 A pushed screen in two columns. Left: a status card (icon, a status line that says why hours are waiting — "Nothing is sent by itself. Upload when the hours are complete." — two counters, and "Upload 2 sessions": glassProminent at the standard size, disabled when nothing waits) and a list with the last upload / members refreshed / the period. Right: the sections "Needs attention", "Waiting to upload" and "Recently uploaded", each a two-column grid of tiles (one column in compact width): per session a tile in two fixed rows, so every tile is the same height: the avatar, the name and "23 Oct · 09:00–11:18" with the duration on the right as on the home screen ("2h18m"); underneath, the task and aircraft ("Glider · OO-ZXA", or "No task chosen" in secondary text) with the flags at the end. A rejected session adds its reason. The tiles are opaque, not glass: they are read, not tapped (ADR 0014).
@@ -109,7 +114,7 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 - Counts use the catalog's plural variants ("8 waiting", "1 waiting"), including Dutch and French plural rules.
 - Weekdays and month names come from the locale, so the home subtitle is not a hand-built string.
 - Member names, the club name, aircraft and club-edited task labels are data, not copy: they are shown as they come from zweef.app or as the club typed them, never translated.
-- French labels run roughly 20–30% longer than English, and some short ones far more. The `String catalog` test suite prints the ones that more than double, which is the list to check on a device. Today that is "Close day" → "Clôturer la journée", "Sync" → "Synchronisation", "Admin code" → "Code d'administration". Two of those sit in toolbars, so the sync button is icon-only and "Close day" shrinks slightly rather than wrapping.
+- French labels run roughly 20–30% longer than English, and some short ones far more. The `String catalog` test suite prints the ones that more than double, which is the list to check on a device. Today that is "Sync" → "Synchronisation" and "Admin code" → "Code d'administration". The first sits in the toolbar, so the sync button is icon-only.
 - VoiceOver labels are translated too, including the ones that differ from the visible text (the sync status button, the timer).
 
 ## Sample data for previews

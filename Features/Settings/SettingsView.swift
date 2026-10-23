@@ -152,6 +152,11 @@ struct SettingsView: View {
         Section("Club") {
             TextField("Club name", text: $clubName)
 
+            ClubLogoPicker(data: Binding(
+                get: { settings.clubLogo },
+                set: { settings.clubLogo = $0 }
+            ))
+
             DatePicker(
                 "Timers stop at",
                 selection: Binding(
@@ -167,15 +172,6 @@ struct SettingsView: View {
                 displayedComponents: .hourAndMinute
             )
             .disabled(configuration.managedKeys.contains(.closingTime))
-
-            Picker("Hours are written in", selection: Binding(
-                get: { ReportingLanguage(code: settings.reportingLanguageCode) },
-                set: { settings.reportingLanguageCode = $0.code }
-            )) {
-                Text("English").tag(ReportingLanguage.english)
-                Text("Nederlands").tag(ReportingLanguage.dutch)
-                Text("Français").tag(ReportingLanguage.french)
-            }
         }
     }
 

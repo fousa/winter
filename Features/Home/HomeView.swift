@@ -2,10 +2,10 @@ import SwiftData
 import SwiftUI
 
 /// The screen the device sits on all day: who is here, who is working, and the
-/// way into closing the day.
+/// way to the hours waiting to upload.
 ///
 /// Two taps to start (a name, then Start) and two to stop (a card, then Stop
-/// and save). Everything else — search, the letter index, the day overview — is
+/// and save). Everything else — search, the letter index, the sync screen — is
 /// there to make those two taps land on the right person.
 struct HomeView: View {
     @Environment(\.modelContext) private var context
@@ -27,7 +27,6 @@ struct HomeView: View {
 
     /// The pushed screens.
     enum Destination: Hashable {
-        case closeDay
         case sync
     }
 
@@ -50,7 +49,6 @@ struct HomeView: View {
                 .scrollEdgeEffectStyle(.soft, for: .bottom)
                 .navigationDestination(for: Destination.self) { destination in
                     switch destination {
-                    case .closeDay: CloseDayView()
                     case .sync: SyncView()
                     }
                 }
@@ -72,7 +70,7 @@ struct HomeView: View {
         }
         .sensoryFeedback(.success, trigger: model.feedback)
         #if DEBUG
-        .task { openSampleScreen() }
+        .task { await openSampleScreen() }
         #endif
         .keepScreenAwake(!runningSessions.isEmpty)
         .resolvedLayoutMetrics()
@@ -228,6 +226,15 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
 
+        // The club's own logo, when one was picked during setup: top left,
+        // in the same glass circle as the sync button opposite, so the two
+        // corners of the bar match.
+        if let logo = settings.first?.clubLogo {
+            ToolbarItem(placement: .topBarLeading) {
+                ClubLogo(data: logo, size: 34)
+            }
+        }
+
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 path.append(.sync)
@@ -247,30 +254,6 @@ struct HomeView: View {
                 pendingUploadCount > 0
                     ? Text("^[\(pendingUploadCount) session](inflect: true) waiting to upload")
                     : Text("Everything uploaded")
-            )
-        }
-
-        // On a phone the primary action belongs at the bottom, within reach.
-        ToolbarItem(placement: isCompact ? .bottomBar : .topBarTrailing) {
-            Button {
-                path.append(.closeDay)
-            } label: {
-                Label {
-                    Text("Close day")
-                        // "Clôturer la journée" is twice the English. One line,
-                        // shrink a little rather than wrap or truncate.
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                } icon: {
-                    Image(systemName: canCloseDay ? "moon.stars" : "lock")
-                }
-            }
-            .buttonStyle(.glassProminent)
-            .disabled(!canCloseDay)
-            .accessibilityHint(
-                canCloseDay
-                    ? Text("Checks and closes today's hours")
-                    : Text("Stop the running timers first")
             )
         }
     }
@@ -362,10 +345,6 @@ struct HomeView: View {
         sessions.filter { $0.status == .completed && ($0.syncState == .local || $0.syncState == .ready) }.count
     }
 
-    private var canCloseDay: Bool {
-        model.canCloseDay(runningCount: runningSessions.count)
-    }
-
     private var membersById: [Int: Member] {
         Dictionary(members.map { ($0.zweefId, $0) }, uniquingKeysWith: { first, _ in first })
     }
@@ -409,17 +388,19 @@ struct HomeView: View {
 
 #if DEBUG
 extension HomeView {
-    /// `-sampleScreen sync`, `closeDay` or `stop`, next to `-sampleClub`:
+    /// `-sampleScreen sync` or `stop`, next to `-sampleClub`:
     /// opens that screen on launch so it can be looked at on a simulator
     /// (CONTRIBUTING.md).
-    fileprivate func openSampleScreen() {
+    fileprivate func openSampleScreen() async {
         let arguments = ProcessInfo.processInfo.arguments
         guard let index = arguments.firstIndex(of: "-sampleScreen"),
               arguments.indices.contains(index + 1)
         else { return }
+        // Pushed straight from the first `.task`, the screen was sometimes
+        // dropped while the window was still settling after launch.
+        try? await Task.sleep(for: .milliseconds(500))
         switch arguments[index + 1] {
         case "sync": path = [.sync]
-        case "closeDay": path = [.closeDay]
         case "stop":
             if let session = runningSessions.first { model.route = .stop(sessionId: session.id) }
         default: break

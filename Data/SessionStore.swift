@@ -4,10 +4,9 @@ import SwiftData
 /// The only place that creates or changes a ``WorkSession``.
 ///
 /// Having one door in front of the sessions is what makes the guarantees
-/// testable: every mutation saves immediately (ADR 0001), a member can only
-/// have one running session, and the day cannot be closed while something is
-/// still running (ADR 0005). Views and view models call this; nothing else
-/// writes sessions.
+/// testable: every mutation saves immediately (ADR 0001), and a member can
+/// only have one running session. Views and view models call this; nothing
+/// else writes sessions.
 ///
 /// `@MainActor` because the mutations are small and immediate, and because the
 /// UI reads the same context. The sync engine gets its own background context
@@ -22,8 +21,6 @@ final class SessionStore {
         case memberAlreadyWorking(sessionId: UUID)
         case sessionNotRunning
         case sessionNotCompleted
-        /// Someone tried to close the day with timers still running.
-        case dayHasRunningSessions
     }
 
     private let context: ModelContext
@@ -66,11 +63,6 @@ final class SessionStore {
             sortBy: [SortDescriptor(\.start)]
         )
         return try context.fetch(descriptor)
-    }
-
-    /// Whether the day may be closed right now.
-    func canCloseDay() throws -> Bool {
-        SessionRules.canCloseDay(runningCount: try runningSessions().count)
     }
 
     /// The club's settings, created with sensible defaults on first use.
@@ -161,33 +153,10 @@ final class SessionStore {
         session.aircraftId = nil
         session.autoStopped = false
         session.stoppedByOther = false
-        session.dayClosedAt = nil
         try context.save()
     }
 
-    // MARK: - Closing the day
-
-    /// Marks every finished session up to the end of today as ready to upload.
-    ///
-    /// Days that were never closed are included on purpose: if nobody closed up
-    /// on Thursday, Saturday's closing takes Thursday with it, so no hours stay
-    /// behind (ADR 0005).
-    ///
-    /// - Returns: How many sessions were marked ready.
-    /// - Throws: ``StoreError/dayHasRunningSessions`` while anything is running.
-    @discardableResult
-    func closeDay() throws -> Int {
-        guard try canCloseDay() else { throw StoreError.dayHasRunningSessions }
-
-        let closedAt = now()
-        let sessions = try allSessions().filter { $0.status == .completed && $0.syncState == .local }
-        for session in sessions {
-            session.syncState = .ready
-            session.dayClosedAt = closedAt
-        }
-        try context.save()
-        return sessions.count
-    }
+    // MARK: - Closing time
 
     /// Stops every timer that has run past its closing time.
     ///

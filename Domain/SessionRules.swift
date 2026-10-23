@@ -3,7 +3,7 @@ import Foundation
 /// The rules that decide what a session means, as pure functions.
 ///
 /// Everything here is deliberately free of storage, UI and clocks: the view
-/// layer asks these questions ("may the day be closed?") instead of answering
+/// layer asks these questions ("is this session short?") instead of answering
 /// them itself, so the answers can be tested at the edges where they matter —
 /// midnight, the closing time, daylight saving.
 enum SessionRules {
@@ -62,12 +62,4 @@ enum SessionRules {
         return flags
     }
 
-    /// Whether the day may be closed.
-    ///
-    /// Anyone may close the day, but only once nothing is running (ADR 0005):
-    /// closing with a timer still going would upload an unfinished session or
-    /// leave it stranded.
-    static func canCloseDay(runningCount: Int) -> Bool {
-        runningCount == 0
-    }
 }

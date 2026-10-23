@@ -129,7 +129,7 @@ Two things that test also settled:
 | `category` | `""` (see above) |
 | `sub_category` | `""` |
 | `project` | The task label as the club stores it, or `""` |
-| `description` | Composed: task · aircraft · times · flags, then the dedup tag. Flags are in the club's reporting language (ADR 0010) |
+| `description` | Composed: task · aircraft · times · flags, then the dedup tag. Flags are in the uploading device's language (ADR 0017) |
 | `status` | `"in_aanvraag"` |
 
 ## Finding the period

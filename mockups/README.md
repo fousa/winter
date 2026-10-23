@@ -13,7 +13,7 @@ The mockups show the iPad in landscape, which is the reference design. The app i
 | `Gestart.dc.html` | 3 · Start confirmation |
 | `Stop.dc.html` | 4 · Stop (sheet) |
 | `Gestopt.dc.html` | 5 · Stop confirmation |
-| `Dagoverzicht.dc.html` | 6 · Close day |
+| `Dagoverzicht.dc.html` | 6 · Close day (not built any more, ADR 0018) |
 | `Sync.dc.html` | 7 · Synchronisation |
 | `Druk.dc.html` | 8 · Home with 8 members working |
 

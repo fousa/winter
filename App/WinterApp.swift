@@ -105,7 +105,7 @@ struct WinterApp: App {
     /// with no connection, so a screen can be looked at on a simulator without
     /// a zweef.app key. Nothing is written to disk and nothing is uploaded.
     ///
-    /// With `-sampleScreen sync` or `-sampleScreen closeDay` the club also has
+    /// With `-sampleScreen sync` or `-sampleScreen stop` the club also has
     /// finished sessions, and the home screen opens that screen on launch.
     private static func sampleClubLaunch() -> (ModelContainer, AppConfiguration, any SecretStore, ConnectionProvider)? {
         #if DEBUG
@@ -115,7 +115,7 @@ struct WinterApp: App {
 
         let wantsFinishedHours = arguments.contains("-sampleScreen")
         guard let container = try? (wantsFinishedHours
-            ? SampleData.closedDayContainer(runningSessionCount: running)
+            ? SampleData.finishedSessionsContainer(runningSessionCount: running)
             : SampleData.container(runningSessionCount: running)),
               let defaults = UserDefaults(suiteName: "app.winter.sample-club")
         else { return nil }

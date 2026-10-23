@@ -38,9 +38,10 @@ final class SetupModel {
 
     // Club
     var clubName = ""
+    /// Optional; picked from Photos, already scaled down (``ClubLogo/prepare(_:)``).
+    var clubLogo: Data?
     var closingHour: Int
     var closingMinute: Int
-    var reportingLanguage: ReportingLanguage
 
     // Admin code
     var adminCode = ""
@@ -70,9 +71,9 @@ final class SetupModel {
         // less to type on a device mounted on a wall. The key is never pushed.
         self.clubSchema = configuration.clubSchema
         self.clubName = settings.clubName ?? ""
+        self.clubLogo = settings.clubLogo
         self.closingHour = settings.closingHour
         self.closingMinute = settings.closingMinute
-        self.reportingLanguage = ReportingLanguage(code: settings.reportingLanguageCode)
     }
 
     // MARK: - Steps
@@ -173,9 +174,9 @@ final class SetupModel {
             settings.setClubName(typed: clubName)
         }
 
+        settings.clubLogo = clubLogo
         settings.closingHour = closingHour
         settings.closingMinute = closingMinute
-        settings.reportingLanguageCode = reportingLanguage.code
     }
 
     private var fetchedClubName: String? {

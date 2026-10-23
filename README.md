@@ -5,7 +5,7 @@
 ## Features
 - Start and stop in two taps, with member photos
 - Fully offline; hours are uploaded with one tap on the sync screen, which shows what is still waiting
-- Anyone can close the day once no timers are running; forgotten timers stop automatically at the closing time
+- Anyone can stop a forgotten timer, and timers still running at the closing time stop automatically
 - Registrations arrive in zweef.app as "pending approval", so the board approves them
 - One universal app for iPhone and iPad, in any orientation, designed for iOS 26 with Liquid Glass
 - Available in English, Dutch and French, following the device's language
@@ -31,7 +31,7 @@ Every setting is documented in [`docs/configuration.md`](docs/configuration.md),
 ## Building it yourself
 1. Install [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`.
 2. Copy `Config/Local.xcconfig.example` to `Config/Local.xcconfig` and fill in your `DEVELOPMENT_TEAM` and `BUNDLE_ID_PREFIX`. (Optional: it builds under `com.example` without this.)
-3. Run `xcodegen generate` to create `Winter.xcodeproj`, then open it in Xcode 26 and build it for your iPhone or iPad.
+3. Run `xcodegen generate` to create `Winter.xcodeproj`, then open it in Xcode 27.1 or later and build it for your iPhone or iPad.
 
 ## Documentation
 Everything lives in [`docs/`](docs/README.md): the installation guide for clubs, configuration, the functional specification, architecture, data model, synchronisation, the zweef.app API, design, and the [design decisions](docs/decisions/README.md).

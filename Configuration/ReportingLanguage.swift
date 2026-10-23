@@ -1,11 +1,11 @@
 import Foundation
 
-/// The language the club's hours are written in when they go to zweef.app.
+/// The language the generated words in a registration are written in when
+/// they go to zweef.app — the flags, such as "short session".
 ///
-/// Separate from the UI language on purpose: the app follows the device, but a
-/// club's maintenance-hours list should not end up with Dutch flags on one row
-/// and French on the next depending on whose phone stopped the timer
-/// (ADR 0010).
+/// The language this device runs the app in (ADR 0017). There is no club
+/// setting any more: one fewer question during setup, and a club whose
+/// devices share a language sees one language in zweef.app anyway.
 struct ReportingLanguage: Hashable, Sendable {
     /// One of the three languages the app ships in.
     let code: String
@@ -14,9 +14,6 @@ struct ReportingLanguage: Hashable, Sendable {
     static let dutch = ReportingLanguage(code: "nl")
     static let french = ReportingLanguage(code: "fr")
 
-    /// Every language a club can pick, in no particular order of preference.
-    static let supported = [english, dutch, french]
-
     /// Falls back to English for anything we do not ship, which is the same
     /// fallback the UI has.
     init(code: String) {
@@ -24,9 +21,13 @@ struct ReportingLanguage: Hashable, Sendable {
         self.code = ["en", "nl", "fr"].contains(normalised) ? normalised : "en"
     }
 
-    /// The language suggested during setup: whatever the device is in.
-    static var deviceDefault: ReportingLanguage {
-        ReportingLanguage(code: Locale.current.language.languageCode?.identifier ?? "en")
+    /// The language the app runs in on this device.
+    ///
+    /// Read from the bundle's resolved localisation rather than the device
+    /// locale, so it is always one of the three the app ships in and follows
+    /// a per-app language set in the iOS Settings app.
+    static var device: ReportingLanguage {
+        ReportingLanguage(code: Bundle.main.preferredLocalizations.first ?? "en")
     }
 
     var locale: Locale {

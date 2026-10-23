@@ -25,7 +25,7 @@ struct StaticConnectivity: ConnectivityReporting {
 /// Reports whether this device currently has a usable connection.
 ///
 /// Used to *trigger* a sync, never to decide whether an action is allowed:
-/// starting, stopping and closing the day work regardless (ADR 0001). The club
+/// starting and stopping work regardless (ADR 0001). The club
 /// wifi drops often enough that polling would be wasteful, so this watches the
 /// path and says something only when it changes.
 final class ConnectivityMonitor: ConnectivityReporting, Sendable {

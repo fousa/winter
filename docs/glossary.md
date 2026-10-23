@@ -12,7 +12,6 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 | Running session / timer | `status == .running` | Lopende sessie / timer | Session en cours | A session without a stop time |
 | Task | `TaskDefinition` | Taak | Tâche | What was worked on (configurable per club) |
 | Aircraft | `Aircraft` | Toestel | Appareil | An aircraft or piece of equipment from zweef.app `material.json` |
-| Close the day | `closeDay` | Dag afsluiten | Clôturer la journée | Mark all completed sessions of the day as ready to upload |
 | Closing time | `closingTime` | Sluitingsuur | Heure de fermeture | The time at which running timers stop automatically |
 | Stopped automatically | `autoStopped` | Automatisch gestopt | Arrêtée automatiquement | A session stopped by the closing time |
 | Stopped by someone else | `stoppedByOther` | Gestopt door iemand anders | Arrêtée par quelqu'un d'autre | Someone stopped another member's timer |

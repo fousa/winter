@@ -61,7 +61,8 @@ struct SyncEngineTests {
         api: FakeZweefAPI = FakeZweefAPI(),
         periodId: Int? = 1,
         members: [(Int, String, String)] = [(101, "Jan", "Verhoeven")],
-        tasks: Bool = true
+        tasks: Bool = true,
+        language: ReportingLanguage = .english
     ) throws -> Fixture {
         let container = try WinterSchema.inMemoryContainer()
         let context = container.mainContext
@@ -86,6 +87,7 @@ struct SyncEngineTests {
             // The language is appended so a test can see which one the engine
             // resolved; the label itself stays the raw flag name.
             flagLabel: { flag, language in "\(flag.rawValue)@\(language.code)" },
+            reportingLanguage: { language },
             calendar: calendar,
             now: { clock.now }
         )
@@ -101,8 +103,7 @@ struct SyncEngineTests {
         state: SyncState = .ready,
         status: SessionStatus = .completed,
         attempts: Int = 0,
-        taskKey: String? = "glider",
-        closedAt: Date? = nil
+        taskKey: String? = "glider"
     ) throws -> WorkSession {
         let session = WorkSession(
             memberId: memberId,
@@ -111,8 +112,7 @@ struct SyncEngineTests {
             status: status,
             taskKey: taskKey,
             syncState: state,
-            attempts: attempts,
-            dayClosedAt: closedAt
+            attempts: attempts
         )
         fixture.container.mainContext.insert(session)
         try fixture.container.mainContext.save()
@@ -121,11 +121,11 @@ struct SyncEngineTests {
 
     // MARK: - Uploading
 
-    @Test("A closed day's sessions are uploaded and marked")
+    @Test("Waiting sessions are uploaded and marked")
     @MainActor
     func uploadsReadySessions() async throws {
         let fixture = try makeFixture(now: date(15, 18))
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 11, 18), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 11, 18))
 
         let outcome = await fixture.engine.requestSync(.upload)
 
@@ -156,7 +156,7 @@ struct SyncEngineTests {
     @MainActor
     func automaticRunsNeverUpload(trigger: SyncEngine.Trigger) async throws {
         let fixture = try makeFixture(now: date(17, 12))
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
         _ = try addSession(to: fixture, start: date(16, 9), stop: date(16, 10), state: .local)
 
         let outcome = await fixture.engine.requestSync(trigger)
@@ -166,7 +166,7 @@ struct SyncEngineTests {
         #expect(await fixture.api.createdDrafts.isEmpty)
     }
 
-    @Test("Upload sends a finished session whose day is not closed, next to a running timer")
+    @Test("Upload sends a finished session and leaves a running timer alone")
     @MainActor
     func uploadsUnclosedSessionsAndLeavesRunningOnes() async throws {
         let fixture = try makeFixture(now: date(15, 12))
@@ -196,7 +196,7 @@ struct SyncEngineTests {
     @MainActor
     func keepsSessionsWhenThereIsNoPeriod() async throws {
         let fixture = try makeFixture(now: date(15, 18), periodId: nil)
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
 
         let outcome = await fixture.engine.requestSync(.upload)
 
@@ -213,7 +213,7 @@ struct SyncEngineTests {
         let api = FakeZweefAPI()
         await api.failNextCreates(1)
         let fixture = try makeFixture(now: date(15, 18), api: api)
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
 
         let outcome = await fixture.engine.requestSync(.upload)
 
@@ -229,7 +229,7 @@ struct SyncEngineTests {
     func marksRejectedWithReason() async throws {
         let api = FakeZweefAPI(create: .failure(.rejected(status: 422, reason: "Member is not active")))
         let fixture = try makeFixture(now: date(15, 18), api: api)
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
 
         let outcome = await fixture.engine.requestSync(.upload)
 
@@ -249,8 +249,7 @@ struct SyncEngineTests {
                 to: fixture,
                 memberId: 101,
                 start: date(15, hour),
-                stop: date(15, hour).addingTimeInterval(1800),
-                closedAt: date(15, 18)
+                stop: date(15, hour).addingTimeInterval(1800)
             )
         }
 
@@ -270,7 +269,7 @@ struct SyncEngineTests {
         let api = FakeZweefAPI()
         await api.failNextCreates(1)
         let fixture = try makeFixture(now: date(15, 18), api: api)
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
         await fixture.engine.requestSync(.upload)
 
         fixture.clock.now = date(15, 18).addingTimeInterval(5)
@@ -301,8 +300,7 @@ struct SyncEngineTests {
             to: fixture,
             start: date(15, 9),
             stop: date(15, 10),
-            attempts: 1,
-            closedAt: date(15, 18)
+            attempts: 1
         )
 
         // The server has the registration, carrying the tag this session put
@@ -335,7 +333,7 @@ struct SyncEngineTests {
     @MainActor
     func skipsDedupCheckForUntriedSessions() async throws {
         let fixture = try makeFixture(now: date(15, 18))
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
 
         await fixture.engine.requestSync(.upload)
 
@@ -362,15 +360,13 @@ struct SyncEngineTests {
         #expect(drafts[0].description.contains("stoppedAutomatically"))
     }
 
-    @Test("Flags are written in the club's reporting language, read on the engine's own context")
+    @Test("Flags are written in the device's language")
     @MainActor
     func flagsUseTheReportingLanguage() async throws {
-        let fixture = try makeFixture(now: date(15, 18))
-        try fixture.settings().reportingLanguageCode = "fr"
-        try fixture.container.mainContext.save()
+        let fixture = try makeFixture(now: date(15, 18), language: .french)
         // Three minutes: under the short-session threshold, so the description
         // carries a flag.
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 9, 3), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 9, 3))
 
         _ = await fixture.engine.requestSync(.upload)
 
@@ -486,7 +482,7 @@ struct SyncEngineTests {
         let fixture = try makeFixture(now: date(15, 18), api: api)
         try fixture.settings().lastRefreshAt = nil
         try fixture.container.mainContext.save()
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
 
         let outcome = await fixture.engine.requestSync(.upload)
 
@@ -504,8 +500,7 @@ struct SyncEngineTests {
             _ = try addSession(
                 to: fixture,
                 start: date(15, hour),
-                stop: date(15, hour).addingTimeInterval(1800),
-                closedAt: date(15, 18)
+                stop: date(15, hour).addingTimeInterval(1800)
             )
         }
 
@@ -527,7 +522,7 @@ struct SyncEngineTests {
     @MainActor
     func logsWithoutPersonalData() async throws {
         let fixture = try makeFixture(now: date(15, 18))
-        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10), closedAt: date(15, 18))
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 10))
 
         await fixture.engine.requestSync(.upload)
 

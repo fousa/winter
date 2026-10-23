@@ -59,7 +59,7 @@ mean a review process for a screen full of Dutch member names.
 ## Step 4 — First launch
 The app opens with the setup assistant:
 1. **Connection**: fill in the schema name and the API key. Tap **Test connection**; you should see the active maintenance period.
-2. **Club**: type your club's name — it becomes the title on the home screen. (zweef.app is supposed to supply it, but that endpoint is currently broken, so the field is filled in for you only when it answers.) After that, set the closing time (when forgotten timers stop automatically) and the language the hours are written in when they go to zweef.app.
+2. **Club**: type your club's name — it becomes the title on the home screen. (zweef.app is supposed to supply it, but that endpoint is currently broken, so the field is filled in for you only when it answers.) You can add the club's logo from Photos. After that, set the closing time (when forgotten timers stop automatically).
 3. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings. Three wrong attempts are free, after that the app makes you wait a little longer each time.
 4. **Done**: the members are fetched as soon as there is internet. (zweef.app has no member photos, so the app shows initials.)
 
@@ -74,10 +74,10 @@ Only for the shared workshop device; skip this on a personal phone.
 ## Language
 The app is available in English, Dutch and French and follows the device's language — so set the device to the language your members read. You can change it per app in Settings › Winter › Language. On a device in any other language, the app shows English.
 
-The task list is created in the language of the setup, and you can rename the tasks to whatever your club calls them. What goes to zweef.app is written in the language you picked in step 5, so the board always reads one consistent list.
+The task list is created in the language of the setup, and you can rename the tasks to whatever your club calls them. The few words the app adds to each registration in zweef.app, such as "short session", are written in the language of the device that uploads them.
 
 ## Changing settings later
-Press and hold the title (your club's name) for 3 seconds and enter the admin code. You can then change the connection, the token, the closing time, the tasks, the reporting language and the admin code, and test the connection again.
+Press and hold the title (your club's name) for 3 seconds and enter the admin code. You can then change the connection, the token, the closing time, the logo, the tasks and the admin code, and test the connection again.
 
 ## Troubleshooting
 | Problem | Solution |

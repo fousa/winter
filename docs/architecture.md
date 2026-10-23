@@ -14,7 +14,7 @@ This document describes how the app is put together technically: which modules e
 ┌──────────────────────────── Winter app ────────────────────────────┐
 │                                                                    │
 │  Features (SwiftUI views + @Observable view models, @MainActor)    │
-│    Home · StartSheet · StopSheet · Confirmation · CloseDay · Sync  │
+│    Home · StartSheet · StopSheet · Confirmation · Sync             │
 │    Setup · Settings                                                │
 │                │                                                   │
 │                ▼                                                   │
@@ -52,11 +52,10 @@ One folder per screen, containing the view, the view model and the previews.
 
 | Feature | Responsibility |
 |---|---|
-| `Home` | Member list with the "Working now" section, search, letter index, the sync status button, the "Close day" button, the hidden entrance to Settings |
+| `Home` | Member list with the "Working now" section, search, letter index, the sync status button, the hidden entrance to Settings |
 | `StartSheet` | Confirming that the right member is starting; already working → redirect to stopping |
 | `StopSheet` | Showing the running time, picking a task/aircraft, stopping |
 | `Confirmation` | Confirmation after a stop, with "Undo"; closed by tapping outside it |
-| `CloseDay` | Overview of the day and closing it |
 | `Sync` | Sync status, pending/rejected/uploaded sessions, and the "Upload" button |
 | `Setup` | The setup assistant on first launch |
 | `Settings` | Settings behind the admin code |
@@ -81,14 +80,14 @@ its `modelContext` where it needs to write. That keeps the model types free of
 
 ### `Domain/`
 Pure functions and value types, without SwiftData, SwiftUI or networking. That makes them fully unit-testable.
-- `SessionRules`: `canCloseDay`, `isShortSession`, `isLongSession`, `flags(for:)`.
+- `SessionRules`: `isShortSession`, `isLongSession`, `flags(for:)`.
 - `MemberDirectory`: search (diacritics-insensitive), letter sections, and the "often here" ranking.
 - `ClosingTime`: computes the automatic stop time for a session.
 - `HoursFormatter`: duration ↔ "2 h 18 min" ↔ decimal hours (2.3).
-- `RegistrationDescription`: builds the `description` field for zweef.app, including the dedup tag. It takes the reporting language as a parameter, so it does not depend on the device's current locale.
+- `RegistrationDescription`: builds the `description` field for zweef.app, including the dedup tag. It takes the language as a parameter, so the domain never reads a locale itself; the sync engine passes the device's (ADR 0017).
 
 ### `Data/`
-- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `closeDay(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
+- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:task:aircraft:by:)`, `undo(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
 - `SyncEngine` (`actor`): see [sync.md](sync.md). Creates its own `ModelContext` per run, on its own executor, so nothing is shared with the UI and nothing stale survives between runs. Runs one at a time: actors are reentrant, so a flag guards it and extra triggers merge into a single follow-up.
 - `SyncCoordinator` (`@MainActor`, `@Observable`): the only thing the screens talk to about syncing. Owns the triggers — connectivity returning, the app becoming active and the background task (which only refresh and auto-stop), and "Upload" (the only one that sends hours, ADR 0015) — and publishes `isSyncing`, `isConnected` and the last outcome.
 - `ZweefAPI` (protocol) with `ZweefClient` (the real one) and `FakeZweefAPI` (tests, previews). Six calls, only one of which writes. There is no photo cache: zweef.app returns no member photos, so avatars are initials ([zweef-api.md](zweef-api.md)).
@@ -103,7 +102,7 @@ Pure functions and value types, without SwiftData, SwiftUI or networking. That m
 - `AdminCodeVerifier`: salt + SHA-256 in the Keychain, with a lockout that grows after wrong attempts. Throws rather than returning a result, so a caller cannot forget to look at the answer.
 - `ConnectionSettings` / `ConnectionProvider`: a `Sendable` snapshot of the connection, and the holder the sync engine reads on every run. The connection changes while the app runs — setup creates it, settings edit it — so an engine that captured an API at launch would keep using a key the club has rotated.
 - `ConnectionTester`: tries a connection without saving it, using `current/hours.json` rather than the `periods.json` that answers 404.
-- `ReportingLanguage`, `DefaultTasks`: the club's language for uploads, and the task list it starts with.
+- `ReportingLanguage`, `DefaultTasks`: the language of the words the app writes into zweef.app (the device's, ADR 0017), and the task list a club starts with.
 - See [configuration.md](configuration.md) for every key.
 
 ### `DesignSystem/`
@@ -115,7 +114,7 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 - One String Catalog (`Localizable.xcstrings`) with `en` as the source language and `nl` and `fr` as translations. Literals in the code are English.
 - Views use `LocalizedStringResource`/`Text` with placeholders; `Domain` never returns a user-facing sentence, only values (minutes, flags as an enum) that the view formats.
 - `HoursFormatter` and anything date-related take a `Locale`, so the formatting is testable per language instead of depending on the simulator's region.
-- `RegistrationDescription` is the one place that formats text for zweef.app, and it uses the club's reporting language rather than the device locale (see [zweef-api.md](zweef-api.md)).
+- `RegistrationDescription` is the one place that formats text for zweef.app, and it takes the language as a parameter — the device's, resolved by the sync engine per upload (ADR 0017; see [zweef-api.md](zweef-api.md)).
 - Search stays diacritics- and case-insensitive through `String.compare` with the right options, not by stripping characters by hand.
 
 ## Key flows
@@ -134,11 +133,8 @@ Home (tap a tile in "Working now") → StopSheet → SessionStore.stop(session, 
    → Confirmation (Undo, until tapped away) → Home
 ```
 
-### Closing the day and syncing
+### Uploading
 ```
-Home → CloseDay (only if SessionRules.canCloseDay) → SessionStore.closeDay
-   → syncState .ready for every completed session of that day (or days)
-
 Sync screen → "Upload" → SyncEngine.requestSync(.upload)
    → POST every completed .local/.ready session → .uploaded
    → (offline or failed) stays waiting until the next tap

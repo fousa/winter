@@ -1,6 +1,6 @@
 # 0015 — Hours are uploaded by hand
 
-- **Status**: accepted
+- **Status**: accepted, amended by [0018](0018-no-closing-the-day.md) (closing the day is gone)
 - **Date**: 2026-10-23
 - **Amends**: [0001](0001-offline-first.md), [0005](0005-closing-the-day.md)
 

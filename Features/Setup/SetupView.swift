@@ -114,7 +114,7 @@ struct SetupView: View {
                 Divider()
                 secureField("API key", text: $model.apiKey, managed: false)
             }
-            .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
+            .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
 
             // Said plainly and unconditionally: this is the one real risk the
             // app asks a club to accept (ADR 0013).
@@ -179,6 +179,11 @@ struct SetupView: View {
             VStack(spacing: 0) {
                 field("Club name", text: $model.clubName, managed: false)
                 Divider()
+                // Optional, and on the device only: zweef.app has no logo to
+                // give.
+                ClubLogoPicker(data: $model.clubLogo)
+                    .padding(14)
+                Divider()
                 HStack {
                     Text("Timers stop automatically at")
                     Spacer()
@@ -191,24 +196,8 @@ struct SetupView: View {
                     .disabled(model.isManaged(.closingTime))
                 }
                 .padding(14)
-                Divider()
-                HStack {
-                    Text("Hours are written to zweef.app in")
-                    Spacer()
-                    Picker("Hours are written to zweef.app in", selection: $model.reportingLanguage) {
-                        Text("English").tag(ReportingLanguage.english)
-                        Text("Nederlands").tag(ReportingLanguage.dutch)
-                        Text("Français").tag(ReportingLanguage.french)
-                    }
-                    .labelsHidden()
-                }
-                .padding(14)
             }
-            .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
-
-            Text("The board reads one consistent list, whichever language a member's own device is in.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
+            .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
         }
     }
 
@@ -224,7 +213,7 @@ struct SetupView: View {
                 Divider()
                 codeField("Again", text: $model.adminCodeRepeat)
             }
-            .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
+            .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
 
             if let error = model.adminCodeError {
                 Text(error)

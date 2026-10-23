@@ -105,7 +105,7 @@ struct MaintenanceHourDraftTests {
         #expect(draft.description == "09:12–10:12 [ou:a1b2c3d4]")
     }
 
-    @Test("Flags travel along in the club's reporting language")
+    @Test("Flags travel along in the language they are given")
     func includesFlagsInTheReportingLanguage() throws {
         let work = session(from: date(15, 14), to: date(15, 21), autoStopped: true)
         let draft = try #require(self.draft(for: work, taskLabel: "Lier", aircraftName: nil, materialId: 4))

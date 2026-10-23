@@ -4,7 +4,7 @@ import Foundation
 ///
 /// A forgotten timer must not run all night and turn into a 14-hour
 /// registration, so at the club's closing time the app stops whatever is still
-/// running (ADR 0005). The *stop time* is the closing time itself, not the
+/// running (ADR 0005, kept by ADR 0018). The *stop time* is the closing time itself, not the
 /// moment the app happens to notice, which is why this is a pure calculation
 /// that does not look at the current date at all.
 enum ClosingTime {

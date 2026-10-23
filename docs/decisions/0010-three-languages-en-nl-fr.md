@@ -1,6 +1,6 @@
 # 0010 — The app ships in English, Dutch and French only
 
-- **Status**: accepted
+- **Status**: accepted, amended by [0017](0017-reporting-language-follows-the-device.md) (no club reporting language; each device writes in its own)
 - **Date**: 2026-10-18
 - **Supersedes**: the UI language part of [0008](0008-open-source-configuration.md) and the Dutch-only assumption throughout the docs
 

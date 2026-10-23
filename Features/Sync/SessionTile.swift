@@ -70,7 +70,7 @@ struct SessionTile: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.background, in: .rect(cornerRadius: metrics.tileCornerRadius))
+        .background(Color.card, in: .rect(cornerRadius: metrics.tileCornerRadius))
         .accessibilityElement(children: .combine)
     }
 

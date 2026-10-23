@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import UIKit
 
 /// The fictional club used by previews and tests.
 ///
@@ -16,6 +17,25 @@ enum SampleData {
         (6, "Lotte", "Janssens"),
         (7, "Pieter", "De Smet"),
     ]
+
+    /// A made-up logo — a white glider on blue — so previews and the
+    /// `-sampleClub` launch show where a club's logo goes.
+    @MainActor
+    static var logo: Data? {
+        let size = CGSize(width: 256, height: 256)
+        let image = UIGraphicsImageRenderer(size: size).image { context in
+            UIColor.systemBlue.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+            let symbol = UIImage(
+                systemName: "airplane",
+                withConfiguration: UIImage.SymbolConfiguration(pointSize: 120, weight: .semibold)
+            )?.withTintColor(.white, renderingMode: .alwaysOriginal)
+            if let symbol {
+                symbol.draw(at: CGPoint(x: (size.width - symbol.size.width) / 2, y: (size.height - symbol.size.height) / 2))
+            }
+        }
+        return image.pngData()
+    }
 
     /// Named by registration, as a club does in zweef.app, with the type
     /// alongside. Fictional registrations.
@@ -44,7 +64,9 @@ enum SampleData {
         for task in DefaultTasks.seed() {
             context.insert(task)
         }
-        context.insert(AppSettings(clubName: "Zweefvliegclub Voorbeeld"))
+        let settings = AppSettings(clubName: "Zweefvliegclub Voorbeeld")
+        settings.clubLogo = logo
+        context.insert(settings)
 
         for index in 0..<min(runningSessionCount, members.count) {
             context.insert(
@@ -61,13 +83,13 @@ enum SampleData {
         return container
     }
 
-    /// A club that worked today and forgot to close up on an earlier day, with
-    /// one flagged session.
+    /// A club with finished sessions from today and an earlier day, one of
+    /// them flagged, and one already uploaded.
     ///
-    /// This is the state the close-day and sync screens are actually
-    /// interesting in: an empty database tells you nothing about the layout.
+    /// This is the state the sync screen is actually interesting in: an empty
+    /// database tells you nothing about the layout.
     @MainActor
-    static func closedDayContainer(runningSessionCount: Int = 0, now: Date = .now) throws -> ModelContainer {
+    static func finishedSessionsContainer(runningSessionCount: Int = 0, now: Date = .now) throws -> ModelContainer {
         let container = try container(runningSessionCount: runningSessionCount, now: now)
         let context = container.mainContext
         let calendar = Calendar.club
