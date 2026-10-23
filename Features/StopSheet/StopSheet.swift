@@ -50,11 +50,10 @@ struct StopSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Close", systemImage: "xmark") {
+                    Button("Close") {
                         dismiss()
                         onDismiss()
                     }
-                    .labelStyle(.iconOnly)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     discardMenu
@@ -151,9 +150,10 @@ struct StopSheet: View {
                 discardQuestion
             }
         } label: {
-            Label("Delete", systemImage: "trash")
+            // The word, not a trash can: an icon alone meant nothing to older
+            // members.
+            Text("Delete")
         }
-        .labelStyle(.iconOnly)
         .accessibilityHint(Text("Removes this timer without saving it"))
     }
 

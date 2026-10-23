@@ -62,8 +62,7 @@ struct MaterialPicker: View {
             .searchable(text: $searchText, prompt: Text("Name or type"))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Close", systemImage: "xmark") { dismiss() }
-                        .labelStyle(.iconOnly)
+                    Button("Close") { dismiss() }
                 }
                 if selected != nil {
                     ToolbarItem(placement: .topBarTrailing) {

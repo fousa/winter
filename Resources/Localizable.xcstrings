@@ -753,6 +753,22 @@
         }
       }
     },
+    "Hours": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heures"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uren"
+          }
+        }
+      }
+    },
     "Hours already in zweef.app stay there.": {
       "localizations": {
         "fr": {

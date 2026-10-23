@@ -54,11 +54,10 @@ struct StartSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Close", systemImage: "xmark") {
+                    Button("Close") {
                         dismiss()
                         onDismiss()
                     }
-                    .labelStyle(.iconOnly)
                 }
             }
         }

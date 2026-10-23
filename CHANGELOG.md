@@ -75,6 +75,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 
 - Easier to read for older members: text that has to be read but is not the main thing — last names, the date line, section headings, times, notes — is a dark grey (`.supporting`, about 9:1) instead of iOS's light `.secondary` (3.5:1) on every screen members use, and last names on the tiles are as large as first names. The installation guide recommends Larger Text, Bold Text and Increase Contrast on the shared iPad.
 - The letter index is large enough to hit: bold letters in the tint colour on a glass column, 44 pt wide and up to 40 pt tall (it was 11 pt letters on 22×16 pt targets), and the member grid keeps room for it.
+- Buttons say what they do in words: "Close" instead of ×, "Delete" instead of a trash can, and "Hours" beside the cloud icon that opens the sync screen.
 
 ### Fixed
 - App Store Connect asked about export compliance for every build. The app declares `ITSAppUsesNonExemptEncryption = NO` (in `Config/Shared.xcconfig`): its only encryption is HTTPS through URLSession, the Keychain, and a CryptoKit hash of the admin code, all the operating system's own.

@@ -331,16 +331,17 @@ struct HomeView: View {
             Button {
                 path.append(.sync)
             } label: {
-                Label {
-                    Text("Sync")
-                } icon: {
+                // Icon and word: an icon alone meant nothing to older
+                // members. "Hours" because it is short in all three languages
+                // ("Synchronisation" did not fit beside the search field) and
+                // says what the screen holds. A plain HStack, because a
+                // toolbar shows only a Label's icon.
+                HStack(spacing: 6) {
                     Image(systemName: pendingUploadCount > 0 ? "icloud.and.arrow.up" : "checkmark.icloud")
+                    Text("Hours")
+                        .fontWeight(.semibold)
                 }
             }
-            // Icon only: "Sync" becomes "Synchronisation" in French, which does
-            // not belong in a toolbar next to a search field. The meaning lives
-            // in the accessibility label below instead.
-            .labelStyle(.iconOnly)
             .badge(pendingUploadCount)
             .accessibilityLabel(
                 pendingUploadCount > 0
