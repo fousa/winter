@@ -481,6 +481,54 @@
         }
       }
     },
+    "Delete": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijderen"
+          }
+        }
+      }
+    },
+    "Delete %@'s timer?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer la session de %@ ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer van %@ verwijderen?"
+          }
+        }
+      }
+    },
+    "Delete this timer?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer cette session ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze timer verwijderen?"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "fr": {
@@ -1357,6 +1405,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Refusé : vérifiez la clé API."
+          }
+        }
+      }
+    },
+    "Removed from this device, never sent to zweef.app": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimé de cet appareil, jamais envoyé à zweef.app"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijderd van dit toestel, gaat nooit naar zweef.app"
+          }
+        }
+      }
+    },
+    "Removes this timer without saving it": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprime cette session sans l'enregistrer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijdert deze timer zonder op te slaan"
           }
         }
       }

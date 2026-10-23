@@ -29,7 +29,7 @@ Each device has its own local database and uploads its own sessions.
 1. **Home** — member list (often here + all members, search, letter index), sync status button, "Close day" button, floating "Working now" bar.
 2. **Start** (sheet) — avatar + name, "Start", "That's not me".
 3. **Start confirmation** — glass card, "Undo" (10 s), dismisses itself after 3 s.
-4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save".
+4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save"; a trash menu to delete the timer instead, with the confirmation inside the menu.
 5. **Stop confirmation** — duration, task/aircraft, "Undo", dismisses itself after 3 s.
 6. **Close day** — overview of the day, flagged sessions, "Close day".
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, "Try again now".
@@ -50,6 +50,13 @@ Each device has its own local database and uploads its own sessions.
 4. "Stop and save" → `stop = now`, `status = .completed`, `syncState = .local`.
 5. A confirmation with "Undo" (10 s, which puts the session back to running).
 - Stopping someone else's timer is allowed. The session gets `stoppedByOther = true` and the flag "stopped by someone else" (in screen 6 and in `description`, see zweef-api.md).
+
+### Deleting instead of stopping
+1. On the "Stop" sheet, tap the trash button in the toolbar.
+2. A menu opens on the button, headed "Delete Jan's timer?", with "Delete" (destructive, subtitled "Removed from this device, never sent to zweef.app") and "Keep working".
+3. "Delete" removes the session entirely; the sheet closes. There is no confirmation card and no undo — the menu was the confirmation.
+- For the timer that was started by mistake, or under the wrong name, once the ten-second undo after starting has passed. Like stopping, it is open to everyone.
+- Only a running timer can be deleted. A finished session is on its way to the board; corrections to those happen in zweef.app.
 
 ### Closing the day
 - The button is always visible in the top right of the home screen.

@@ -128,12 +128,23 @@ final class SessionStore {
         try context.save()
     }
 
-    /// Undoes a start within the undo window: the session is removed entirely,
-    /// because it never really happened.
-    func undoStart(_ session: WorkSession) throws {
+    /// Removes a running session from the device without finishing it.
+    ///
+    /// For the timer that was started by mistake, or for the wrong person, once
+    /// the ten-second undo has passed. Nothing is kept and nothing reaches
+    /// zweef.app: the hours were never real. Only a running session can be
+    /// discarded — a finished one is on its way to the board, and corrections
+    /// to those happen in zweef.app, not here.
+    func discard(_ session: WorkSession) throws {
         guard session.status == .running else { throw StoreError.sessionNotRunning }
         context.delete(session)
         try context.save()
+    }
+
+    /// Undoes a start within the undo window: the session is removed entirely,
+    /// because it never really happened.
+    func undoStart(_ session: WorkSession) throws {
+        try discard(session)
     }
 
     /// Undoes a stop: the session runs again, as if Stop had not been tapped.

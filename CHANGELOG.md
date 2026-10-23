@@ -26,6 +26,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - Sync engine: an actor that stops forgotten timers, refreshes members and aircraft every six hours, and uploads closed days — with per-session backoff plus jitter, a dedup check that recognises an upload which already arrived, rejections that wait for a human, and one run at a time however many triggers arrive. Triggered by connectivity returning, the app becoming active, closing the day, "try again now" and a background refresh.
 - The club name can be typed in the setup, because `GET /club.json` answers 500 for a real club (ADR 0012). A typed name is never overwritten by a later refresh.
 - zweef.app client: `ZweefAPI` with `ZweefClient` (URLSession, async/await) and `FakeZweefAPI`, typed errors that say whether to retry, and the `WorkSession` → registration mapping. Anonymised fixtures captured from a real club.
+- A running timer can be deleted from the stop sheet instead of saved: a trash menu in the toolbar that asks "Delete Jan's timer?" and says the time is removed from the device and never sent to zweef.app. Only running timers; finished sessions are corrected in zweef.app.
 
 ### Changed
 - No proxy: the app talks to zweef.app directly with the club's API key in the Keychain (ADR 0013). `proxy/`, the device token and the connection-mode choice are gone. SECURITY.md records what that costs — a lost device now means rotating the club's key.

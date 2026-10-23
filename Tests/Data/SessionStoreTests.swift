@@ -228,6 +228,50 @@ struct SessionStoreTests {
         }
     }
 
+    // MARK: - Discarding
+
+    @Test("Discarding a running timer removes it, so nothing reaches zweef.app")
+    func discardRemovesRunningSession() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 11, 30)
+
+        try fixture.store.discard(session)
+
+        #expect(try fixture.store.runningSessions().isEmpty)
+        #expect(try fixture.store.sessions(onDayOf: date(15, 12)).isEmpty)
+        #expect(!fixture.context.hasChanges)
+    }
+
+    @Test("After discarding, the member can start again")
+    func discardFreesTheMember() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let first = try fixture.store.start(member: member)
+        try fixture.store.discard(first)
+        fixture.clock.now = date(15, 9, 20)
+
+        let second = try fixture.store.start(member: member)
+
+        #expect(second.start == date(15, 9, 20))
+        #expect(try fixture.store.runningSessions().count == 1)
+    }
+
+    @Test("A finished session cannot be discarded; corrections happen in zweef.app")
+    func discardNeedsARunningSession() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 11, 30)
+        try fixture.store.stop(session)
+
+        #expect(throws: SessionStore.StoreError.sessionNotRunning) {
+            try fixture.store.discard(session)
+        }
+        #expect(try fixture.store.sessions(onDayOf: date(15, 12)).count == 1)
+    }
+
     // MARK: - Closing the day
 
     @Test("The day cannot be closed while a timer is running")

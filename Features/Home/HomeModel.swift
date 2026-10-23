@@ -140,6 +140,23 @@ final class HomeModel {
         }
     }
 
+    /// Throws a running timer away instead of saving it.
+    ///
+    /// The sheet has already asked "are you sure?", so there is no confirmation
+    /// card and no undo here: the session is gone, and the "Working now" bar
+    /// shows that at once. A pending undo for that same session is dropped,
+    /// because there is nothing left to undo.
+    func discard(_ session: WorkSession, store: SessionStore) {
+        do {
+            try store.discard(session)
+            feedback += 1
+            if pendingUndo?.sessionId == session.id { pendingUndo = nil }
+        } catch {
+            // The timer is still there, which the bar behind the sheet shows.
+        }
+        route = nil
+    }
+
     /// Takes back whatever the last action was, inside the undo window.
     func undo(_ undo: PendingUndo, sessions: [WorkSession], store: SessionStore) {
         guard let session = sessions.first(where: { $0.id == undo.sessionId }) else {

@@ -79,6 +79,7 @@ A centred glass card (~480×480, radius 48) above the dimmed home screen. A blue
 A wide sheet (~920×680) in two columns:
 - Left: avatar 96, name, "Working since 09:12", a 76 pt light timer, "hours : minutes", and a "Stop and save" button (red, stop.fill).
 - Right: "What were you working on?" + "Optional"; an inset grouped list with 6 tasks (a coloured icon in a rounded square, a checkmark on selection); for Glider a row of aircraft capsules; footnote "Saved on this device, with or without internet."
+- Toolbar: close (xmark) on the left and a trash menu on the right, which is not in the mockup. The menu is headed "Delete Jan's timer?" and offers "Delete" (destructive, with the consequence as its subtitle) and "Keep working"; "Delete" removes the session without saving it. A menu rather than a confirmation dialog, because the dialog's popover anchored away from the button on the wide sheet. It is a toolbar icon rather than a second big button so that "Stop and save" stays the one obvious action on a shared device.
 
 #### Two things the mockups left open
 - **The card closes after 3 seconds, but undo is promised for 10** (`spec.md`). Both are kept: the card auto-dismisses after 3 s, and the rest of the window lives on as a small "Undo" chip above the floating bar on the home screen, which disappears by itself. Undoing a start deletes the session; undoing a stop sets it running again.

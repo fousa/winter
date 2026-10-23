@@ -240,6 +240,8 @@ struct HomeView: View {
                         store: store,
                         locale: locale
                     )
+                } onDiscard: {
+                    model.discard(session, store: store)
                 } onDismiss: {
                     model.route = nil
                 }

@@ -4,6 +4,13 @@ import SwiftUI
 /// The second of the two taps that end an hour, and the only place the app asks
 /// what someone was doing.
 ///
+/// It is also where a timer that should never have run is thrown away: a trash
+/// menu in the toolbar deletes the session from the device without saving it.
+/// A menu rather than a confirmation dialog, because the choice then sits on
+/// the button that was tapped — a dialog anchors elsewhere on a wide sheet.
+/// Deliberately not a second big button — stopping is the normal path,
+/// deleting the exception.
+///
 /// Two columns in regular width — the person and the running clock on the left,
 /// the optional task on the right — so stopping never needs a scroll. In
 /// compact width, or at an accessibility text size, it becomes one scrolling
@@ -20,6 +27,7 @@ struct StopSheet: View {
     let tasks: [TaskDefinition]
     let aircraft: [Aircraft]
     var onStop: (TaskDefinition?, Aircraft?, StoppedBy) -> Void
+    var onDiscard: () -> Void
     var onDismiss: () -> Void
 
     @State private var selectedTask: TaskDefinition?
@@ -72,6 +80,9 @@ struct StopSheet: View {
                         onDismiss()
                     }
                     .labelStyle(.iconOnly)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    discardMenu
                 }
             }
             .confirmationDialog(
@@ -136,6 +147,29 @@ struct StopSheet: View {
         }
         .buttonStyle(.glassProminent)
         .tint(.stopAction)
+    }
+
+    /// The confirmation lives in the menu itself: the question as the section
+    /// header, the consequence as the subtitle of the destructive item, and an
+    /// explicit way out.
+    private var discardMenu: some View {
+        Menu {
+            Section {
+                Button(role: .destructive) {
+                    discard()
+                } label: {
+                    Text("Delete")
+                    Text("Removed from this device, never sent to zweef.app")
+                }
+                Button("Keep working", systemImage: "arrow.uturn.backward") {}
+            } header: {
+                discardQuestion
+            }
+        } label: {
+            Label("Delete", systemImage: "trash")
+        }
+        .labelStyle(.iconOnly)
+        .accessibilityHint(Text("Removes this timer without saving it"))
     }
 
     // MARK: - Right column
@@ -242,6 +276,13 @@ struct StopSheet: View {
         return Text("Is \(HoursFormatter.durationText(minutes: minutes, locale: locale)) right?")
     }
 
+    private var discardQuestion: Text {
+        if let member {
+            return Text("Delete \(member.firstName)'s timer?")
+        }
+        return Text("Delete this timer?")
+    }
+
     private func select(_ task: TaskDefinition) {
         if selectedTask?.key == task.key {
             selectedTask = nil
@@ -258,6 +299,11 @@ struct StopSheet: View {
             selectedTask?.asksForAircraft == true ? selectedAircraft : nil,
             stoppingForSomeoneElse ? .someoneElse : .member
         )
+        dismiss()
+    }
+
+    private func discard() {
+        onDiscard()
         dismiss()
     }
 }
@@ -310,6 +356,7 @@ private struct StopSheetPreview: View {
             tasks: tasks,
             aircraft: planes,
             onStop: { _, _, _ in },
+            onDiscard: {},
             onDismiss: {}
         )
         .modelContainer(container)
