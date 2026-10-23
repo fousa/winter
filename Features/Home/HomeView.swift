@@ -13,6 +13,7 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.locale) private var locale
     @Environment(SyncCoordinator.self) private var sync
+    @Environment(\.leaveDemo) private var leaveDemo
 
     @Query(filter: #Predicate<Member> { $0.isActive }) private var members: [Member]
     @Query private var sessions: [WorkSession]
@@ -297,6 +298,25 @@ struct HomeView: View {
     private var toolbar: some ToolbarContent {
         // The club name in the bar, faded in once the header has scrolled
         // out of view, so the name is never on screen twice.
+        // Only while the sample club is open: says so, and leads back out
+        // (ADR 0021).
+        if let leaveDemo {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Section {
+                        Button("Leave the demo", systemImage: "rectangle.portrait.and.arrow.right") { leaveDemo() }
+                    } header: {
+                        Text("A sample club. Nothing is saved or sent to zweef.app.")
+                    }
+                } label: {
+                    // The word, not an icon: a toolbar shows only the icon of
+                    // a Label, and "this is a demo" has to be readable.
+                    Text("Demo")
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+
         ToolbarItem(placement: .principal) {
             Text(clubName)
                 .font(.headline)

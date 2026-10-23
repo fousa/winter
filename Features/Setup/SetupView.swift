@@ -9,6 +9,7 @@ import SwiftUI
 struct SetupView: View {
     @Environment(\.metrics) private var metrics
     @Environment(\.locale) private var locale
+    @Environment(\.startDemo) private var startDemo
 
     @State private var model: SetupModel
     var onFinish: () -> Void
@@ -90,7 +91,7 @@ struct SetupView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Welcome to Winter")
                 .font(.largeTitle.weight(.bold))
-            Text("Members log their maintenance hours here with start and stop, without logging in. The hours are kept on this device and sent to zweef.app as soon as there is a connection.")
+            Text("Members log their maintenance hours here with start and stop, without logging in. The hours are kept on this device and sent to zweef.app when someone uploads them.")
                 .font(.title3)
                 .foregroundStyle(.secondary)
 
@@ -101,7 +102,30 @@ struct SetupView: View {
             }
             .font(.callout)
             .padding(.top, 8)
+
+            if let startDemo {
+                demoOffer(startDemo)
+            }
         }
+    }
+
+    /// For someone without a zweef.app key — App Review, or a club looking
+    /// before it commits (ADR 0021). Nothing it does is stored or sent.
+    private func demoOffer(_ startDemo: DemoAction) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("No zweef.app key at hand?")
+                .font(.headline)
+            Text("Try Winter with a sample club: fictional members and aircraft, two timers already running. Nothing is saved or sent to zweef.app. The settings code is \(AppEnvironment.demoAdminCode).")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            Button("Try with a sample club", systemImage: "play.circle") { startDemo() }
+                .buttonStyle(.glass)
+                .padding(.top, 4)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.card, in: .rect(cornerRadius: metrics.cardCornerRadius))
+        .padding(.top, 16)
     }
 
     private var connection: some View {

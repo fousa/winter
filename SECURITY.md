@@ -37,3 +37,6 @@ A read-only or scope-limited key would remove most of this risk at no cost to th
 
 ## Reporting a vulnerability
 Please do **not** report security problems in a public issue. Use GitHub *Private vulnerability reporting* (the repository's "Security" tab). You will get a response within a week.
+
+## The demo
+The demo mode ([ADR 0021](docs/decisions/0021-demo-mode.md)) runs on an in-memory database, its own UserDefaults suite, an in-memory secret store and a fake zweef.app. It cannot read or change the device's real hours, settings or Keychain, and it never connects to zweef.app. Its settings code, 123456, is public on purpose and protects nothing real.

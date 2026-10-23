@@ -64,6 +64,11 @@ The app opens with the setup assistant:
 4. **Admin code**: six digits. Store them with your other club passwords; without this code you can no longer change the settings. Three wrong attempts are free, after that the app makes you wait a little longer each time.
 5. **Done**: the members are fetched as soon as there is internet. (zweef.app has no member photos, so the app shows initials.)
 
+## App Review
+Winter needs a zweef.app key, and a real club's key cannot be given to Apple. The app has a demo mode instead ([ADR 0021](decisions/0021-demo-mode.md)). In App Store Connect › App Review Information, leave "Sign-in required" off and put this in the notes:
+
+> Winter connects to a gliding club's account on zweef.app with an API key that gives access to the club's members' personal and financial data, so we cannot provide demo credentials. The app has a built-in demo instead: on the first screen, tap "Try with a sample club". It opens a fictional club with two timers running and every feature working; nothing is saved or sent anywhere. The settings (hold the club name for three seconds) use the code 123456. Tap "Demo" at the top left to leave the demo.
+
 ## Step 5 — Lock the shared device into the app
 Only for the shared workshop device; skip this on a personal phone.
 

@@ -24,6 +24,7 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0018 | [No closing the day](0018-no-closing-the-day.md) | accepted |
 | 0019 | [The description is the times and a comment](0019-description-is-times-and-a-comment.md) | accepted |
 | 0020 | [What the work was on comes from zweef.app](0020-material-from-zweef-app.md) | accepted |
+| 0021 | [A demo mode with a sample club](0021-demo-mode.md) | accepted |
 
 ## Template
 ```markdown

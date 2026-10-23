@@ -65,6 +65,22 @@
         }
       }
     },
+    "A sample club. Nothing is saved or sent to zweef.app.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un club d'exemple. Rien n'est enregistré ni envoyé à zweef.app."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een voorbeeldclub. Er wordt niets bewaard of naar zweef.app gestuurd."
+          }
+        }
+      }
+    },
     "A six-digit code to protect these settings": {
       "localizations": {
         "fr": {
@@ -561,6 +577,22 @@
         }
       }
     },
+    "Demo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démo"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "fr": {
@@ -865,6 +897,22 @@
         }
       }
     },
+    "Leave the demo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter la démo"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo verlaten"
+          }
+        }
+      }
+    },
     "Logo": {
       "localizations": {
         "fr": {
@@ -977,18 +1025,18 @@
         }
       }
     },
-    "Members log their maintenance hours here with start and stop, without logging in. The hours are kept on this device and sent to zweef.app as soon as there is a connection.": {
+    "Members log their maintenance hours here with start and stop, without logging in. The hours are kept on this device and sent to zweef.app when someone uploads them.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les membres enregistrent ici leurs heures d'entretien avec démarrer et arrêter, sans connexion. Les heures restent sur cet appareil et partent vers zweef.app dès qu'il y a une connexion."
+            "value": "Les membres enregistrent ici leurs heures d'entretien avec démarrer et arrêter, sans se connecter. Les heures restent sur cet appareil et partent vers zweef.app quand quelqu'un les envoie."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Leden registreren hier hun onderhoudsuren met start en stop, zonder aan te melden. De uren blijven op dit toestel en gaan naar zweef.app zodra er verbinding is."
+            "value": "Leden registreren hier hun onderhoudsuren met starten en stoppen, zonder in te loggen. De uren blijven op dit toestel en gaan naar zweef.app wanneer iemand ze uploadt."
           }
         }
       }
@@ -1213,6 +1261,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nog geen leden"
+          }
+        }
+      }
+    },
+    "No zweef.app key at hand?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas de clé zweef.app sous la main ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen zweef.app-sleutel bij de hand?"
           }
         }
       }
@@ -2279,6 +2343,22 @@
         }
       }
     },
+    "Try Winter with a sample club: fictional members and aircraft, two timers already running. Nothing is saved or sent to zweef.app. The settings code is %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essayez Winter avec un club d'exemple : membres et appareils fictifs, deux chronomètres déjà lancés. Rien n'est enregistré ni envoyé à zweef.app. Le code des réglages est %@."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probeer Winter met een voorbeeldclub: verzonnen leden en toestellen, twee timers lopen al. Er wordt niets bewaard of naar zweef.app gestuurd. De code voor de instellingen is %@."
+          }
+        }
+      }
+    },
     "Try again in %lld s": {
       "localizations": {
         "fr": {
@@ -2291,6 +2371,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Opnieuw proberen over %lld s"
+          }
+        }
+      }
+    },
+    "Try with a sample club": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essayer avec un club d'exemple"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probeer met een voorbeeldclub"
           }
         }
       }

@@ -35,6 +35,10 @@ It appears until someone confirms its last step: a "setup completed" flag in Use
 
 Testing the connection is encouraged but not required: a club setting the app up in a hangar with no signal must still be able to finish. Secrets are written to the Keychain as the step is left, and the fields are cleared so the values do not sit in a view model for the rest of the session.
 
+
+### The demo
+The first page also offers "Try with a sample club" ([ADR 0021](decisions/0021-demo-mode.md)), for App Review and for a club that wants to look before it asks for a key. It opens the fictional sample club with two timers running, in memory and against a fake zweef.app: nothing reaches the device's real data, its Keychain or zweef.app, and every feature works, including Upload. The settings code is **123456**. The home screen shows a "Demo" button that leads back to the real setup; quitting the app does the same.
+
 ## Changing settings later
 - The hidden entrance: long-press (3 s) on the title (the club name) → admin code → the settings screen.
 - Admin code forgotten → delete the app and reinstall it. Local data goes with it; the Keychain does not, but the setup assistant runs again from the start and its admin-code step replaces the old code.

@@ -44,9 +44,21 @@ final class ConnectionProvider: @unchecked Sendable {
     private var settings: ConnectionSettings?
     private let session: URLSession
 
+    /// Set for the demo: every run talks to this instead of zweef.app.
+    private let fixedAPI: (any ZweefAPI)?
+
     init(settings: ConnectionSettings? = nil, session: URLSession = .shared) {
         self.settings = settings
         self.session = session
+        self.fixedAPI = nil
+    }
+
+    /// Always answers with `api`, whatever the settings say: the demo's fake
+    /// zweef.app (ADR 0021).
+    init(fixed api: any ZweefAPI) {
+        self.settings = nil
+        self.session = .shared
+        self.fixedAPI = api
     }
 
     /// Replaces the connection. Called after setup and after any change in
@@ -61,6 +73,7 @@ final class ConnectionProvider: @unchecked Sendable {
 
     /// What the sync engine calls at the start of every run.
     func api() -> any ZweefAPI {
+        if let fixedAPI { return fixedAPI }
         guard let settings = current else { return UnconfiguredZweefAPI() }
         return settings.makeAPI(session: session)
     }

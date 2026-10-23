@@ -1,9 +1,8 @@
 import BackgroundTasks
-import SwiftData
 import SwiftUI
 
-/// The app's entry point: builds the one model container, the configuration and
-/// the sync stack, and wires the triggers that keep hours moving.
+/// The app's entry point: picks the environment — the real app, or the sample
+/// club while it is being tried — and wires the triggers that keep hours moving.
 @main
 struct WinterApp: App {
     /// Must match the `BGTaskSchedulerPermittedIdentifiers` entry in
@@ -13,75 +12,46 @@ struct WinterApp: App {
     /// main actor.
     nonisolated static let refreshTaskIdentifier = "app.winter.refresh"
 
-    private let container: ModelContainer
-    private let configuration: AppConfiguration
-    private let secrets: any SecretStore
-    private let connection: ConnectionProvider
-
-    @State private var sync: SyncCoordinator
-    @State private var autoStop: AutoStopService
+    /// The real app — or, in a Debug build launched with `-sampleClub`, the
+    /// sample club in its place. Kept for the whole run, so leaving the demo
+    /// returns to exactly this.
+    @State private var live: AppEnvironment
+    /// The sample club while someone is trying it (ADR 0021); nil otherwise.
+    @State private var demo: AppEnvironment?
 
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        let container: ModelContainer
-        let configuration: AppConfiguration
-        let secrets: any SecretStore
-        let connection: ConnectionProvider
-
-        if let sample = Self.sampleClubLaunch() {
-            (container, configuration, secrets, connection) = sample
-        } else {
-            do {
-                container = try WinterSchema.container()
-            } catch {
-                // Nothing can be recorded without a store, and silently running
-                // on an in-memory one would lose a member's hours without
-                // telling anyone — which is the one thing this app must never
-                // do.
-                fatalError("Could not open the Winter database: \(error)")
-            }
-            configuration = AppConfiguration()
-            secrets = KeychainSecretStore()
-            // Read once at launch and updated whenever the settings change, so
-            // the sync engine always uses the current token.
-            connection = ConnectionProvider(
-                settings: ConnectionSettings(configuration: configuration, secrets: secrets)
-            )
+        _live = State(initialValue: Self.debugSampleClub() ?? .live())
+        #if DEBUG
+        // `-demo`: open straight into the demo, as if "Try with a sample club"
+        // had been tapped — for checking it on a simulator (CONTRIBUTING.md).
+        if ProcessInfo.processInfo.arguments.contains("-demo") {
+            _demo = State(initialValue: .demo())
         }
-        self.container = container
-        self.configuration = configuration
-        self.secrets = secrets
-        self.connection = connection
-
-        let store = SessionStore(context: container.mainContext)
-        let autoStop = AutoStopService(store: store) { try? store.settings() }
-
-        let engine = SyncEngine(
-            container: container,
-            apiProvider: { connection.api() }
-        )
-
-        self.autoStop = autoStop
-        self.sync = SyncCoordinator(
-            engine: engine,
-            connectivity: ConnectivityMonitor(),
-            autoStop: autoStop
-        )
+        #endif
     }
+
+    /// Whichever mode is showing.
+    private var current: AppEnvironment { demo ?? live }
 
     var body: some Scene {
         WindowGroup {
-            RootView(configuration: configuration, secrets: secrets, connection: connection)
-                .environment(sync)
-                .task { await sync.watchConnectivity() }
-                .task { await autoStop.runWhileActive() }
+            RootView(configuration: current.configuration, secrets: current.secrets, connection: current.connection)
+                .environment(current.sync)
+                .environment(\.startDemo, demo == nil ? DemoAction(.start) { demo = .demo() } : nil)
+                .environment(\.leaveDemo, demo == nil ? nil : DemoAction(.leave) { demo = nil })
+                .modelContainer(current.container)
+                // A fresh view tree per mode: nothing from the demo's screens
+                // survives into the real app, or the other way round.
+                .id(ObjectIdentifier(current))
+                .task(id: ObjectIdentifier(current)) { await current.sync.watchConnectivity() }
+                .task(id: ObjectIdentifier(current)) { await current.autoStop.runWhileActive() }
         }
-        .modelContainer(container)
         .onChange(of: scenePhase) { _, phase in
             switch phase {
             case .active:
-                Task { await sync.appBecameActive() }
+                Task { await current.sync.appBecameActive() }
             case .background:
                 scheduleBackgroundRefresh()
             default:
@@ -90,37 +60,30 @@ struct WinterApp: App {
         }
         .backgroundTask(.appRefresh(WinterApp.refreshTaskIdentifier)) {
             // Best effort: the system decides whether this ever runs. Hours are
-            // safe on the device either way; this only shortens the wait.
-            await sync.backgroundRefresh()
+            // safe on the device either way; this only shortens the wait. Always
+            // the real app's: the demo has nothing worth refreshing.
+            await live.sync.backgroundRefresh()
             scheduleBackgroundRefresh()
         }
     }
 
     /// Debug builds only: `-sampleClub 3` launches straight into the home
-    /// screen of the fictional club with three timers running, in memory and
-    /// with no connection, so a screen can be looked at on a simulator without
-    /// a zweef.app key. Nothing is written to disk and nothing is uploaded.
+    /// screen of the sample club with three timers running, in memory and
+    /// with a fake zweef.app, so a screen can be looked at on a simulator
+    /// without a key. Nothing is written to disk and nothing is uploaded.
     ///
     /// With `-sampleScreen sync` or `-sampleScreen stop` the club also has
     /// finished sessions, and the home screen opens that screen on launch.
-    private static func sampleClubLaunch() -> (ModelContainer, AppConfiguration, any SecretStore, ConnectionProvider)? {
+    private static func debugSampleClub() -> AppEnvironment? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
         guard let index = arguments.firstIndex(of: "-sampleClub") else { return nil }
         let running = arguments.indices.contains(index + 1) ? Int(arguments[index + 1]) ?? 0 : 0
-
-        let wantsFinishedHours = arguments.contains("-sampleScreen")
-        guard let container = try? (wantsFinishedHours
-            ? SampleData.finishedSessionsContainer(runningSessionCount: running)
-            : SampleData.container(runningSessionCount: running)),
-              let defaults = UserDefaults(suiteName: "app.winter.sample-club")
-        else { return nil }
-        defaults.removePersistentDomain(forName: "app.winter.sample-club")
-        let configuration = AppConfiguration(defaults: defaults)
-        configuration.clubSchema = "exampleclub"
-        configuration.hasCompletedSetup = true
-        let secrets = InMemorySecretStore([.apiKey: "sample", .adminCode: "sample"])
-        return (container, configuration, secrets, ConnectionProvider())
+        return .sampleClub(
+            runningSessionCount: running,
+            withFinishedSessions: arguments.contains("-sampleScreen"),
+            isDemo: false
+        )
         #else
         return nil
         #endif
