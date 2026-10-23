@@ -43,7 +43,11 @@ actor SyncEngine {
     /// assistant creates the connection after launch, and the settings screen
     /// can replace a token the club has revoked.
     private let apiProvider: @Sendable () -> any ZweefAPI
-    private let flagLabel: @Sendable (SessionFlag) -> String
+    /// Resolves a flag in the club's reporting language, which the engine reads
+    /// from its own context at upload time. Injected so tests can pin the
+    /// output; it must never touch the main actor, because it runs on this
+    /// actor's executor.
+    private let flagLabel: @Sendable (SessionFlag, ReportingLanguage) -> String
     private let calendar: Calendar
     private let now: @Sendable () -> Date
     private let jitter: @Sendable () -> Double
@@ -59,7 +63,7 @@ actor SyncEngine {
     init(
         container: ModelContainer,
         apiProvider: @escaping @Sendable () -> any ZweefAPI,
-        flagLabel: @escaping @Sendable (SessionFlag) -> String,
+        flagLabel: @escaping @Sendable (SessionFlag, ReportingLanguage) -> String,
         calendar: Calendar = .club,
         now: @escaping @Sendable () -> Date = { Date() },
         jitter: @escaping @Sendable () -> Double = { .random(in: 0...1) }
@@ -448,6 +452,11 @@ actor SyncEngine {
             ).first
         }
 
+        // Read per upload, not captured at init: a club can change the
+        // language its hours are written in, and the next upload should use
+        // it (ADR 0010).
+        let language = ReportingLanguage(code: (try? settings(in: context))?.reportingLanguageCode ?? "en")
+
         return MaintenanceHourDraft(
             session: session,
             memberId: session.memberId,
@@ -456,7 +465,7 @@ actor SyncEngine {
             aircraftName: aircraft?.name,
             materialId: aircraft?.zweefId,
             periodId: periodId,
-            flagLabel: flagLabel,
+            flagLabel: { flagLabel($0, language) },
             calendar: calendar
         )
     }

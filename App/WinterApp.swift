@@ -52,13 +52,10 @@ struct WinterApp: App {
         let engine = SyncEngine(
             container: container,
             apiProvider: { connection.api() },
-            // Resolved per call, not captured: a club can change the language
-            // its hours are written in, and the next upload should use it
-            // (ADR 0010).
-            flagLabel: { flag in
-                let code = MainActor.assumeIsolated { (try? store.settings())?.reportingLanguageCode } ?? "en"
-                return ReportingLanguage(code: code).label(for: flag)
-            }
+            // The engine reads the reporting language from its own context and
+            // passes it in; this closure runs on the engine's executor, so it
+            // must not reach for the main-actor store.
+            flagLabel: { flag, language in language.label(for: flag) }
         )
 
         self.autoStop = autoStop

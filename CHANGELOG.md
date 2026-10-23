@@ -34,3 +34,6 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - Verified the zweef.app API against a real club: `accounts.json` has no member photo (avatars are always initials, and the photo cache is dropped), `category` is sent empty rather than `"Maintenance"`, the active period is read from `current/hours.json` because `periods.json` answers 404, and `club.json` answers 500 so the club name may be unavailable.
 - No CI: tests and the secrets check are run locally before merging (ADR 0011).
 - `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.
+
+### Fixed
+- The first upload crashed with `_dispatch_assert_queue_fail`: the flag-label closure handed to the sync engine assumed it was on the main actor to read the reporting language, but the engine calls it from its own executor. The engine now reads the language from its own context and passes it to the closure.

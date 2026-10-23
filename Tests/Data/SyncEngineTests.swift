@@ -83,7 +83,9 @@ struct SyncEngineTests {
         let engine = SyncEngine(
             container: container,
             apiProvider: { api },
-            flagLabel: { flag in flag.rawValue },
+            // The language is appended so a test can see which one the engine
+            // resolved; the label itself stays the raw flag name.
+            flagLabel: { flag, language in "\(flag.rawValue)@\(language.code)" },
             calendar: calendar,
             now: { clock.now },
             // No jitter, so backoff windows are exact in tests.
@@ -367,6 +369,23 @@ struct SyncEngineTests {
         #expect(session.syncState == .uploaded)
         let drafts = await fixture.api.createdDrafts
         #expect(drafts[0].description.contains("stoppedAutomatically"))
+    }
+
+    @Test("Flags are written in the club's reporting language, read on the engine's own context")
+    @MainActor
+    func flagsUseTheReportingLanguage() async throws {
+        let fixture = try makeFixture(now: date(15, 18))
+        try fixture.settings().reportingLanguageCode = "fr"
+        try fixture.container.mainContext.save()
+        // Three minutes: under the short-session threshold, so the description
+        // carries a flag.
+        _ = try addSession(to: fixture, start: date(15, 9), stop: date(15, 9, 3), closedAt: date(15, 18))
+
+        _ = await fixture.engine.requestSync(.dayClosed)
+
+        let drafts = await fixture.api.createdDrafts
+        #expect(drafts.count == 1)
+        #expect(drafts.first?.description.contains("shortSession@fr") == true)
     }
 
     // MARK: - Refresh
