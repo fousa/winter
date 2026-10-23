@@ -11,14 +11,13 @@ import SwiftUI
 /// Deliberately not a second big button — stopping is the normal path,
 /// deleting the exception.
 ///
-/// Two columns in regular width — the person and the running clock on the left,
-/// the optional task on the right — so stopping never needs a scroll. In
-/// compact width, or at an accessibility text size, it becomes one scrolling
-/// column with the stop button pinned at the bottom (ADR 0009).
+/// A form-sized sheet in one column on every device: the person, the running
+/// time and the stop button on top — the button right under the time, since
+/// that is what it stops — and the optional task grid underneath. Smaller
+/// than a page sheet, so the home screen stays in view around it; it scrolls
+/// when the text is large (ADR 0009).
 struct StopSheet: View {
     @Environment(\.metrics) private var metrics
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.locale) private var locale
     @Environment(\.dismiss) private var dismiss
 
@@ -34,41 +33,14 @@ struct StopSheet: View {
     @State private var selectedAircraft: Aircraft?
     @State private var isPickingAircraft = false
 
-    /// One column once the width is compact, and also once the text is large:
-    /// two columns of accessibility-sized type fit nowhere.
-    private var isSingleColumn: Bool {
-        horizontalSizeClass == .compact || dynamicTypeSize.isAccessibilitySize
-    }
-
     var body: some View {
         NavigationStack {
-            Group {
-                if isSingleColumn {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-                            person
-                            taskPicker
-                        }
-                        .padding(metrics.gutter)
-                    }
-                    .safeAreaInset(edge: .bottom) {
-                        stopButton
-                            .padding(metrics.gutter)
-                            .background(.bar)
-                    }
-                } else {
-                    HStack(alignment: .top, spacing: metrics.sectionSpacing) {
-                        VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
-                            person
-                            Spacer(minLength: 0)
-                            stopButton
-                        }
-                        .frame(maxWidth: 320)
-
-                        ScrollView { taskPicker }
-                    }
-                    .padding(metrics.gutter)
+            ScrollView {
+                VStack(alignment: .leading, spacing: metrics.sectionSpacing) {
+                    person
+                    taskPicker
                 }
+                .padding(metrics.gutter)
             }
             .navigationTitle("Stop")
             .navigationBarTitleDisplayMode(.inline)
@@ -90,17 +62,17 @@ struct StopSheet: View {
                 }
             }
         }
-        .presentationSizing(.page)
+        .presentationSizing(.form)
         .resolvedLayoutMetrics()
     }
 
-    // MARK: - Left column
+    // MARK: - Person
 
     private var person: some View {
         VStack(alignment: .leading, spacing: 10) {
             if let member {
                 HStack(spacing: 14) {
-                    MemberAvatar(member: member, size: 96)
+                    MemberAvatar(member: member, size: 72)
                     VStack(alignment: .leading, spacing: 4) {
                         Text(member.fullName)
                             .font(.title2.weight(.semibold))
@@ -111,16 +83,13 @@ struct StopSheet: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 0) {
-                RunningTimerText(
-                    start: session.start,
-                    size: metrics.displayTimerFontSize,
-                    weight: .light
-                )
-                Text("hours : minutes")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            // Written as everywhere else ("17m", "1h05m"), so it needs no
+            // "hours : minutes" caption to be read.
+            // Two thirds of the display size: big enough to read from a step
+            // back, small enough that the form sheet needs no scroll.
+            RunningTimerText(start: session.start, size: metrics.displayTimerFontSize * 0.7)
+
+            stopButton
         }
     }
 
@@ -146,7 +115,6 @@ struct StopSheet: View {
             }
         } label: {
             Label("Stop and save", systemImage: "stop.fill")
-                .frame(maxWidth: .infinity, minHeight: metrics.primaryButtonHeight)
         }
         .menuStyle(.button)
         .buttonStyle(.glassProminent)
@@ -176,7 +144,7 @@ struct StopSheet: View {
         .accessibilityHint(Text("Removes this timer without saving it"))
     }
 
-    // MARK: - Right column
+    // MARK: - Task
 
     private var taskPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -189,42 +157,15 @@ struct StopSheet: View {
                     .foregroundStyle(.secondary)
             }
 
-            VStack(spacing: 0) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 10)], spacing: 10) {
                 ForEach(tasks) { task in
-                    Button {
-                        select(task)
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: task.symbolName)
-                                .foregroundStyle(.white)
-                                .frame(width: 30, height: 30)
-                                .background(task.color.gradient, in: .rect(cornerRadius: 8))
-                            Text(task.label)
-                            Spacer()
-                            if selectedTask?.key == task.key {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.tint)
-                            }
-                        }
-                        .padding(.horizontal, 14)
-                        .frame(minHeight: LayoutMetrics.minimumTapTarget + 8)
-                        .contentShape(.rect)
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityElement(children: .combine)
-                    // A checkmark is invisible to a listener; the trait is not.
-                    .accessibilityAddTraits(selectedTask?.key == task.key ? [.isSelected] : [])
-
-                    if selectedTask?.key == task.key, task.asksForAircraft, !aircraft.isEmpty {
-                        aircraftRow
-                    }
-
-                    if task.key != tasks.last?.key {
-                        Divider().padding(.leading, 56)
-                    }
+                    taskTile(task)
                 }
             }
-            .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
+
+            if selectedTask?.asksForAircraft == true, !aircraft.isEmpty {
+                aircraftTile
+            }
 
             Text("Saved on this device, with or without internet.")
                 .font(.footnote)
@@ -232,44 +173,85 @@ struct StopSheet: View {
         }
     }
 
-    /// The chosen aircraft, under the task that asks for one; tapping it
-    /// opens the picker again.
-    private var aircraftRow: some View {
-        VStack(spacing: 0) {
-            Divider().padding(.leading, 56)
-            Button {
-                isPickingAircraft = true
-            } label: {
-                HStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        if let plane = selectedAircraft {
-                            Text(plane.name)
-                                .font(.body.weight(.medium))
-                            if let type = plane.displayType {
-                                Text(type)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } else {
-                            Text("Choose the aircraft")
-                                .foregroundStyle(.tint)
-                        }
+    /// A task as a glass tile, like the members on the home screen: these are
+    /// the buttons of this half of the sheet (ADR 0014). The chosen one takes
+    /// on its own colour and a checkmark.
+    private func taskTile(_ task: TaskDefinition) -> some View {
+        let isSelected = selectedTask?.key == task.key
+        return Button {
+            select(task)
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top) {
+                    Image(systemName: task.symbolName)
+                        .foregroundStyle(.white)
+                        .frame(width: 36, height: 36)
+                        .background(task.color.gradient, in: .rect(cornerRadius: 10))
+                    Spacer(minLength: 0)
+                    if isSelected {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(.tint)
                     }
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.footnote.weight(.semibold))
-                        .foregroundStyle(.tertiary)
                 }
-                .padding(.leading, 56)
-                .padding(.trailing, 14)
-                .padding(.vertical, 8)
-                .frame(minHeight: LayoutMetrics.minimumTapTarget + 8)
-                .contentShape(.rect)
+                Text(task.label)
+                    .font(.headline)
+                    .lineLimit(2, reservesSpace: true)
+                    .multilineTextAlignment(.leading)
             }
-            .buttonStyle(.plain)
-            .accessibilityElement(children: .combine)
-            .accessibilityHint(Text("Opens the list of aircraft"))
+            .padding(14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(.rect(cornerRadius: metrics.tileCornerRadius))
         }
+        .buttonStyle(.plain)
+        .glassEffect(
+            isSelected ? .regular.tint(task.color.opacity(0.25)).interactive() : .regular.interactive(),
+            in: .rect(cornerRadius: metrics.tileCornerRadius)
+        )
+        .accessibilityElement(children: .combine)
+        // A checkmark is invisible to a listener; the trait is not.
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    /// The chosen aircraft under the grid, for the task that asks for one;
+    /// tapping it opens the picker again.
+    private var aircraftTile: some View {
+        Button {
+            isPickingAircraft = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "airplane")
+                    .font(.title3)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 36)
+                VStack(alignment: .leading, spacing: 2) {
+                    if let plane = selectedAircraft {
+                        Text(plane.name)
+                            .font(.headline)
+                        if let type = plane.displayType {
+                            Text(type)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Text("Choose the aircraft")
+                            .font(.headline)
+                            .foregroundStyle(.tint)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(14)
+            .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget + 16, alignment: .leading)
+            .contentShape(.rect(cornerRadius: metrics.tileCornerRadius))
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: .rect(cornerRadius: metrics.tileCornerRadius))
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(Text("Opens the list of aircraft"))
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
 

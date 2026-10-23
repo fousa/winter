@@ -2907,22 +2907,6 @@
         }
       }
     },
-    "hours : minutes": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "heures : minutes"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "uur : minuten"
-          }
-        }
-      }
-    },
     "task.clubhouse": {
       "comment": "Default task list entry, seeded at setup. The club may rename it afterwards.",
       "extractionState": "manual",

@@ -40,7 +40,6 @@ struct StartSheet: View {
                         onStart()
                     } label: {
                         Label("Start", systemImage: "play.fill")
-                            .frame(maxWidth: .infinity, minHeight: metrics.primaryButtonHeight)
                     }
                     .buttonStyle(.glassProminent)
 

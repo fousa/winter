@@ -31,12 +31,7 @@ struct MemberTile: View {
                     // ellipsis.
                     VStack(alignment: .leading, spacing: 10) {
                         identity
-                        RunningTimerText(
-                            start: workingSince,
-                            size: metrics.timerFontSize,
-                            style: .hoursMinutes,
-                            color: .primary
-                        )
+                        RunningTimerText(start: workingSince, size: metrics.timerFontSize)
                     }
                     .padding(16)
                 } else {

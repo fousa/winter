@@ -115,8 +115,9 @@ struct SyncView: View {
         .background(.background, in: .rect(cornerRadius: metrics.cardCornerRadius))
     }
 
-    /// The screen's one action, sized and coloured like "Start" and "Stop
-    /// and save": uploading is a deliberate step now, not something to retry.
+    /// The screen's one action, coloured like "Start" and "Stop and save":
+    /// uploading is a deliberate step now, not something to retry. A standard
+    /// button size, like every button in the app.
     private var uploadButton: some View {
         Button {
             Task { await sync.uploadNow() }
@@ -132,10 +133,8 @@ struct SyncView: View {
                     } icon: {
                         Image(systemName: "icloud.and.arrow.up")
                     }
-                    .font(.headline)
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: metrics.primaryButtonHeight)
         }
         .buttonStyle(.glassProminent)
         .disabled(sync.isSyncing || waiting.isEmpty)

@@ -76,7 +76,6 @@ struct SetupView: View {
                 }
             } label: {
                 Text(model.step == .done ? "Start using Winter" : "Next")
-                    .frame(minWidth: 140, minHeight: metrics.primaryButtonHeight)
             }
             .buttonStyle(.glassProminent)
             .disabled(!model.canAdvance)
@@ -133,10 +132,9 @@ struct SetupView: View {
                 Task { await model.testConnection() }
             } label: {
                 if case .testing = model.testState {
-                    ProgressView().frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
+                    ProgressView()
                 } else {
                     Label("Test connection", systemImage: "antenna.radiowaves.left.and.right")
-                        .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
                 }
             }
             .buttonStyle(.glass)

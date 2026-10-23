@@ -53,6 +53,9 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - "Stop and save" asks first, in a menu on the button ("Stop Jan's timer?"). For a short session the menu asks whether the time is right instead, replacing the separate dialog.
 - Debug builds also take `-sampleScreen sync` or `-sampleScreen closeDay`, which opens that screen with finished sample sessions.
 - Xcode Cloud can build the app (ADR 0016, amending 0011): `ci_scripts/ci_post_clone.sh` installs XcodeGen and generates the project, and writes `Config/Local.xcconfig` from the workflow's `WINTER_BUNDLE_ID_PREFIX` and `WINTER_DEVELOPMENT_TEAM`.
+- Buttons are the system's standard size everywhere ("Start", "Stop and save", "Upload", "Next", "Test connection"), no longer full-width 56–64 pt slabs. `LayoutMetrics.primaryButtonHeight` is gone.
+- The stop sheet is a smaller form sheet in one column, and puts "Stop and save" right under the time, and writes the time as everywhere else ("46m", "1h05m") in the primary colour instead of a green clock with an "hours : minutes" caption. The tasks are a grid of glass tiles instead of a table, with the chosen aircraft in a glass row under it.
+- Debug builds take `-sampleScreen stop` too, which opens the stop sheet of the first running timer.
 
 ### Fixed
 - The sync screen said "This device has no zweef.app connection configured yet" on a connected device, a placeholder from before the setup assistant existed. It now says why hours are waiting. The two counters line up at the top.
