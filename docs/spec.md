@@ -29,7 +29,7 @@ Each device has its own local database and uploads its own sessions.
 1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button.
 2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
 3. **Start** has no confirmation card: the tile moves into "Working now", a haptic fires on a phone, and a large "Jan is working since 14:05 · Undo" confirmation stays at the bottom for 10 s.
-4. **Stop** (sheet) — the person and the running timer, "Stop and save", what the work was on (zweef.app's material) and a comment; a trash menu to delete the timer instead, with the confirmation inside the menu.
+4. **Stop** (sheet) — the person and the running timer, "Stop and save", what the work was on (zweef.app's material) and a comment; "Delete" in the toolbar to delete the timer instead, after a confirmation.
 5. **Stop confirmation** — duration, what it was on, "Undo"; stays until someone taps outside it.
 6. **Close day** — removed ([ADR 0018](decisions/0018-no-closing-the-day.md)); the sync screen lists the waiting sessions.
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, and the prominent "Upload" button: the only way hours leave the device (ADR 0015).
@@ -48,14 +48,14 @@ Each device has its own local database and uploads its own sessions.
 2. The "Stop" sheet shows the person, the start time and the running duration.
 3. Optional: pick what the work was on from zweef.app's material list, in zweef.app's own three tabs — Flying (the club's aircraft), Rolling (winch, carts, vehicles) and Other (the club's projects) — searchable (ADR 0020). It is sent as `material_id`, with its name as `project`.
 4. Optional: a comment for the board, which goes into the registration after the times; required when the club turned that on (ADR 0019).
-5. "Stop and save" opens a confirmation menu ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
+5. "Stop and save" asks first, in an alert ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
 6. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
 - Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.
 
 ### Deleting instead of stopping
-1. On the "Stop" sheet, tap the trash button in the toolbar.
-2. A menu opens on the button, headed "Delete Jan's timer?", with "Delete" (destructive, subtitled "Removed from this device, never sent to zweef.app") and "Keep working".
-3. "Delete" removes the session entirely; the sheet closes. There is no confirmation card and no undo — the menu was the confirmation.
+1. On the "Stop" sheet, tap "Delete" in the toolbar.
+2. An alert asks "Delete Jan's timer?" — "Removed from this device, never sent to zweef.app" — with "Delete" (red) and "Keep working".
+3. "Delete" removes the session entirely; the sheet closes. There is no confirmation card and no undo — the alert was the confirmation.
 - For the timer that was started by mistake, or under the wrong name, once the ten-second undo after starting has passed. Like stopping, it is open to everyone.
 - Only a running timer can be deleted. A finished session is on its way to the board; corrections to those happen in zweef.app.
 

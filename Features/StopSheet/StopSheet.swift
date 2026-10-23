@@ -4,12 +4,15 @@ import SwiftUI
 /// The second of the two taps that end an hour, and the only place the app asks
 /// what someone was doing.
 ///
-/// It is also where a timer that should never have run is thrown away: a trash
-/// menu in the toolbar deletes the session from the device without saving it.
-/// A menu rather than a confirmation dialog, because the choice then sits on
-/// the button that was tapped — a dialog anchors elsewhere on a wide sheet.
-/// Deliberately not a second big button — stopping is the normal path,
+/// It is also where a timer that should never have run is thrown away:
+/// "Delete" in the toolbar removes the session from the device without saving
+/// it. Deliberately not a second big button — stopping is the normal path,
 /// deleting the exception.
+///
+/// Both ask first, in an alert: the question in the middle of the screen with
+/// two full-width buttons. Not a menu by the button, which older members
+/// missed or closed by accident, and not a confirmation dialog, whose popover
+/// anchored away from the button on the wide sheet.
 ///
 /// A form-sized sheet in one column on every device: the person, the running
 /// time and the stop button on top — the button right under the time, since
@@ -36,6 +39,8 @@ struct StopSheet: View {
     @State private var selectedMaterial: Material?
     @State private var isPickingMaterial = false
     @State private var comment = ""
+    @State private var isConfirmingStop = false
+    @State private var isConfirmingDelete = false
 
     var body: some View {
         NavigationStack {
@@ -56,8 +61,40 @@ struct StopSheet: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    discardMenu
+                    // The word, not a trash can: an icon alone meant nothing
+                    // to older members.
+                    Button("Delete") { isConfirmingDelete = true }
+                        .accessibilityHint(Text("Removes this timer without saving it"))
                 }
+            }
+            .alert(isShortSession ? shortSessionQuestion : stopQuestion, isPresented: $isConfirmingStop) {
+                Button("Stop and save") { stop() }
+                Button("Keep working", role: .cancel) {}
+            } message: {
+                if isShortSession {
+                    Text("That looks short. Saving it is fine — the board sees it marked as a short session.")
+                }
+            }
+            #if DEBUG
+            // `-sampleAlert stop` or `delete`, with `-sampleScreen stop`: opens
+            // the confirmation as if the button had been tapped, so it can be
+            // looked at on a simulator (CONTRIBUTING.md).
+            .task {
+                let arguments = ProcessInfo.processInfo.arguments
+                guard let index = arguments.firstIndex(of: "-sampleAlert"), arguments.indices.contains(index + 1) else { return }
+                try? await Task.sleep(for: .milliseconds(600))
+                switch arguments[index + 1] {
+                case "stop": isConfirmingStop = true
+                case "delete": isConfirmingDelete = true
+                default: break
+                }
+            }
+            #endif
+            .alert(discardQuestion, isPresented: $isConfirmingDelete) {
+                Button("Delete", role: .destructive) { discard() }
+                Button("Keep working", role: .cancel) {}
+            } message: {
+                Text("Removed from this device, never sent to zweef.app")
             }
             .sheet(isPresented: $isPickingMaterial) {
                 MaterialPicker(material: material, selected: selectedMaterial) { item in
@@ -104,57 +141,18 @@ struct StopSheet: View {
         }
     }
 
-    /// A menu, like the trash button: the question as its header, the
-    /// confirmation and a way out under the finger that tapped. A stopped
-    /// timer is saved and on its way to the board, so one stray tap on a
-    /// shared device should not do it. A short session asks whether the time
-    /// is right instead, since that is the likelier mistake.
+    /// Asks first (see the alert in `body`): a stopped timer is saved and on
+    /// its way to the board, so one stray tap on a shared device should not
+    /// do it.
     private var stopButton: some View {
-        Menu {
-            Section {
-                Button {
-                    stop()
-                } label: {
-                    Label("Stop and save", systemImage: "stop.fill")
-                    if isShortSession {
-                        Text("That looks short. Saving it is fine — the board sees it marked as a short session.")
-                    }
-                }
-                Button("Keep working", systemImage: "arrow.uturn.backward") {}
-            } header: {
-                isShortSession ? shortSessionQuestion : stopQuestion
-            }
+        Button {
+            isConfirmingStop = true
         } label: {
             Label("Stop and save", systemImage: "stop.fill")
         }
-        .menuStyle(.button)
         .disabled(isMissingComment)
         .buttonStyle(.glassProminent)
         .tint(.stopAction)
-    }
-
-    /// The confirmation lives in the menu itself: the question as the section
-    /// header, the consequence as the subtitle of the destructive item, and an
-    /// explicit way out.
-    private var discardMenu: some View {
-        Menu {
-            Section {
-                Button(role: .destructive) {
-                    discard()
-                } label: {
-                    Text("Delete")
-                    Text("Removed from this device, never sent to zweef.app")
-                }
-                Button("Keep working", systemImage: "arrow.uturn.backward") {}
-            } header: {
-                discardQuestion
-            }
-        } label: {
-            // The word, not a trash can: an icon alone meant nothing to older
-            // members.
-            Text("Delete")
-        }
-        .accessibilityHint(Text("Removes this timer without saving it"))
     }
 
     // MARK: - What and why

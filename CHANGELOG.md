@@ -77,6 +77,7 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - The letter index is large enough to hit: bold letters in the tint colour on a glass column, 44 pt wide and up to 40 pt tall (it was 11 pt letters on 22×16 pt targets), and the member grid keeps room for it.
 - Buttons say what they do in words: "Close" instead of ×, "Delete" instead of a trash can, and "Hours" beside the cloud icon that opens the sync screen.
 - The confirmation after starting is large and plain: a green check, "Jan is working since 14:05" (title 3 on an iPad) and an "Undo" button, instead of the small "Jan started · Undo". It is announced to VoiceOver, since an iPad cannot buzz. Debug builds take `-sampleScreen start`.
+- Stopping and deleting ask first in an alert in the middle of the screen, with two full-width buttons, instead of a menu by the button that older members missed or closed by accident. Debug builds take `-sampleAlert stop|delete`.
 
 ### Fixed
 - App Store Connect asked about export compliance for every build. The app declares `ITSAppUsesNonExemptEncryption = NO` (in `Config/Shared.xcconfig`): its only encryption is HTTPS through URLSession, the Keychain, and a CryptoKit hash of the admin code, all the operating system's own.
