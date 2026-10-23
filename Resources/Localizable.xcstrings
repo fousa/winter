@@ -769,22 +769,6 @@
         }
       }
     },
-    "I'm stopping this for someone else": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "J'arrête ceci pour quelqu'un d'autre"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ik stop dit voor iemand anders"
-          }
-        }
-      }
-    },
     "Is %@ right?": {
       "localizations": {
         "fr": {
@@ -845,22 +829,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Laatste poging"
-          }
-        }
-      }
-    },
-    "Last one out? Close the day.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dernier à partir ? Clôturez la journée."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Als laatste weg? Sluit de dag af."
           }
         }
       }
@@ -1181,22 +1149,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nog geen onderhoudsperiode gevonden."
-          }
-        }
-      }
-    },
-    "Nobody on this device": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Personne sur cet appareil"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niemand op dit toestel"
           }
         }
       }
@@ -1863,22 +1815,6 @@
         }
       }
     },
-    "Tap to stop": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Touchez pour arrêter"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tik om te stoppen"
-          }
-        }
-      }
-    },
     "Task": {
       "localizations": {
         "fr": {
@@ -1971,22 +1907,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die code is niet juist."
-          }
-        }
-      }
-    },
-    "That isn't me": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ce n'est pas moi"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dat ben ik niet"
           }
         }
       }
@@ -2487,86 +2407,6 @@
         }
       }
     },
-    "^[%lld member](inflect: true)": {
-      "localizations": {
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld membre"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld membres"
-                }
-              }
-            }
-          }
-        },
-        "nl": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld lid"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld leden"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "^[%lld member](inflect: true) · tap to stop": {
-      "localizations": {
-        "fr": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld membre · touchez pour arrêter"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld membres · touchez pour arrêter"
-                }
-              }
-            }
-          }
-        },
-        "nl": {
-          "variations": {
-            "plural": {
-              "one": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld lid · tik om te stoppen"
-                }
-              },
-              "other": {
-                "stringUnit": {
-                  "state": "translated",
-                  "value": "%lld leden · tik om te stoppen"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "^[%lld registration](inflect: true) in period %lld.": {
       "localizations": {
         "fr": {
@@ -2895,22 +2735,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "uur : minuten"
-          }
-        }
-      }
-    },
-    "since %@": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "depuis %@"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "sinds %@"
           }
         }
       }

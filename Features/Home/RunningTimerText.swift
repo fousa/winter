@@ -7,9 +7,18 @@ import SwiftUI
 /// is the difference between a battery that lasts and one that does not.
 /// Monospaced digits so the number does not jitter as it ticks.
 struct RunningTimerText: View {
+    /// How the elapsed time is written.
+    enum Style {
+        /// "1:05" — the large clock on the stop sheet.
+        case clock
+        /// "01h05m" — compact and unambiguous inside a member tile.
+        case hoursMinutes
+    }
+
     let start: Date
     var size: CGFloat
     var weight: Font.Weight = .semibold
+    var style: Style = .clock
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
@@ -26,7 +35,10 @@ struct RunningTimerText: View {
 
     private func text(at now: Date) -> String {
         let minutes = SessionRules.duration(start: start, stop: now)
-        return "\(minutes / 60):\(String(format: "%02d", minutes % 60))"
+        switch style {
+        case .clock: return "\(minutes / 60):\(String(format: "%02d", minutes % 60))"
+        case .hoursMinutes: return String(format: "%02dh%02dm", minutes / 60, minutes % 60)
+        }
     }
 
     private func accessibilityText(at now: Date) -> String {

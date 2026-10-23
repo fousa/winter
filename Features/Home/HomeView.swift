@@ -39,10 +39,12 @@ struct HomeView: View {
             memberList
                 .background(Color(.systemGroupedBackground))
                 .navigationTitle(clubName)
-                .navigationSubtitle(subtitle)
                 .toolbar { toolbar }
                 .searchable(text: $model.searchText, prompt: Text("Search members"))
-                .safeAreaInset(edge: .bottom, spacing: 0) { bottomBar }
+                // A safe-area *bar*, not an inset: iOS 26 then draws the
+                // scroll edge effect under the undo chip.
+                .safeAreaBar(edge: .bottom, spacing: 0) { bottomBar }
+                .scrollEdgeEffectStyle(.soft, for: .bottom)
                 .navigationDestination(for: Destination.self) { destination in
                     switch destination {
                     case .closeDay: CloseDayView()
@@ -50,7 +52,11 @@ struct HomeView: View {
                     }
                 }
         }
-        .sheet(item: sheetRoute) { route in
+        .sheet(item: sheetRoute, onDismiss: {
+            // The next screen waits for this one to be gone; see
+            // `HomeModel.queuedRoute`.
+            withAnimation(.smooth) { model.presentQueuedRoute() }
+        }) { route in
             sheet(for: route)
         }
         .overlay {
@@ -72,6 +78,12 @@ struct HomeView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: metrics.sectionSpacing) {
+                    // Who is working comes first, with their running time:
+                    // stopping is the other half of what this screen is for.
+                    if model.searchText.isEmpty, !runningSessions.isEmpty {
+                        workingNowSection
+                    }
+
                     if model.searchText.isEmpty, !oftenHere.isEmpty {
                         section(title: Text("Often here"), members: oftenHere)
                     }
@@ -108,16 +120,11 @@ struct HomeView: View {
     private func section(title: Text?, members: [Member]) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             if let title {
-                title
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                sectionTitle(title)
             }
-            LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: metrics.tileMinimumWidth), spacing: 10)],
-                spacing: 10
-            ) {
+            tileGrid {
                 ForEach(members) { member in
-                    MemberTile(member: member, isWorking: isWorking(member)) {
+                    MemberTile(member: member, workingSince: runningStart(of: member)) {
                         tap(member)
                     }
                 }
@@ -126,32 +133,67 @@ struct HomeView: View {
         .accessibilityElement(children: .contain)
     }
 
-    @ViewBuilder
-    private var bottomBar: some View {
-        VStack(spacing: 8) {
-            if let undo = model.pendingUndo {
-                UndoChip(undo: undo) {
-                    model.undo(undo, sessions: sessions, store: store)
-                } onExpire: {
-                    model.expireUndo()
+    /// The running timers, oldest first, as tiles that show the time.
+    private var workingNowSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionTitle(Text("Working now"))
+            tileGrid {
+                ForEach(runningSessions) { session in
+                    if let member = membersById[session.memberId] {
+                        MemberTile(member: member, workingSince: session.start, showsTimer: true) {
+                            model.route = .stop(sessionId: session.id)
+                        }
+                    }
                 }
             }
-
-            WorkingNowBar(
-                sessions: runningSessions,
-                members: membersById,
-                onSelect: { model.route = .stop(sessionId: $0.id) },
-                onSelectMany: { model.route = .runningList },
-                onCloseDayHint: { if canCloseDay { path.append(.closeDay) } }
-            )
         }
-        .padding(.bottom, 8)
+        .accessibilityElement(children: .contain)
+        .animation(.smooth, value: runningSessions.map(\.id))
+    }
+
+    private func sectionTitle(_ title: Text) -> some View {
+        title
+            .font(.title3.weight(.semibold))
+            .foregroundStyle(.secondary)
+    }
+
+    private func tileGrid(@ViewBuilder content: () -> some View) -> some View {
+        LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: metrics.tileMinimumWidth), spacing: 10)],
+            spacing: 10,
+            content: content
+        )
+    }
+
+    @ViewBuilder
+    private var bottomBar: some View {
+        if let undo = model.pendingUndo {
+            UndoChip(undo: undo) {
+                model.undo(undo, sessions: sessions, store: store)
+            } onExpire: {
+                model.expireUndo()
+            }
+            .padding(.bottom, 8)
+        }
     }
 
     // MARK: - Toolbar
 
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
+        // Under the large title, at a size people can read from a step back;
+        // `navigationSubtitle` renders it in caption type.
+        ToolbarItem(placement: .largeSubtitle) {
+            Text(subtitle)
+                .font(isCompact ? .subheadline : .title3)
+                .foregroundStyle(.secondary)
+                // Wraps on a phone rather than cutting off "tap your name to
+                // start", which is the instruction.
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
         ToolbarItem(placement: .topBarTrailing) {
             Button {
                 path.append(.sync)
@@ -230,13 +272,12 @@ struct HomeView: View {
                     member: membersById[session.memberId],
                     tasks: tasks.filter { !$0.isArchived },
                     aircraft: aircraft
-                ) { task, plane, stoppedBy in
+                ) { task, plane in
                     model.stop(
                         session,
                         member: membersById[session.memberId],
                         task: task,
                         aircraft: plane,
-                        by: stoppedBy,
                         store: store,
                         locale: locale
                     )
@@ -245,11 +286,6 @@ struct HomeView: View {
                 } onDismiss: {
                     model.route = nil
                 }
-            }
-
-        case .runningList:
-            RunningSessionsSheet(sessions: runningSessions, members: membersById) { session in
-                model.route = .stop(sessionId: session.id)
             }
 
         case .confirmation(let confirmation):
@@ -268,14 +304,14 @@ struct HomeView: View {
         ZStack {
             Color.black.opacity(0.2)
                 .ignoresSafeArea()
-                .onTapGesture { model.route = nil }
+                .onTapGesture { withAnimation(.smooth) { model.route = nil } }
 
             ConfirmationView(confirmation: confirmation) {
                 if let undo = model.pendingUndo {
-                    model.undo(undo, sessions: sessions, store: store)
+                    withAnimation(.smooth) { model.undo(undo, sessions: sessions, store: store) }
                 }
             } onDone: {
-                model.route = nil
+                withAnimation(.smooth) { model.route = nil }
             }
             .frame(maxWidth: 480)
         }
@@ -319,8 +355,8 @@ struct HomeView: View {
         return String(localized: "Maintenance hours · \(today) · tap your name to start")
     }
 
-    private func isWorking(_ member: Member) -> Bool {
-        runningSessions.contains { $0.memberId == member.zweefId }
+    private func runningStart(of member: Member) -> Date? {
+        runningSessions.first { $0.memberId == member.zweefId }?.start
     }
 
     private func tap(_ member: Member) {

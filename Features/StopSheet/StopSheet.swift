@@ -26,13 +26,12 @@ struct StopSheet: View {
     let member: Member?
     let tasks: [TaskDefinition]
     let aircraft: [Aircraft]
-    var onStop: (TaskDefinition?, Aircraft?, StoppedBy) -> Void
+    var onStop: (TaskDefinition?, Aircraft?) -> Void
     var onDiscard: () -> Void
     var onDismiss: () -> Void
 
     @State private var selectedTask: TaskDefinition?
     @State private var selectedAircraft: Aircraft?
-    @State private var stoppingForSomeoneElse = false
     @State private var isConfirmingShortSession = false
 
     /// One column once the width is compact, and also once the text is large:
@@ -127,10 +126,6 @@ struct StopSheet: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-
-            Toggle("I'm stopping this for someone else", isOn: $stoppingForSomeoneElse)
-                .font(.subheadline)
-                .toggleStyle(.switch)
         }
     }
 
@@ -296,8 +291,7 @@ struct StopSheet: View {
     private func stop() {
         onStop(
             selectedTask,
-            selectedTask?.asksForAircraft == true ? selectedAircraft : nil,
-            stoppingForSomeoneElse ? .someoneElse : .member
+            selectedTask?.asksForAircraft == true ? selectedAircraft : nil
         )
         dismiss()
     }
@@ -355,7 +349,7 @@ private struct StopSheetPreview: View {
             member: member,
             tasks: tasks,
             aircraft: planes,
-            onStop: { _, _, _ in },
+            onStop: { _, _ in },
             onDiscard: {},
             onDismiss: {}
         )

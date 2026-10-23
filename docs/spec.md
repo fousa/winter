@@ -26,8 +26,8 @@ Each device has its own local database and uploads its own sessions.
 
 ## Screens (see docs/design.md for the layouts per size class)
 0. **Setup assistant** (first launch) and **Settings** (hidden, behind the admin code) — see docs/configuration.md.
-1. **Home** — member list (often here + all members, search, letter index), sync status button, "Close day" button, floating "Working now" bar.
-2. **Start** (sheet) — avatar + name, "Start", "That's not me".
+1. **Home** — member list ("Working now" with the running times, often here, all members; search, letter index), sync status button, "Close day" button.
+2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
 3. **Start confirmation** — glass card, "Undo" (10 s), dismisses itself after 3 s.
 4. **Stop** (sheet) — the person and the running timer, the task list and the aircraft picker, "Stop and save"; a trash menu to delete the timer instead, with the confirmation inside the menu.
 5. **Stop confirmation** — duration, task/aircraft, "Undo", dismisses itself after 3 s.
@@ -44,12 +44,12 @@ Each device has its own local database and uploads its own sessions.
 - The member already has a running session → instead the sheet shows "You have been working since 09:12" with a "Stop" button (which leads to Stopping).
 
 ### Stopping
-1. Someone taps a card in "Working now" (their own timer or someone else's).
+1. Someone taps a tile in "Working now" at the top of the list, or the member's own tile further down (their own timer or someone else's).
 2. The "Stop" sheet shows the person, the start time and the running duration.
 3. Optional: pick a task from the club's task list (default: Glider, Winch, Hangar and workshop, Grounds, Clubhouse, Something else; configurable). For tasks with `asksForAircraft` the aircraft picker appears (from `material.json`, plus "Other").
 4. "Stop and save" → `stop = now`, `status = .completed`, `syncState = .local`.
 5. A confirmation with "Undo" (10 s, which puts the session back to running).
-- Stopping someone else's timer is allowed. The session gets `stoppedByOther = true` and the flag "stopped by someone else" (in screen 6 and in `description`, see zweef-api.md).
+- Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.
 
 ### Deleting instead of stopping
 1. On the "Stop" sheet, tap the trash button in the toolbar.

@@ -1,6 +1,6 @@
 # 0006 — A native SwiftUI app for iPadOS 26 with Liquid Glass
 
-- **Status**: accepted; the device and orientation part is superseded by [0009](0009-universal-app-iphone-and-ipad.md)
+- **Status**: accepted; the device and orientation part is superseded by [0009](0009-universal-app-iphone-and-ipad.md), and member tiles are glass since [0014](0014-glass-member-tiles.md)
 - **Date**: 2026-10-18
 
 ## Context

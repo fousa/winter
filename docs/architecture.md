@@ -52,7 +52,7 @@ One folder per screen, containing the view, the view model and the previews.
 
 | Feature | Responsibility |
 |---|---|
-| `Home` | Member list, search, letter index, the "Working now" bar, the sync status button, the "Close day" button, the hidden entrance to Settings |
+| `Home` | Member list with the "Working now" section, search, letter index, the sync status button, the "Close day" button, the hidden entrance to Settings |
 | `StartSheet` | Confirming that the right member is starting; already working → redirect to stopping |
 | `StopSheet` | Showing the running time, picking a task/aircraft, stopping |
 | `Confirmation` | Confirmation after start/stop, with "Undo" and auto-dismiss |

@@ -19,7 +19,7 @@ Full index: `docs/README.md`.
 ## Settled decisions (do not change without discussion)
 - **Platform**: native iOS/iPadOS 26, SwiftUI, Swift 6 strict concurrency, SwiftData. One universal app for iPhone and iPad, all orientations, no orientation locks. Layout follows the size classes, never the device model or a screen size. The iPad 11" in landscape (1194×834 pt) is the reference design; compact layouts are derived from it.
 - **One device, one set of sessions**: running timers and the day overview are about the device they live on. No syncing of running timers between devices.
-- **Look & feel**: iOS 26 HIG. Liquid Glass only on the navigation/control layer (toolbar, floating bar at the bottom, sheets, buttons). Content (member tiles, lists, cards) stays opaque. System font, system colours, inset grouped lists.
+- **Look & feel**: iOS 26 HIG. Liquid Glass on the navigation/control layer (toolbar, sheets, buttons) and on the member tiles, which are the home screen's buttons (ADR 0014). Other content (lists, cards) stays opaque. System font, system colours, inset grouped lists.
 - **No login** for members. Members pick their name; no PIN for everyday use. Only the settings screen sits behind an admin code. Checking and corrections happen in zweef.app by the board (registrations arrive with status `in_aanvraag`).
 - **Fully usable offline**. Starting, stopping and closing the day work without a network. Internet at the club is unreliable; syncing happens automatically whenever there is a connection.
 - **Two taps** to start (name → Start) and two to stop (card → Stop and save). Picking a task and an aircraft is optional.

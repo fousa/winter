@@ -21,11 +21,11 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 
 ## Phase 2 — UI with fake data
 - [x] DesignSystem: `Avatar` (photo or initials), glass bar, stat card, flag badge, plus the spacing scale with a compact and a regular value.
-- [x] Home screen including search, letter index, "Often here", and the "Working now" bar (1–3 large, 4+ compact).
+- [x] Home screen including search, letter index, "Often here", and "Working now" (now a section at the top of the list, with the running times).
 - [x] Start and Stop sheets, confirmations with auto-dismiss and undo, haptics.
 - [x] Close day.
 - [x] Sync screen (shows the stored sync state; the engine behind it lands in phase 4).
-- [x] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets, the collapsed floating bar. No `userInterfaceIdiom` or `UIScreen.main` anywhere. (Settings as one `Form` comes with the screen itself in phase 4b.)
+- [x] Compact variants per `docs/design.md`: the adaptive home grid, the single-column Stop sheet, confirmations as sheets. No `userInterfaceIdiom` or `UIScreen.main` anywhere. (Settings as one `Form` comes with the screen itself in phase 4b.)
 - [x] Previews per screen for iPad landscape, iPhone portrait, iPhone landscape (compact height) and the largest accessibility text size.
 - [x] Screen-stays-on logic (`isIdleTimerDisabled`) while a timer runs, and Guided Access friendliness (no links that leave the app). Limiting it to the shared device needs the configuration from phase 4b.
 
@@ -56,8 +56,8 @@ Done in code:
 - [x] Distribution documented: build-it-yourself, TestFlight and MDM (`docs/installation-guide.md`).
 
 Needs a device or a simulator, which the development machine does not have:
-- [ ] Look at it. Nobody has yet seen this app run: not a preview, not a screenshot. The glass, the floating bar over a scrolling grid and the two-column stop sheet are reasoned, not observed.
-- [ ] Rotation pass on both devices: no clipping, no layout jumps, nothing hidden behind the floating bar or a safe area.
+- [ ] Look at it. Nobody has yet seen this app run: not a preview, not a screenshot. The home screen has now been seen on the iPad and iPhone simulators (Debug launch argument `-sampleClub`); the stop sheet, the confirmations and real hardware have not.
+- [ ] Rotation pass on both devices: no clipping, no layout jumps, nothing hidden behind the undo chip or a safe area.
 - [ ] French at the largest accessibility text size, on the four labels the catalog test flags.
 - [ ] VoiceOver pass with the screen curtain on: start, stop, close the day.
 

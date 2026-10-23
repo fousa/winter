@@ -23,6 +23,15 @@ final class HomeModel {
     /// Which sheet is up, if any.
     var route: Route?
 
+    /// What to present once the current sheet has finished closing.
+    ///
+    /// Swapping one sheet for another in a single step — Start for its
+    /// confirmation, say — makes SwiftUI dismiss and present at the same time,
+    /// and the two animations fight. So an action closes its sheet and queues
+    /// the next screen here; the view presents it from the sheet's
+    /// `onDismiss`, when the first animation is done.
+    private(set) var queuedRoute: Route?
+
     /// The undo offer that outlives the confirmation card.
     ///
     /// The card closes after three seconds, but undo is promised for ten
@@ -42,15 +51,12 @@ final class HomeModel {
         case start(memberId: Int)
         case stop(sessionId: UUID)
         case confirmation(Confirmation)
-        /// Compact width only: which of the running timers did you mean?
-        case runningList
 
         var id: String {
             switch self {
             case .start(let id): "start-\(id)"
             case .stop(let id): "stop-\(id)"
             case .confirmation(let confirmation): "confirmation-\(confirmation.sessionId)"
-            case .runningList: "running-list"
             }
         }
     }
@@ -103,11 +109,11 @@ final class HomeModel {
             let session = try store.start(member: member)
             feedback += 1
             offerUndo(sessionId: session.id, kind: .started, memberName: member.firstName)
-            route = .confirmation(
+            present(.confirmation(
                 Confirmation(kind: .started, sessionId: session.id, memberName: member.firstName)
-            )
+            ))
         } catch SessionStore.StoreError.memberAlreadyWorking(let sessionId) {
-            route = .stop(sessionId: sessionId)
+            present(.stop(sessionId: sessionId))
         } catch {
             route = nil
         }
@@ -118,23 +124,22 @@ final class HomeModel {
         member: Member?,
         task: TaskDefinition?,
         aircraft: Aircraft?,
-        by stoppedBy: StoppedBy,
         store: SessionStore,
         locale: Locale = .current
     ) {
         do {
-            try store.stop(session, task: task, aircraft: aircraft, by: stoppedBy)
+            try store.stop(session, task: task, aircraft: aircraft)
             feedback += 1
             let name = member?.firstName ?? ""
             offerUndo(sessionId: session.id, kind: .stopped, memberName: name)
-            route = .confirmation(
+            present(.confirmation(
                 Confirmation(
                     kind: .stopped,
                     sessionId: session.id,
                     memberName: name,
                     summary: summary(for: session, task: task, aircraft: aircraft, locale: locale)
                 )
-            )
+            ))
         } catch {
             route = nil
         }
@@ -176,6 +181,26 @@ final class HomeModel {
         }
         pendingUndo = nil
         route = nil
+    }
+
+    /// Closes whatever is up and queues `next` for when it has gone.
+    ///
+    /// With nothing up there is nothing to wait for, so `next` is shown at once.
+    func present(_ next: Route) {
+        if route == nil {
+            route = next
+        } else {
+            queuedRoute = next
+            route = nil
+        }
+    }
+
+    /// Called from the sheet's `onDismiss`: shows what an action queued, now
+    /// that the previous sheet has finished animating away.
+    func presentQueuedRoute() {
+        guard let next = queuedRoute else { return }
+        queuedRoute = nil
+        route = next
     }
 
     /// Drops the undo offer once its ten seconds are up.

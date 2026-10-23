@@ -30,6 +30,11 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - A running timer can be deleted from the stop sheet instead of saved: a trash menu in the toolbar that asks "Delete Jan's timer?" and says the time is removed from the device and never sent to zweef.app. Only running timers; finished sessions are corrected in zweef.app.
 
 ### Changed
+- The floating "Working now" bar is gone. Running timers are the first section of the member list, in the same tiles as everyone else, with the time written as "01h23m"; the phone's "which timer?" sheet went with the bar.
+- Member tiles are interactive Liquid Glass (ADR 0014); the running ones carry a faint green tint.
+- The home subtitle is larger: a `.largeSubtitle` toolbar item in title 3 instead of the caption-sized `navigationSubtitle`, wrapping on a phone.
+- The start sheet has one button. "That isn't me" is gone; the close button does the same.
+- The stop sheet no longer asks "I'm stopping this for someone else"; the app no longer records who stopped a timer.
 - Three settings Xcode 27 recommends are set in `project.yml`: the analyzer's "Missing Localizability" check, String Catalog symbol generation and asset symbol extensions on `Color` and `Image`.
 - Debug builds take a `-sampleClub <n>` launch argument that opens the fictional club with `n` timers running, so a screen can be looked at on a simulator without a zweef.app key (CONTRIBUTING.md).
 - No proxy: the app talks to zweef.app directly with the club's API key in the Keychain (ADR 0013). `proxy/`, the device token and the connection-mode choice are gone. SECURITY.md records what that costs — a lost device now means rotating the club's key.
@@ -39,5 +44,6 @@ All notable changes are recorded in this file. The format follows [Keep a Change
 - `Config/Shared.xcconfig` defaults `BUNDLE_ID_PREFIX` to `com.example`, so a fresh clone builds without a `Local.xcconfig`.
 
 ### Fixed
+- Starting or stopping a timer no longer glitches: the sheet used to be swapped for its confirmation in one step, so SwiftUI dismissed and presented at the same time. The confirmation now waits for the sheet to finish closing.
 - Build warnings: the setup summary's plural ("3 registrations in period 7") is written with a substitution so the compiler knows which number drives it; the unused accent-colour setting is gone (the app uses the system tint); and the XcodeGen project records Xcode 27 as its last upgrade check.
 - The first upload crashed with `_dispatch_assert_queue_fail`: the flag-label closure handed to the sync engine assumed it was on the main actor to read the reporting language, but the engine calls it from its own executor. The engine now reads the language from its own context and passes it to the closure.

@@ -25,8 +25,6 @@ struct LayoutMetrics: Equatable, Sendable {
     var tileCornerRadius: CGFloat
     /// Avatar on a member tile.
     var avatarSize: CGFloat
-    /// Avatar on a card in the "working now" bar.
-    var barAvatarSize: CGFloat
     var cardCornerRadius: CGFloat
     /// Height of a primary action button ("Start", "Stop and save").
     var primaryButtonHeight: CGFloat
@@ -42,7 +40,6 @@ struct LayoutMetrics: Equatable, Sendable {
         tileHeight: 84,
         tileCornerRadius: 24,
         avatarSize: 52,
-        barAvatarSize: 52,
         cardCornerRadius: 28,
         primaryButtonHeight: 64,
         timerFontSize: 28,
@@ -56,7 +53,6 @@ struct LayoutMetrics: Equatable, Sendable {
         tileHeight: 76,
         tileCornerRadius: 20,
         avatarSize: 44,
-        barAvatarSize: 40,
         cardCornerRadius: 22,
         primaryButtonHeight: 56,
         timerFontSize: 22,

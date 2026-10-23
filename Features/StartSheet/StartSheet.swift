@@ -3,8 +3,8 @@ import SwiftUI
 /// The second of the two taps that start an hour.
 ///
 /// It exists for one reason: on a shared device the wrong name gets tapped, and
-/// this is where that is caught. So the photo and the name are large, and "That
-/// isn't me" is as easy to hit as "Start".
+/// this is where that is caught. So the photo and the name are large; the way
+/// out for a wrong name is the close button, like any other sheet.
 ///
 /// What was worked on is not asked here. A member arriving with dirty hands
 /// does not yet know what they will end up doing, and asking costs a tap that
@@ -43,13 +43,6 @@ struct StartSheet: View {
                             .frame(maxWidth: .infinity, minHeight: metrics.primaryButtonHeight)
                     }
                     .buttonStyle(.glassProminent)
-
-                    Button("That isn't me") {
-                        dismiss()
-                        onDismiss()
-                    }
-                    .frame(maxWidth: .infinity, minHeight: LayoutMetrics.minimumTapTarget)
-                    .buttonStyle(.glass)
 
                     Text("You pick what you worked on when you stop.")
                         .font(.footnote)

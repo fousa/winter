@@ -5,7 +5,7 @@ Reference: the mockups in `mockups/*.dc.html` (1194×834 pt, landscape) and the 
 The mockups show the iPad in landscape, which stays the reference design. Everything below describes that layout first and then how it adapts to a compact size class. The sizes in pt from the mockups are the regular-width values; they are not fixed screen coordinates ([ADR 0009](decisions/0009-universal-app-iphone-and-ipad.md)).
 
 ## Principles
-- Liquid Glass only for the layer that floats above the content: toolbar items, the floating "Working now" bar, sheets, buttons. Content (member tiles, lists, stat cards) is opaque white on `systemGroupedBackground`.
+- Liquid Glass for the layer that floats above the content — toolbar items, sheets, buttons — and for the member tiles, which are the home screen's buttons ([ADR 0014](decisions/0014-glass-member-tiles.md)). Other content (lists, stat cards) is opaque white on `systemGroupedBackground`.
 - SwiftUI: `.glassEffect()` / `GlassEffectContainer` for custom glass shapes, `.buttonStyle(.glass)` for secondary buttons and `.buttonStyle(.glassProminent)` for primary ones. Let standard toolbars and sheets use their system glass instead of rebuilding it.
 - Big targets: at least 44 pt, primary buttons 56–64 pt tall, capsule-shaped. Concentric corner radii (tiles 24, cards 24–28, sheets system).
 - System font (SF Pro), support Dynamic Type. Times with `.monospacedDigit()`.
@@ -29,7 +29,7 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 - Grids use `LazyVGrid` with `.adaptive(minimum:)` so the number of columns follows the available width instead of a hardcoded count.
 - Spacing and padding come from a small scale that has a compact and a regular value; the mockup numbers are the regular ones.
 - Dynamic Type at accessibility sizes effectively makes any layout compact: test the largest size in both size classes, and let two-column layouts fall back to one column when the text no longer fits (`ViewThatFits`).
-- Safe areas are respected on every edge (the home indicator, Dynamic Island, and the iPad's rounded corners). The floating bar sits above the bottom safe area and adds its height as a bottom content inset so nothing is permanently hidden underneath it.
+- Safe areas are respected on every edge (the home indicator, Dynamic Island, and the iPad's rounded corners). The undo chip sits in a bottom safe-area bar, so the content scrolls clear of it.
 
 ### Per size class
 | Element | Regular width (iPad, iPhone landscape on the largest models) | Compact width (iPhone) |
@@ -37,8 +37,8 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 | Home grid | 5-column grid, member tiles with first and last name | `.adaptive(minimum: 150)`, roughly 2 columns in portrait; the letter index stays on the trailing edge |
 | Search | A search field in the toolbar | `.searchable` on the navigation stack, so it collapses into the title area |
 | Toolbar | Sync status, search and "Close day" side by side | Sync status stays visible; "Close day" moves into the bottom bar, where the primary action belongs on a phone |
-| "Working now" bar | Floating glass bar, 1–3 large cards or a 4-column grid of compact cards | A single floating glass row ("2 members · tap to stop"). One timer running → straight to the stop sheet; more than one → a sheet asking which, because guessing the first would stop the wrong member's hours |
-| Start sheet | Form sheet, ~540×560 | A full-height sheet; the avatar shrinks and the buttons go to the bottom |
+| "Working now" | A section at the top of the grid, the same tiles with the running time | The same section, one tile per row like the rest of the grid |
+| Start sheet | Form sheet, ~540×560 | A full-height sheet; the avatar shrinks and the button goes to the bottom |
 | Stop sheet | Two columns: person and timer left, task list right | One scrolling column: person, timer, then the task list; "Stop and save" pinned at the bottom in a glass bar |
 | Confirmations | A centred glass card above the dimmed screen | The same card as a sheet with `.presentationDetents([.medium])` |
 | Sync screen | Two columns | One scrolling column, with the status card first |
@@ -47,30 +47,25 @@ The app is one universal app with no orientation locks. Layout decisions follow 
 
 ### Compact height (iPhone landscape)
 - Centred confirmation cards become sheets, so the content keeps scrolling behind them.
-- The floating bar collapses to one line; the timer stays readable (`.monospacedDigit()`), the rest is secondary.
 - Large display text (the 76 pt timer on the Stop screen) scales down with the vertical size class instead of being clipped.
 - Nothing is placed in a fixed-height container that assumes portrait.
 
 ### Shared device vs. personal device
 The shared workshop device (usually the iPad) runs in Guided Access with the screen kept on. A personal iPhone does neither: no Guided Access, no `isIdleTimerDisabled` beyond a running timer, and no reminder to mount it on a wall. The screens are otherwise identical — the same member list, the same two taps.
 
-Running timers belong to the device they were started on. The "Working now" bar is therefore phrased as being about this device, and the empty state on a phone does not claim nobody is working at the club.
+Running timers belong to the device they were started on. The "Working now" section therefore only lists this device's timers, and simply is not there when none run here.
 
 ## Screens
 
 ### 1. Home (`Main.dc.html`, `Druk.dc.html`)
-- A navigation bar with the large title = the club name from zweef.app (falling back to "Winter" while it is unknown), subtitle "Maintenance hours · Thursday 1 October · tap your name to start". The mockups still show "Onderhoudsuren" as the title.
+- A navigation bar with the large title = the club name from zweef.app (falling back to "Winter" while it is unknown), subtitle "Maintenance hours · Thursday 1 October · tap your name to start". The subtitle is a `.largeSubtitle` toolbar item in title 3 (subheadline on a phone, wrapping to two lines) rather than `navigationSubtitle`, whose caption size was too small to read from a step back. The mockups still show "Onderhoudsuren" as the title.
 - Toolbar on the right (glass): the sync status button ("8 waiting", an orange cloud when there is no connection) → screen 7; a search field; "Close day" (prominent when allowed, otherwise disabled with a lock).
-- Content: an "Often here" section (5 tiles) and an "All members" section (a 5-column grid). A tile: white, radius 24, height 84, avatar 52 pt round (initials — zweef.app has no member photos, see [zweef-api.md](zweef-api.md)), first name 17 semibold, last name 15 secondary.
+- Content: a "Working now" section, an "Often here" section (5 tiles) and an "All members" section (a 5-column grid). A tile: interactive Liquid Glass, radius 24, height 84, avatar 52 pt round (initials — zweef.app has no member photos, see [zweef-api.md](zweef-api.md)), first name 17 semibold, last name 15 secondary; a green stopwatch at the end while that member works. Glass because the tiles are the screen's buttons and should lift under a finger like one ([ADR 0014](decisions/0014-glass-member-tiles.md)).
 - A letter index on the right (as in Contacts).
-- A floating glass "Working now" bar at the bottom (above the content, the content scrolls underneath it, with extra bottom inset):
-  - left: a green dot + "Working now", "2 members", "Tap to stop"
-  - 1–3 running: large cards (avatar 52, full name, "since 09:12", timer 28 pt green)
-  - 4+ running: compact cards in a 4-column grid (avatar 48, "Jan V.", timer 22 pt); the bar grows taller
-  - 0 running: a grey dot, "Nobody on this device", and the text "Last one out? Close the day, top right."
+- "Working now", the first section while anything runs on this device: the same tiles as the rest of the grid, oldest timer first, with the running time in green as "01h23m" where the stopwatch would be, and a faint green tint on the glass. Tapping one opens the stop sheet. It replaces the floating bar of earlier versions, so there is one way to see who is working and it scrolls with everything else. Hidden while searching, like "Often here".
 
 ### 2. Start (`Start.dc.html`)
-A form sheet (~540×560). Close button on the left (glass, xmark), title "Start". Avatar 120, name 34 bold, "Ready to get going?". Buttons: "Start" (glassProminent, play.fill, 64 tall) and "That's not me" (glass). Footnote: "You pick what you worked on when you stop."
+A form sheet (~540×560). Close button on the left (glass, xmark), title "Start". Avatar 120, name 34 bold, "Ready to get going?". One button: "Start" (glassProminent, play.fill, 64 tall). A wrong name is dismissed with the close button, like any sheet; the mockup's "That's not me" button is gone. Footnote: "You pick what you worked on when you stop."
 
 ### 3. Start confirmation (`Gestart.dc.html`)
 A centred glass card (~480×480, radius 48) above the dimmed home screen. A blue circle with a checkmark, "Enjoy the work, Ellen", "Started at 14:05". Buttons "Undo" (glass) and "Done" (prominent). "Closes by itself after 3 seconds".
@@ -82,8 +77,8 @@ A wide sheet (~920×680) in two columns:
 - Toolbar: close (xmark) on the left and a trash menu on the right, which is not in the mockup. The menu is headed "Delete Jan's timer?" and offers "Delete" (destructive, with the consequence as its subtitle) and "Keep working"; "Delete" removes the session without saving it. A menu rather than a confirmation dialog, because the dialog's popover anchored away from the button on the wide sheet. It is a toolbar icon rather than a second big button so that "Stop and save" stays the one obvious action on a shared device.
 
 #### Two things the mockups left open
-- **The card closes after 3 seconds, but undo is promised for 10** (`spec.md`). Both are kept: the card auto-dismisses after 3 s, and the rest of the window lives on as a small "Undo" chip above the floating bar on the home screen, which disappears by itself. Undoing a start deletes the session; undoing a stop sets it running again.
-- **Who stopped the timer?** On a device with no login the app cannot tell whether Jan stopped his own timer or Koen stopped it for him, and `stoppedByOther` has to come from somewhere. The stop sheet therefore has one switch, off by default — "I'm stopping this for someone else" — so the normal path is still two taps and the flag is only set when someone says so.
+- **The card closes after 3 seconds, but undo is promised for 10** (`spec.md`). Both are kept: the card auto-dismisses after 3 s, and the rest of the window lives on as a small "Undo" chip at the bottom of the home screen, which disappears by itself. Undoing a start deletes the session; undoing a stop sets it running again.
+- **Who stopped the timer?** On a device with no login the app cannot tell whether Jan stopped his own timer or Koen stopped it for him. An earlier version asked with a switch on the stop sheet; it was removed because nobody used it and it cluttered the one screen that must stay simple. The app no longer sets `stoppedByOther`, so the "stopped by someone else" flag only appears on sessions recorded before the change.
 
 ### 5. Stop confirmation (`Gestopt.dc.html`)
 Like 3, with a green circle. "Thanks, Jan", "2 h 18 min", "09:12 – 11:30 · Glider · ASK 21", "Saved on this device, and sent to zweef.app as soon as there is internet".
@@ -119,4 +114,4 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 ## Sample data for previews
 Members: Jan Verhoeven, Koen Maes, Ellen Peeters, Sofie Claes, Bart Wouters, Lotte Janssens, Pieter De Smet, … Aircraft: ASK 21, LS4, Discus.
 
-Every screen gets at least two previews: an iPad in landscape (the reference) and an iPhone in portrait. Add an iPhone landscape preview for the screens with a compact-height variant (the floating bar, the Stop sheet, the confirmations), one preview at the largest accessibility text size, and one in French (`.environment(\.locale, Locale(identifier: "fr"))`) as the longest language.
+Every screen gets at least two previews: an iPad in landscape (the reference) and an iPhone in portrait. Add an iPhone landscape preview for the screens with a compact-height variant (the Stop sheet, the confirmations), one preview at the largest accessibility text size, and one in French (`.environment(\.locale, Locale(identifier: "fr"))`) as the longest language.
