@@ -53,11 +53,18 @@ enum SampleData {
 
     /// An in-memory container with the sample club in it.
     ///
-    /// - Parameter runningSessionCount: How many members are working, so a
-    ///   preview can show the "Working now" bar empty, with a few cards, or
-    ///   busy.
+    /// - Parameters:
+    ///   - runningSessionCount: How many members are working, so a preview can
+    ///     show the "Working now" bar empty, with a few cards, or busy.
+    ///   - pausedMinutes: Puts the first of them on a break that began this
+    ///     many minutes ago, after a morning's work — a few minutes for an
+    ///     ordinary lunch, over an hour for a forgotten resume (ADR 0022).
     @MainActor
-    static func container(runningSessionCount: Int = 0, now: Date = .now) throws -> ModelContainer {
+    static func container(
+        runningSessionCount: Int = 0,
+        pausedMinutes: Int? = nil,
+        now: Date = .now
+    ) throws -> ModelContainer {
         let container = try WinterSchema.inMemoryContainer()
         let context = container.mainContext
 
@@ -72,6 +79,18 @@ enum SampleData {
         context.insert(settings)
 
         for index in 0..<min(runningSessionCount, members.count) {
+            if index == 0, let pausedMinutes {
+                // 3h18m of work, then the break: the numbers of the mockups.
+                let pausedAt = now.addingTimeInterval(Double(-pausedMinutes) * 60)
+                context.insert(
+                    WorkSession(
+                        memberId: members[index].id,
+                        start: pausedAt.addingTimeInterval(-198 * 60),
+                        pausedAt: pausedAt
+                    )
+                )
+                continue
+            }
             context.insert(
                 WorkSession(
                     memberId: members[index].id,
@@ -91,9 +110,19 @@ enum SampleData {
     ///
     /// This is the state the sync screen is actually interesting in: an empty
     /// database tells you nothing about the layout.
+    ///
+    /// - Parameter withBreaks: Adds a session with a lunch break in it and one
+    ///   the closing time ended on a break, as the sync screen shows them
+    ///   (ADR 0022). Off by default, so the App Store screenshots stay as
+    ///   they are.
     @MainActor
-    static func finishedSessionsContainer(runningSessionCount: Int = 0, now: Date = .now) throws -> ModelContainer {
-        let container = try container(runningSessionCount: runningSessionCount, now: now)
+    static func finishedSessionsContainer(
+        runningSessionCount: Int = 0,
+        pausedMinutes: Int? = nil,
+        withBreaks: Bool = false,
+        now: Date = .now
+    ) throws -> ModelContainer {
+        let container = try container(runningSessionCount: runningSessionCount, pausedMinutes: pausedMinutes, now: now)
         let context = container.mainContext
         let calendar = Calendar.club
         let today = calendar.startOfDay(for: now)
@@ -138,6 +167,20 @@ enum SampleData {
         context.insert(
             session(memberIndex: 4, day: yesterday, fromHour: 9, minutes: 90, syncState: .uploaded)
         )
+
+        if withBreaks {
+            // 10:00–16:40 with half an hour for lunch.
+            let lunched = session(memberIndex: 5, day: yesterday, fromHour: 10, minutes: 400, materialId: 301)
+            let lunch = lunched.start.addingTimeInterval(150 * 60)
+            lunched.breaks = [WorkBreak(start: lunch, end: lunch.addingTimeInterval(30 * 60))]
+            context.insert(lunched)
+
+            // Paused at 12:30 and never resumed: the closing time ended it
+            // where the break began.
+            let forgotten = session(memberIndex: 6, day: yesterday, fromHour: 9, minutes: 210, autoStopped: true)
+            forgotten.endedOnBreak = true
+            context.insert(forgotten)
+        }
 
         try context.save()
         return container

@@ -12,19 +12,27 @@ enum RegistrationDescription {
     struct Input: Equatable, Sendable {
         var start: Date
         var stop: Date
+        /// The breaks inside the session, which are left out of the times.
+        var breaks: [WorkBreak]
         /// What the member typed when stopping, if anything.
         var comment: String?
 
-        init(start: Date, stop: Date, comment: String? = nil) {
+        init(start: Date, stop: Date, breaks: [WorkBreak] = [], comment: String? = nil) {
             self.start = start
             self.stop = stop
+            self.breaks = breaks
             self.comment = comment
         }
     }
 
     /// "09:12–11:30", or "09:12–11:30 · Replaced the canopy seal".
+    ///
+    /// With a break, each stretch that was worked: "09:12–12:30 ·
+    /// 13:15–16:05". The break is the gap, which needs no word for "break" —
+    /// and so no language (ADR 0022).
     static func text(for input: Input, timeZone: TimeZone) -> String {
-        var parts = [timeRange(from: input.start, to: input.stop, timeZone: timeZone)]
+        var parts = SessionRules.workedStretches(start: input.start, stop: input.stop, breaks: input.breaks)
+            .map { timeRange(from: $0.start, to: $0.end, timeZone: timeZone) }
         if let comment = input.comment?.trimmingCharacters(in: .whitespacesAndNewlines), !comment.isEmpty {
             parts.append(comment)
         }

@@ -1,5 +1,7 @@
 # Data model (SwiftData)
 
+The new fields of a later version are optional or have a default, so a database from an earlier version opens as it is (`Tests/Data/StoreMigrationTests.swift`).
+
 Every tap is written out immediately (`modelContext.save()`), so a crash, a flat battery or a restart never costs any hours.
 
 ```swift
@@ -29,7 +31,9 @@ enum MaterialKind: String { case flying = "kist", rolling = "rollend", other = "
 }
 
 
-enum SessionStatus: String, Codable { case running, completed }
+enum SessionStatus: String, Codable { case running, completed }  // a paused timer is still .running
+
+struct WorkBreak: Codable { var start: Date; var end: Date }     // one finished break
 
 enum SyncState: String, Codable {
     case local            // completed, never tried: waiting for "Upload"
@@ -47,6 +51,9 @@ enum SyncState: String, Codable {
     var start: Date
     var stop: Date?
     var status: SessionStatus
+    var pausedAt: Date?            // when the break it is on began; nil while working (ADR 0022)
+    var breaksData: Data?          // the finished breaks, [WorkBreak] as JSON; read through `breaks`
+    var endedOnBreak: Bool = false // stopped while paused: `stop` is where that break began
     @Attribute(originalName: "aircraftId") var materialId: Int?  // Material.zweefId, or nil when nothing was picked
     var autoStopped: Bool
     var stoppedByOther: Bool
@@ -86,9 +93,11 @@ enum SyncState: String, Codable {
 ```
 
 ## Derived rules (pure functions, unit-tested)
-- `duration(start:stop:) -> Minutes`
+- `duration(start:stop:) -> Minutes`, and `duration(of:)`, which takes the breaks out: the time worked
+- `workedMinutes(of:now:) -> Minutes` for a timer that is still running, standing still while it is paused
+- `isLongBreak(since:now:)`: a break of an hour or more, when the app asks whether someone forgot to resume
 - `decimalHours(minutes:) -> Double` (two decimals)
-- `flags(for:) -> [Flag]` → short (< 5 min), long (> 10 h), stopped automatically, stopped by someone else
+- `flags(for:) -> [Flag]` → short (< 5 min), long (> 10 h), stopped automatically, ended on a break (in its place, when the closing time found the timer paused), stopped by someone else
 - `autoStopDate(for start: Date, closing: DateComponents) -> Date`: the closing time on the day the session started; a session that starts *after* the closing time gets the next day's closing time
-- `description(for session:) -> String`: the times and the comment (ADR 0019)
+- `description(for session:) -> String`: the stretches worked and the comment (ADR 0019, ADR 0022)
 - Retention: uploaded sessions stay on the device for 90 days, then get cleaned up.

@@ -47,4 +47,39 @@ struct RegistrationDescriptionTests {
         #expect(text == "17:12–19:12")
         #expect(!text.lowercased().contains("pm"))
     }
+
+    // MARK: - Breaks (ADR 0022)
+
+    @Test("A break shows as a gap between two time ranges, in no language at all")
+    func breakIsAGap() {
+        let lunch = start.addingTimeInterval(198 * 60)
+        let input = RegistrationDescription.Input(
+            start: start,
+            stop: start.addingTimeInterval(413 * 60),
+            breaks: [WorkBreak(start: lunch, end: lunch.addingTimeInterval(45 * 60))],
+            comment: "Replaced the canopy seal"
+        )
+        #expect(
+            RegistrationDescription.text(for: input, timeZone: timeZone)
+                == "09:12–12:30 · 13:15–16:05 · Replaced the canopy seal"
+        )
+    }
+
+    @Test("Two breaks make three ranges, in order whatever order they were stored in")
+    func twoBreaks() {
+        let coffee = start.addingTimeInterval(78 * 60)
+        let lunch = start.addingTimeInterval(198 * 60)
+        let input = RegistrationDescription.Input(
+            start: start,
+            stop: start.addingTimeInterval(413 * 60),
+            breaks: [
+                WorkBreak(start: lunch, end: lunch.addingTimeInterval(45 * 60)),
+                WorkBreak(start: coffee, end: coffee.addingTimeInterval(15 * 60)),
+            ]
+        )
+        #expect(
+            RegistrationDescription.text(for: input, timeZone: timeZone)
+                == "09:12–10:30 · 10:45–12:30 · 13:15–16:05"
+        )
+    }
 }

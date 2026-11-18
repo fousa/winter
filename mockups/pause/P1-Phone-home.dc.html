@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>iPhone home with a paused timer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; background: #F2F2F7; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif; color: #000000; -webkit-font-smoothing: antialiased">
+
+<button type="button" aria-label="Hours, 4 sessions waiting to upload" style="position: absolute; right: 16px; top: 52px; height: 44px; padding: 0 16px; border-radius: 999px; display: flex; align-items: center; gap: 8px; font-family: inherit; font-size: 17px; font-weight: 600; color: #000000; cursor: pointer; background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.95); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 1px 2px rgba(0,0,0,0.05), 0 6px 18px rgba(0,0,0,0.07)">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.6-9.96A6.5 6.5 0 0 1 19 9a4.5 4.5 0 0 1-1 8.9"></path><path d="M12 20v-8"></path><path d="M9 14.5l3-3 3 3"></path></svg>
+<span>Hours</span>
+<span aria-hidden="true" style="position: absolute; right: -4px; top: -6px; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 5px; border-radius: 999px; background: #D9322A; color: #FFFFFF; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center">4</span>
+</button>
+
+<div style="position: absolute; left: 16px; right: 16px; top: 110px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 14px">
+<div aria-hidden="true" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 999px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.12)">
+<div style="width: 54px; height: 54px; border-radius: 999px; background: #0A84FF; display: flex; align-items: center; justify-content: center">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="#FFFFFF"><g transform="rotate(90 12 12)"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"></path></g></svg>
+</div>
+</div>
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.6px; line-height: 1.15">Zweefvliegclub Voorbeeld</h1>
+</div>
+<div style="font-size: 15px; color: #3A3A3C">Maintenance hours · Saturday, 21 November · tap your name to start</div>
+
+<h2 style="margin: 10px 0 0; font-size: 20px; font-weight: 600; color: #3A3A3C">Working now</h2>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-right: 48px">
+<sc-for list="{{working}}" as="t" hint-placeholder-count="3">
+<button type="button" aria-label="{{t.aria}}" style="width: 100%; box-sizing: border-box; padding: 14px; border-radius: 24px; font-family: inherit; text-align: left; color: #000000; cursor: pointer; display: flex; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.95); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 1px 2px rgba(0,0,0,0.05), 0 6px 18px rgba(0,0,0,0.07)">
+<span style="display: flex; align-items: center; gap: 12px">
+<span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 999px; color: #FFFFFF; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center; background: {{t.bg}}">{{t.initials}}</span>
+<span style="display: flex; flex-direction: column; min-width: 0">
+<span style="font-size: 17px; font-weight: 600; letter-spacing: -0.2px">{{t.first}}</span>
+<span style="font-size: 17px; color: #3A3A3C">{{t.last}}</span>
+</span>
+</span>
+<span style="display: flex; align-items: center; gap: 8px">
+<sc-if value="{{t.paused}}" hint-placeholder-val="{{ false }}">
+<svg width="22" height="22" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="13" fill="#FCEBD9"></circle><rect x="8.5" y="7.5" width="3.5" height="11" rx="1" fill="#8A4500"></rect><rect x="14" y="7.5" width="3.5" height="11" rx="1" fill="#8A4500"></rect></svg>
+</sc-if>
+<span style="font-size: 22px; font-weight: 600; letter-spacing: -0.4px; font-variant-numeric: tabular-nums; color: {{t.timeColor}}">{{t.time}}</span>
+</span>
+<sc-if value="{{t.paused}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 15px; font-weight: 600; color: #8A4500">{{t.caption}}</span>
+</sc-if>
+</button>
+</sc-for>
+</div>
+
+<h2 style="margin: 10px 0 0; font-size: 20px; font-weight: 600; color: #3A3A3C">Recents</h2>
+<div style="display: flex; flex-direction: column; gap: 10px; padding-right: 48px">
+<button type="button" style="width: 100%; height: 76px; box-sizing: border-box; padding: 0 14px; border-radius: 24px; display: flex; align-items: center; gap: 12px; font-family: inherit; text-align: left; color: #000000; cursor: pointer; background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.95); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 1px 2px rgba(0,0,0,0.05), 0 6px 18px rgba(0,0,0,0.07)">
+<span aria-hidden="true" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 999px; background: #1A7F5F; color: #FFFFFF; font-size: 17px; font-weight: 600; display: flex; align-items: center; justify-content: center">BW</span>
+<span style="display: flex; flex-direction: column; min-width: 0">
+<span style="font-size: 17px; font-weight: 600; letter-spacing: -0.2px">Bart</span>
+<span style="font-size: 17px; color: #3A3A3C">Wouters</span>
+</span>
+</button>
+</div>
+</div>
+
+<nav aria-label="Jump to a letter" style="position: absolute; right: 8px; top: 420px; width: 44px; box-sizing: border-box; padding: 6px 0; border-radius: 22px; display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.95); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 1px 2px rgba(0,0,0,0.05), 0 6px 18px rgba(0,0,0,0.07)">
+<button type="button" aria-label="Jump to B" style="width: 44px; height: 40px; border: none; background: transparent; font-family: inherit; font-size: 17px; font-weight: 700; color: #0A6CDB; cursor: pointer">B</button>
+<button type="button" aria-label="Jump to E" style="width: 44px; height: 40px; border: none; background: transparent; font-family: inherit; font-size: 17px; font-weight: 700; color: #0A6CDB; cursor: pointer">E</button>
+<button type="button" aria-label="Jump to L" style="width: 44px; height: 40px; border: none; background: transparent; font-family: inherit; font-size: 17px; font-weight: 700; color: #0A6CDB; cursor: pointer">L</button>
+<button type="button" aria-label="Jump to S" style="width: 44px; height: 40px; border: none; background: transparent; font-family: inherit; font-size: 17px; font-weight: 700; color: #0A6CDB; cursor: pointer">S</button>
+</nav>
+
+<label style="position: absolute; left: 16px; right: 16px; bottom: 24px; height: 48px; box-sizing: border-box; padding: 0 16px; border-radius: 999px; display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.9); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.95); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 8px 24px rgba(0,0,0,0.12)">
+<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#3A3A3C" stroke-width="2.25" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search members</span>
+<input type="search" placeholder="Search members" style="border: none; outline: none; flex-grow: 1; min-width: 0; background: transparent; font-family: inherit; font-size: 17px; color: #000000">
+</label>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      working: [
+        { first: 'Jan', last: 'Verhoeven', initials: 'JV', bg: '#4B45C6', time: '3h18m', timeColor: '#6C6C70', paused: true, caption: 'On a break since 12:30', aria: 'Jan Verhoeven, on a break since 12:30, 3h18m worked' },
+        { first: 'Koen', last: 'Maes', initials: 'KM', bg: '#9B2FAE', time: '2h42m', timeColor: '#000000', paused: false, caption: '', aria: 'Koen Maes, working, 2h42m' },
+        { first: 'Pieter', last: 'De Smet', initials: 'PD', bg: '#C02A4A', time: '28m', timeColor: '#000000', paused: false, caption: '', aria: 'Pieter De Smet, working, 28m' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

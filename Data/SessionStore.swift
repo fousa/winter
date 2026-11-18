@@ -21,6 +21,10 @@ final class SessionStore {
         case memberAlreadyWorking(sessionId: UUID)
         case sessionNotRunning
         case sessionNotCompleted
+        /// Pausing a timer that is already on a break.
+        case sessionAlreadyPaused
+        /// Resuming a timer that is not on a break.
+        case sessionNotPaused
     }
 
     private let context: ModelContext
@@ -111,13 +115,62 @@ final class SessionStore {
     ) throws {
         guard session.status == .running else { throw StoreError.sessionNotRunning }
 
-        session.stop = now()
+        if let pausedAt = session.pausedAt {
+            // Nobody worked after the break began, so that is where the
+            // session ends: the member who went home at lunch and stops the
+            // timer in the evening gets their morning, not an afternoon they
+            // were not here for (ADR 0022).
+            session.stop = pausedAt
+            session.endedOnBreak = true
+            session.pausedAt = nil
+        } else {
+            session.stop = now()
+        }
         session.status = .completed
         session.syncState = .local
         session.materialId = material?.zweefId
         let trimmed = comment?.trimmingCharacters(in: .whitespacesAndNewlines)
         session.comment = trimmed?.isEmpty == false ? trimmed : nil
         session.stoppedByOther = stoppedBy == .someoneElse
+        try context.save()
+    }
+
+    // MARK: - Pausing
+
+    /// Puts a running session on a break, saved before this method returns.
+    ///
+    /// The session stays `.running`: it keeps its tile, an upload leaves it
+    /// alone, and the closing time still finds it. Like stopping, anyone may
+    /// do this for anyone (ADR 0022).
+    func pause(_ session: WorkSession) throws {
+        guard session.status == .running else { throw StoreError.sessionNotRunning }
+        guard session.pausedAt == nil else { throw StoreError.sessionAlreadyPaused }
+
+        session.pausedAt = now()
+        try context.save()
+    }
+
+    /// Ends the break a session is on: the timer runs again, and the break is
+    /// kept so it is not counted.
+    ///
+    /// - Parameter minutes: How long the break really was, for the member who
+    ///   forgot to resume: the break then ends that long after it began, and
+    ///   the time since counts as work. Nil counts the whole break, up to
+    ///   now. Never longer than the break actually lasted — the timer cannot
+    ///   be given a break that reaches into the future.
+    func resume(_ session: WorkSession, countingBreak minutes: Minutes? = nil) throws {
+        guard session.status == .running else { throw StoreError.sessionNotRunning }
+        guard let pausedAt = session.pausedAt else { throw StoreError.sessionNotPaused }
+
+        let moment = now()
+        var end = moment
+        if let minutes {
+            end = min(moment, pausedAt.addingTimeInterval(Double(max(0, minutes)) * 60))
+        }
+        if end > pausedAt {
+            session.breaks.append(WorkBreak(start: pausedAt, end: end))
+        }
+        session.pausedAt = nil
         try context.save()
     }
 
@@ -143,10 +196,15 @@ final class SessionStore {
     /// Undoes a stop: the session runs again, as if Stop had not been tapped.
     ///
     /// The material and comment are cleared too, because they were picked as part
-    /// of stopping.
+    /// of stopping. A session that was stopped during a break goes back to
+    /// that break, not to work: undo restores what was there.
     func undoStop(_ session: WorkSession) throws {
         guard session.status == .completed else { throw StoreError.sessionNotCompleted }
 
+        if session.endedOnBreak {
+            session.pausedAt = session.stop
+            session.endedOnBreak = false
+        }
         session.stop = nil
         session.status = .running
         session.syncState = .local
@@ -162,7 +220,8 @@ final class SessionStore {
     /// Stops every timer that has run past its closing time.
     ///
     /// The stop time is the closing time, not the moment this runs, so a timer
-    /// noticed the next morning still reports the right hours.
+    /// noticed the next morning still reports the right hours. A timer that
+    /// is paused ends where its break began (ADR 0022).
     ///
     /// - Returns: How many sessions were stopped.
     @discardableResult
@@ -178,14 +237,11 @@ final class SessionStore {
                 calendar: calendar
             ) else { continue }
 
-            session.stop = ClosingTime.autoStopDate(
+            session.end(atClosingTime: ClosingTime.autoStopDate(
                 for: session.start,
                 closing: closing,
                 calendar: calendar
-            )
-            session.status = .completed
-            session.syncState = .local
-            session.autoStopped = true
+            ))
             stopped += 1
         }
 

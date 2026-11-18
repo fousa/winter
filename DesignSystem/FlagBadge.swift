@@ -27,6 +27,7 @@ extension SessionFlag {
         case .shortSession: String(localized: "Short session")
         case .longSession: String(localized: "Long session")
         case .stoppedAutomatically: String(localized: "Stopped automatically")
+        case .endedOnBreak: String(localized: "Ended on a break")
         case .stoppedBySomeoneElse: String(localized: "Stopped by someone else")
         }
     }
@@ -36,8 +37,34 @@ extension SessionFlag {
         case .shortSession: "hourglass.bottomhalf.filled"
         case .longSession: "hourglass.tophalf.filled"
         case .stoppedAutomatically: "moon.zzz"
+        case .endedOnBreak: "pause.circle"
         case .stoppedBySomeoneElse: "person.2"
         }
+    }
+}
+
+/// How long the breaks in a session took, as a grey capsule: "30 min break".
+///
+/// Grey where a flag is orange, because a break is not something for the
+/// board to look into — it is just why the hours are fewer than the times
+/// suggest (ADR 0022).
+struct BreakBadge: View {
+    @Environment(\.locale) private var locale
+
+    let minutes: Minutes
+
+    var body: some View {
+        Label {
+            Text("\(HoursFormatter.durationText(minutes: minutes, locale: locale)) break")
+        } icon: {
+            Image(systemName: "pause.fill")
+        }
+        .font(.caption.weight(.medium))
+        .labelStyle(.titleAndIcon)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(Color(.tertiarySystemFill), in: .capsule)
+        .foregroundStyle(.supporting)
     }
 }
 
@@ -46,6 +73,7 @@ extension SessionFlag {
         ForEach(SessionFlag.allCases, id: \.self) { flag in
             FlagBadge(flag: flag)
         }
+        BreakBadge(minutes: 30)
     }
     .padding()
 }

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sync screen after the closing time</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1194px; height: 834px; position: relative; overflow: hidden; box-sizing: border-box; background: #F2F2F7; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif; color: #000000; -webkit-font-smoothing: antialiased">
+
+<button type="button" aria-label="Back" style="position: absolute; left: 20px; top: 20px; width: 44px; height: 44px; padding: 0; border-radius: 999px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.78); border: 1px solid rgba(255,255,255,0.95); box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 1px 2px rgba(0,0,0,0.05), 0 6px 18px rgba(0,0,0,0.07)">
+<svg width="12" height="20" viewBox="0 0 12 20" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2 2 10l8 8"></path></svg>
+</button>
+<h1 style="position: absolute; left: 0; right: 0; top: 30px; margin: 0; text-align: center; font-size: 17px; font-weight: 600">Sync</h1>
+
+<div style="position: absolute; left: 24px; top: 92px; width: 340px; box-sizing: border-box; padding: 20px 16px 16px; border-radius: 28px; background: #FFFFFF; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; align-items: flex-start; gap: 14px">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#8A4500" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.6-9.96A6.5 6.5 0 0 1 19 9a4.5 4.5 0 0 1-1 8.9"></path><path d="M12 20v-8"></path><path d="M9 14.5l3-3 3 3"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 17px; font-weight: 600">Waiting to upload</div>
+<div style="font-size: 13px; color: #3A3A3C">Nothing is sent by itself. Upload when the hours are complete.</div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 0 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 15px; color: #3A3A3C">Sessions waiting</div>
+<div style="font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums">4</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 15px; color: #3A3A3C">Hours waiting</div>
+<div style="font-size: 28px; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums">21 hrs, 16 min</div>
+</div>
+</div>
+<button type="button" style="align-self: flex-start; height: 44px; padding: 0 18px; border-radius: 999px; display: flex; align-items: center; gap: 10px; font-family: inherit; font-size: 17px; font-weight: 600; color: #FFFFFF; cursor: pointer; background: #0A6CDB; border: 1px solid #0A6CDB; box-shadow: inset 0 1px 1px rgba(255,255,255,0.35), 0 6px 16px rgba(10,108,219,0.28)">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.6-9.96A6.5 6.5 0 0 1 19 9a4.5 4.5 0 0 1-1 8.9"></path><path d="M12 20v-8"></path><path d="M9 14.5l3-3 3 3"></path></svg>
+<span>Upload 4 sessions</span>
+</button>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 15px">
+<div style="display: flex; justify-content: space-between; gap: 12px"><span>Last upload</span><span style="color: #3A3A3C">14 Nov, 17:32</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><span>Last attempt</span><span style="color: #3A3A3C">14 Nov, 17:32</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><span>Members refreshed</span><span style="color: #3A3A3C">2 hours ago</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><span>Club</span><span style="color: #3A3A3C">Zweefvliegclub Voorbeeld</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px"><span>Maintenance period</span><span style="color: #3A3A3C">1</span></div>
+</div>
+</div>
+
+<div style="position: absolute; left: 388px; right: 24px; top: 92px; display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 600; color: #3A3A3C">Waiting to upload</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{sessions}}" as="s" hint-placeholder-count="4">
+<div style="box-sizing: border-box; padding: 16px; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<div aria-hidden="true" style="width: 52px; height: 52px; flex-shrink: 0; border-radius: 999px; color: #FFFFFF; font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center; background: {{s.bg}}">{{s.initials}}</div>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 17px; font-weight: 600; letter-spacing: -0.2px">{{s.name}}</div>
+<div style="font-size: 15px; color: #3A3A3C; font-variant-numeric: tabular-nums">{{s.when}}</div>
+</div>
+<div style="font-size: 28px; font-weight: 600; letter-spacing: -0.5px; font-variant-numeric: tabular-nums">{{s.duration}}</div>
+</div>
+<div style="min-height: 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="font-size: 16px">{{s.material}}</div>
+<sc-if value="{{s.hasBreak}}" hint-placeholder-val="{{ false }}">
+<div style="height: 28px; padding: 0 12px; border-radius: 999px; display: flex; align-items: center; gap: 6px; background: #E9E9EE; color: #3A3A3C; font-size: 13px; font-weight: 600">
+<svg width="10" height="10" viewBox="0 0 14 14" fill="#3A3A3C" aria-hidden="true"><rect x="2" y="1" width="3.5" height="12" rx="1"></rect><rect x="8.5" y="1" width="3.5" height="12" rx="1"></rect></svg>
+<span>{{s.breakLabel}}</span>
+</div>
+</sc-if>
+<sc-if value="{{s.hasFlag}}" hint-placeholder-val="{{ false }}">
+<div style="height: 28px; padding: 0 12px; border-radius: 999px; display: flex; align-items: center; gap: 6px; background: #FCEBD9; color: #8A4500; font-size: 13px; font-weight: 600">
+<svg width="10" height="10" viewBox="0 0 14 14" fill="#8A4500" aria-hidden="true"><circle cx="7" cy="7" r="6"></circle></svg>
+<span>{{s.flagLabel}}</span>
+</div>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+
+<h2 style="margin: 16px 0 0; font-size: 20px; font-weight: 600; color: #3A3A3C">Recently uploaded</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="box-sizing: border-box; padding: 16px; border-radius: 24px; background: #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 12px">
+<div aria-hidden="true" style="width: 52px; height: 52px; flex-shrink: 0; border-radius: 999px; background: #1A7F5F; color: #FFFFFF; font-size: 20px; font-weight: 600; display: flex; align-items: center; justify-content: center">BW</div>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+<div style="font-size: 17px; font-weight: 600; letter-spacing: -0.2px">Bart Wouters</div>
+<div style="font-size: 15px; color: #3A3A3C; font-variant-numeric: tabular-nums">14 Nov · 09:00–10:30</div>
+</div>
+<div style="font-size: 28px; font-weight: 600; letter-spacing: -0.5px; font-variant-numeric: tabular-nums">1h30m</div>
+</div>
+<div style="min-height: 28px; display: flex; align-items: center; font-size: 16px">OO-ZXA</div>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1194,"height":834}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      sessions: [
+        { initials: 'JV', bg: '#4B45C6', name: 'Jan Verhoeven', when: '21 Nov · 09:12–12:30', duration: '3h18m', material: 'OO-ZXA', hasBreak: false, breakLabel: '', hasFlag: true, flagLabel: 'Ended on a break' },
+        { initials: 'KM', bg: '#9B2FAE', name: 'Koen Maes', when: '21 Nov · 10:00–16:40', duration: '6h10m', material: 'Club', hasBreak: true, breakLabel: '30 min break', hasFlag: false, flagLabel: '' },
+        { initials: 'PD', bg: '#C02A4A', name: 'Pieter De Smet', when: '21 Nov · 12:14–17:02', duration: '4h48m', material: 'Lier', hasBreak: false, breakLabel: '', hasFlag: false, flagLabel: '' },
+        { initials: 'SC', bg: '#1777A6', name: 'Sofie Claes', when: '21 Nov · 14:00–21:00', duration: '7h00m', material: 'OO-ZXB', hasBreak: false, breakLabel: '', hasFlag: true, flagLabel: 'Stopped automatically' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

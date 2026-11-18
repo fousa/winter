@@ -106,6 +106,24 @@ struct MaintenanceHourDraftTests {
         #expect(draft.hours == 7.0)
     }
 
+    @Test("A break is left out of the hours and shows as a gap in the times")
+    func leavesTheBreakOut() throws {
+        let work = session(from: date(15, 9, 12), to: date(15, 16, 5), comment: "Replaced the canopy seal")
+        work.breaks = [WorkBreak(start: date(15, 12, 30), end: date(15, 13, 15))]
+        let draft = try #require(self.draft(for: work))
+
+        // 6 h 53 min at the club, 45 minutes of lunch: 6 h 08 min worked.
+        #expect(draft.hours == 6.13)
+        #expect(draft.description == "09:12–12:30 · 13:15–16:05 · Replaced the canopy seal")
+    }
+
+    @Test("A timer still on a break is a running session, and cannot be uploaded")
+    func refusesAPausedSession() {
+        let work = session(from: date(15, 9, 12), to: nil)
+        work.pausedAt = date(15, 12, 30)
+        #expect(draft(for: work) == nil)
+    }
+
     @Test("A session that runs past midnight is logged on the day it started")
     func usesTheStartingDay() throws {
         let work = session(from: date(15, 23, 30), to: date(16, 0, 30))

@@ -51,7 +51,12 @@ extension MaintenanceHourDraft {
             // material is picked (ADR 0020).
             project: project ?? "",
             description: RegistrationDescription.text(
-                for: RegistrationDescription.Input(start: session.start, stop: stop, comment: session.comment),
+                for: RegistrationDescription.Input(
+                    start: session.start,
+                    stop: stop,
+                    breaks: session.breaks,
+                    comment: session.comment
+                ),
                 timeZone: calendar.timeZone
             ),
             status: status
@@ -63,8 +68,8 @@ extension MaintenanceHourDraft {
     /// Used after an upload timed out, when the app cannot tell whether its
     /// POST arrived. Without a machine tag in the description (ADR 0019) the
     /// registration is recognised by what it says: the same member, day,
-    /// hours, aircraft and description — and the description holds the start
-    /// and stop time to the minute, which one member cannot have twice.
+    /// hours, aircraft and description — and the description holds the times
+    /// worked to the minute, which one member cannot have twice.
     func isSameRegistration(as hour: ZweefMaintenanceHour) -> Bool {
         hour.userId == userId
             && hour.date == date

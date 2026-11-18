@@ -74,14 +74,21 @@ struct WinterApp: App {
     ///
     /// With `-sampleScreen sync` or `-sampleScreen stop` the club also has
     /// finished sessions, and the home screen opens that screen on launch.
+    /// `-samplePaused <minutes>` puts the first timer on a break.
     private static func debugSampleClub() -> AppEnvironment? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
         guard let index = arguments.firstIndex(of: "-sampleClub") else { return nil }
         let running = arguments.indices.contains(index + 1) ? Int(arguments[index + 1]) ?? 0 : 0
+        // `-samplePaused 12`: the first timer went on a break 12 minutes ago.
+        var pausedMinutes: Int?
+        if let paused = arguments.firstIndex(of: "-samplePaused"), arguments.indices.contains(paused + 1) {
+            pausedMinutes = Int(arguments[paused + 1])
+        }
         return .sampleClub(
             runningSessionCount: running,
             withFinishedSessions: arguments.contains("-sampleScreen"),
+            pausedMinutes: pausedMinutes,
             isDemo: false
         )
         #else

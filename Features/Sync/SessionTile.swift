@@ -55,6 +55,10 @@ struct SessionTile: View {
 
                 Spacer(minLength: 0)
 
+                // A break is information, not a flag: grey, and before them.
+                if session.breakMinutes > 0 {
+                    BreakBadge(minutes: session.breakMinutes)
+                }
                 ForEach(session.flags, id: \.self) { FlagBadge(flag: $0) }
             }
             // As tall as a flag badge, with or without one.
@@ -87,7 +91,9 @@ struct SessionTile: View {
     }
 
     /// "23 Oct · 09:12–11:30": no weekday, so the times still fit beside the
-    /// duration in a portrait column.
+    /// duration in a portrait column. First start to last stop, whatever
+    /// breaks lie between: those are in the badge, and taken out of the
+    /// duration beside it.
     private var when: String {
         let day = session.start.formatted(.dateTime.day().month(.abbreviated).locale(locale))
         let start = session.start.formatted(date: .omitted, time: .shortened)

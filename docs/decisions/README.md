@@ -21,10 +21,11 @@ Every significant choice is recorded in a short document: context, decision, con
 | 0015 | [Hours are uploaded by hand](0015-manual-upload.md) | accepted |
 | 0016 | [Xcode Cloud builds the releases](0016-xcode-cloud-for-distribution.md) | accepted |
 | 0017 | [Each device writes in its own language](0017-reporting-language-follows-the-device.md) | superseded by 0019 |
-| 0018 | [No closing the day](0018-no-closing-the-day.md) | accepted |
-| 0019 | [The description is the times and a comment](0019-description-is-times-and-a-comment.md) | accepted |
+| 0018 | [No closing the day](0018-no-closing-the-day.md) | accepted (a paused timer at the closing time: 0022) |
+| 0019 | [The description is the times and a comment](0019-description-is-times-and-a-comment.md) | accepted (the times are the stretches worked: 0022) |
 | 0020 | [What the work was on comes from zweef.app](0020-material-from-zweef-app.md) | accepted |
 | 0021 | [A demo mode with a sample club](0021-demo-mode.md) | accepted |
+| 0022 | [A timer can be paused, within one day](0022-pause-within-one-day.md) | accepted |
 
 ## Template
 ```markdown

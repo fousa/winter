@@ -1,6 +1,22 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ break": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ de pause"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ pauze"
+          }
+        }
+      }
+    },
     "%@ is working since %@": {
       "localizations": {
         "fr": {
@@ -13,6 +29,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ is aan het werk sinds %2$@"
+          }
+        }
+      }
+    },
+    "%@, on a break since %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, en pause depuis %2$@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, in pauze sinds %2$@"
           }
         }
       }
@@ -173,6 +205,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Terug"
+          }
+        }
+      }
+    },
+    "Break of %@ · forgot to resume?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause de %@ · oublié de reprendre ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pauze van %@ · vergeten te hervatten?"
           }
         }
       }
@@ -609,6 +657,38 @@
         }
       }
     },
+    "Done for the day? Stopping now saves %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fini pour aujourd'hui ? Arrêter maintenant enregistre %@."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klaar voor vandaag? Nu stoppen bewaart %@."
+          }
+        }
+      }
+    },
+    "Ended on a break": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminée en pause"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geëindigd tijdens pauze"
+          }
+        }
+      }
+    },
     "Enter the admin code": {
       "localizations": {
         "fr": {
@@ -737,6 +817,22 @@
         }
       }
     },
+    "Forgot to resume?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oublié de reprendre ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vergeten te hervatten?"
+          }
+        }
+      }
+    },
     "Forgotten it? The app has to be deleted and set up again, and hours that have not been uploaded are lost with it.": {
       "localizations": {
         "fr": {
@@ -749,6 +845,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vergeten? Dan moet de app verwijderd en opnieuw ingesteld worden, en gaan uren die nog niet doorgestuurd zijn verloren."
+          }
+        }
+      }
+    },
+    "Going for lunch? Pause, and the break is not counted.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous partez déjeuner ? Mettez en pause : la pause n'est pas comptée."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ga je lunchen? Pauzeer, dan telt de pauze niet mee."
           }
         }
       }
@@ -1377,6 +1489,22 @@
         }
       }
     },
+    "On a break since %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En pause depuis %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In pauze sinds %@"
+          }
+        }
+      }
+    },
     "On a shared device, turn on Guided Access so the app cannot be left: Settings › Accessibility › Guided Access": {
       "localizations": {
         "fr": {
@@ -1389,6 +1517,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zet op een gedeeld toestel Begeleide toegang aan, zodat de app niet verlaten kan worden: Instellingen › Toegankelijkheid › Begeleide toegang"
+          }
+        }
+      }
+    },
+    "Opens resuming or stopping": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvre la reprise ou l'arrêt"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opent hervatten of stoppen"
           }
         }
       }
@@ -1485,6 +1629,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Plak de sleutel. Die gaat rechtstreeks naar de Keychain."
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pauze"
           }
         }
       }
@@ -1661,6 +1821,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verplicht door je club."
+          }
+        }
+      }
+    },
+    "Resume": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reprendre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hervatten"
           }
         }
       }
@@ -1975,18 +2151,18 @@
         }
       }
     },
-    "Stop": {
+    "Still on a break": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arrêter"
+            "value": "Encore en pause"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stoppen"
+            "value": "Nog in pauze"
           }
         }
       }
@@ -2067,6 +2243,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gestopt door iemand anders"
+          }
+        }
+      }
+    },
+    "Stopping now saves %@ with a break of %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter maintenant enregistre %1$@ avec une pause de %2$@."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu stoppen bewaart %1$@ met een pauze van %2$@."
           }
         }
       }
@@ -2295,6 +2487,22 @@
         }
       }
     },
+    "This break has lasted %@. How long was it really?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette pause dure depuis %@. Combien de temps a-t-elle vraiment duré ?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze pauze duurt al %@. Hoe lang was ze echt?"
+          }
+        }
+      }
+    },
     "This key opens your club's whole zweef.app account — member data and finances included — and it is stored on this device. Keep the device somewhere safe, and if you lose it, create a new key in zweef.app straight away.": {
       "localizations": {
         "fr": {
@@ -2323,6 +2531,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Deze sleutel geeft toegang tot het hele zweef.app-account van je club. Is dit toestel kwijt, maak dan een nieuwe sleutel aan in zweef.app."
+          }
+        }
+      }
+    },
+    "Timer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chronomètre"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer"
           }
         }
       }
@@ -2855,6 +3079,22 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "worked so far": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "travaillé jusqu'ici"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gewerkt tot nu toe"
           }
         }
       }

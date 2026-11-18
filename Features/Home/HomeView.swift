@@ -242,13 +242,14 @@ struct HomeView: View {
         .accessibilityElement(children: .contain)
     }
 
-    /// The running timers, oldest first, as tiles that show the time.
+    /// The running timers, oldest first, as tiles that show the time. A
+    /// member on a break stays here, marked as paused (ADR 0022).
     private var workingNowSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle(Text("Working now"))
             tileGrid(minimumWidth: metrics.workingTileMinimumWidth) {
                 ForEach(workingNow, id: \.session.id) { session, member in
-                    MemberTile(member: member, workingSince: session.start) {
+                    MemberTile(member: member, working: session.facts) {
                         model.route = .stop(sessionId: session.id)
                     }
                     .matchedGeometryEffect(id: AnyHashable(member.zweefId), in: tiles)
@@ -276,7 +277,9 @@ struct HomeView: View {
         @ViewBuilder content: () -> some View
     ) -> some View {
         LazyVGrid(
-            columns: [GridItem(.adaptive(minimum: minimumWidth ?? metrics.tileMinimumWidth), spacing: 10)],
+            // Top-aligned: a paused tile is a line taller than its neighbours,
+            // and names that jump down beside it read as a broken row.
+            columns: [GridItem(.adaptive(minimum: minimumWidth ?? metrics.tileMinimumWidth), spacing: 10, alignment: .top)],
             spacing: 10,
             content: content
         )
@@ -384,15 +387,20 @@ struct HomeView: View {
                     // not offered (ADR 0020).
                     material: material.filter(\.isOffered),
                     requiresComment: settings.first?.requiresComment ?? false
-                ) { item, comment in
+                ) { item, comment, countedBreak in
                     model.stop(
                         session,
                         member: membersById[session.memberId],
                         material: item,
                         comment: comment,
+                        countedBreak: countedBreak,
                         store: store,
                         locale: locale
                     )
+                } onPause: {
+                    model.pause(session, store: store)
+                } onResume: { countedBreak in
+                    model.resume(session, countedBreak: countedBreak, store: store)
                 } onDiscard: {
                     model.discard(session, store: store)
                 } onDismiss: {

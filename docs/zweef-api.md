@@ -122,14 +122,14 @@ Two things that test also settled:
 | `period_id` | The active period (see "Finding the period") |
 | `user_id`, `user_name` | The member (`zweefId`, full name) |
 | `date` | `yyyy-MM-dd` of `start` in the device's own time zone, which is what defines the club's day |
-| `hours` | The duration in hours, two decimals (2h15 → 2.25). Rounding: the exact minutes |
+| `hours` | The time worked in hours, two decimals (2h15 → 2.25), with the breaks taken out (ADR 0022). Rounding: the exact minutes |
 | `material_id` | The chosen aircraft's material `id`, or `null` |
 | `workorder_id` | `null` |
 | `is_private` | `false` |
 | `category` | `""` (see above) |
 | `sub_category` | `""` |
 | `project` | The picked material's name, as zweef.app's own form books it (assumed, ADR 0020), or `""` |
-| `description` | The times, then the member's comment if there is one: `09:12–11:30 · Replaced the canopy seal` (ADR 0019). No task, aircraft, flags or tag: those are in `project` and `material_id`, or stay on the device |
+| `description` | The times, then the member's comment if there is one: `09:12–11:30 · Replaced the canopy seal` (ADR 0019). A session with a break lists each stretch that was worked, so the break is the gap: `09:12–12:30 · 13:15–16:05 · Replaced the canopy seal` (ADR 0022). No task, aircraft, flags or tag: those are in `project` and `material_id`, or stay on the device |
 | `status` | `"in_aanvraag"` |
 
 ## Finding the period

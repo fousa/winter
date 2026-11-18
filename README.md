@@ -4,6 +4,7 @@
 
 ## Features
 - Start and stop in two taps, with member photos
+- Pause for lunch and resume afterwards: the break is not counted, and a forgotten resume can be put right the same day
 - Fully offline; hours are uploaded with one tap on the sync screen, which shows what is still waiting
 - Anyone can stop a forgotten timer, and timers still running at the closing time stop automatically
 - Registrations arrive in zweef.app as "pending approval", so the board approves them

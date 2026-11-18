@@ -187,10 +187,7 @@ actor SyncEngine {
                 calendar: calendar
             ) else { continue }
 
-            session.stop = ClosingTime.autoStopDate(for: session.start, closing: closing, calendar: calendar)
-            session.status = .completed
-            session.syncState = .local
-            session.autoStopped = true
+            session.end(atClosingTime: ClosingTime.autoStopDate(for: session.start, closing: closing, calendar: calendar))
             stopped += 1
         }
 

@@ -54,7 +54,7 @@ One folder per screen, containing the view, the view model and the previews.
 |---|---|
 | `Home` | Member list with the "Working now" section, search, letter index, the sync status button, the hidden entrance to Settings |
 | `StartSheet` | Confirming that the right member is starting; already working → redirect to stopping |
-| `StopSheet` | Showing the running time, picking what the work was on (zweef.app's material), a comment, stopping |
+| `StopSheet` | The "Timer" sheet: showing the running time, pausing and resuming, picking what the work was on (zweef.app's material), a comment, stopping |
 | `Confirmation` | Confirmation after a stop, with "Undo"; closed by tapping outside it |
 | `Sync` | Sync status, pending/rejected/uploaded sessions, and the "Upload" button |
 | `Setup` | The setup assistant on first launch |
@@ -80,14 +80,14 @@ its `modelContext` where it needs to write. That keeps the model types free of
 
 ### `Domain/`
 Pure functions and value types, without SwiftData, SwiftUI or networking. That makes them fully unit-testable.
-- `SessionRules`: `isShortSession`, `isLongSession`, `flags(for:)`.
+- `SessionRules`: the time worked with the breaks taken out, `isShortSession`, `isLongSession`, `isLongBreak`, `flags(for:)`.
 - `MemberDirectory`: search (diacritics-insensitive), letter sections, and the "often here" ranking.
 - `ClosingTime`: computes the automatic stop time for a session.
 - `HoursFormatter`: duration ↔ "2 h 18 min" ↔ decimal hours (2.3).
-- `RegistrationDescription`: builds the `description` field for zweef.app: the times and the member's comment (ADR 0019).
+- `RegistrationDescription`: builds the `description` field for zweef.app: the times — each stretch worked — and the member's comment (ADR 0019, ADR 0022).
 
 ### `Data/`
-- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `stop(session:material:comment:by:)`, `undo(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
+- `SessionStore` (`@MainActor`): the only place that creates or modifies a `WorkSession`. Methods: `start(member:)`, `pause(_:)`, `resume(_:countingBreak:)`, `stop(session:material:comment:by:)`, `undo(_:)`, `applyAutoStop(now:)`. Saves immediately after every mutation.
 - `SyncEngine` (`actor`): see [sync.md](sync.md). Creates its own `ModelContext` per run, on its own executor, so nothing is shared with the UI and nothing stale survives between runs. Runs one at a time: actors are reentrant, so a flag guards it and extra triggers merge into a single follow-up.
 - `AppEnvironment` (`App/`): one per mode — the database, configuration, secrets, connection and sync stack. `WinterApp` keeps the real one for the whole run and swaps in a demo one while the sample club is open (ADR 0021); `DemoAction` in the environment starts and leaves it.
 - `SyncCoordinator` (`@MainActor`, `@Observable`): the only thing the screens talk to about syncing. Owns the triggers — connectivity returning, the app becoming active and the background task (which only refresh and auto-stop), and "Upload" (the only one that sends hours, ADR 0015) — and publishes `isSyncing`, `isConnected` and the last outcome.
@@ -131,6 +131,15 @@ Home (tap a member) → StartSheet → SessionStore.start(member)
 Home (tap a tile in "Working now") → StopSheet → SessionStore.stop(session, material, comment)
    → status .completed, syncState .local
    → Confirmation (Undo, until tapped away) → Home
+```
+
+### Pause and resume
+```
+Home (tap a tile in "Working now") → StopSheet ("Timer") → SessionStore.pause(session)
+   → still .running, pausedAt = now; the tile stays, its time standing still
+Home (tap the paused tile) → StopSheet → SessionStore.resume(session)
+   → the break is stored and not counted; pausedAt = nil
+Closing time, still paused → stop = pausedAt, endedOnBreak (ADR 0022)
 ```
 
 ### Uploading

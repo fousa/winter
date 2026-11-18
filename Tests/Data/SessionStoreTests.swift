@@ -332,6 +332,243 @@ struct SessionStoreTests {
         #expect(session.status == .running)
     }
 
+    // MARK: - Pausing (ADR 0022)
+
+    @Test("Pausing keeps the session running, and remembers when the break began")
+    func pauseKeepsTheSessionRunning() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+
+        #expect(session.status == .running)
+        #expect(session.isPaused)
+        #expect(session.pausedAt == date(15, 12, 30))
+        #expect(session.stop == nil)
+        #expect(try fixture.store.runningSessions().count == 1)
+        #expect(!fixture.context.hasChanges)
+    }
+
+    @Test("A member on a break is still working, so they cannot start a second timer")
+    func pausedMemberCannotStartAgain() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        try fixture.store.pause(session)
+
+        #expect(throws: SessionStore.StoreError.memberAlreadyWorking(sessionId: session.id)) {
+            try fixture.store.start(member: member)
+        }
+    }
+
+    @Test("A timer cannot be paused twice, or resumed when it is not paused")
+    func pauseAndResumeAreRefusedOutOfTurn() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+
+        #expect(throws: SessionStore.StoreError.sessionNotPaused) {
+            try fixture.store.resume(session)
+        }
+        try fixture.store.pause(session)
+        #expect(throws: SessionStore.StoreError.sessionAlreadyPaused) {
+            try fixture.store.pause(session)
+        }
+    }
+
+    @Test("A finished session cannot be paused")
+    func pauseNeedsARunningSession() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        try fixture.store.stop(session)
+
+        #expect(throws: SessionStore.StoreError.sessionNotRunning) {
+            try fixture.store.pause(session)
+        }
+    }
+
+    @Test("Resuming stores the break, and the hours leave it out")
+    func resumeStoresTheBreak() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+
+        fixture.clock.now = date(15, 13, 15)
+        try fixture.store.resume(session)
+
+        #expect(!session.isPaused)
+        #expect(session.breaks == [WorkBreak(start: date(15, 12, 30), end: date(15, 13, 15))])
+
+        fixture.clock.now = date(15, 16, 5)
+        try fixture.store.stop(session)
+
+        #expect(session.stop == date(15, 16, 5))
+        #expect(session.minutes == 368)
+        #expect(session.breakMinutes == 45)
+        #expect(!session.endedOnBreak)
+    }
+
+    @Test("A session can have more than one break")
+    func severalBreaksAreKept() throws {
+        let fixture = try makeFixture(now: date(15, 9))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+
+        fixture.clock.now = date(15, 10, 30)
+        try fixture.store.pause(session)
+        fixture.clock.now = date(15, 10, 45)
+        try fixture.store.resume(session)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+        fixture.clock.now = date(15, 13)
+        try fixture.store.resume(session)
+        fixture.clock.now = date(15, 17)
+        try fixture.store.stop(session)
+
+        #expect(session.breaks.count == 2)
+        #expect(session.minutes == 8 * 60 - 45)
+    }
+
+    @Test("A forgotten resume is repaired: the break ends as long after it began as the member says")
+    func resumeCountingAShorterBreak() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+
+        // Noticed at five past four; lunch took three quarters of an hour.
+        fixture.clock.now = date(15, 16, 5)
+        try fixture.store.resume(session, countingBreak: 45)
+
+        #expect(session.breaks == [WorkBreak(start: date(15, 12, 30), end: date(15, 13, 15))])
+        try fixture.store.stop(session)
+        #expect(session.minutes == 368)
+    }
+
+    @Test("A break cannot be given a length that reaches into the future")
+    func countedBreakIsNeverLongerThanTheBreak() throws {
+        let fixture = try makeFixture(now: date(15, 9))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12)
+        try fixture.store.pause(session)
+
+        fixture.clock.now = date(15, 12, 20)
+        try fixture.store.resume(session, countingBreak: 60)
+
+        #expect(session.breaks == [WorkBreak(start: date(15, 12), end: date(15, 12, 20))])
+    }
+
+    @Test("Stopping during a break ends the session where the break began")
+    func stopWhilePausedEndsAtTheBreak() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+
+        // Went home at lunch; stops the timer from the car park at four.
+        fixture.clock.now = date(15, 16)
+        try fixture.store.stop(session)
+
+        #expect(session.status == .completed)
+        #expect(session.stop == date(15, 12, 30))
+        #expect(session.minutes == 198)
+        #expect(session.pausedAt == nil)
+        #expect(session.endedOnBreak)
+        // Chosen by a person, so nothing for the board to look into.
+        #expect(session.flags.isEmpty)
+    }
+
+    @Test("Undoing a stop made during a break puts the member back on that break")
+    func undoStopRestoresTheBreak() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+        fixture.clock.now = date(15, 16)
+        try fixture.store.stop(session)
+
+        try fixture.store.undoStop(session)
+
+        #expect(session.status == .running)
+        #expect(session.stop == nil)
+        #expect(session.pausedAt == date(15, 12, 30))
+        #expect(!session.endedOnBreak)
+    }
+
+    @Test("A paused timer can be deleted like any running one")
+    func discardWhilePaused() throws {
+        let fixture = try makeFixture(now: date(15, 9))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        try fixture.store.pause(session)
+
+        try fixture.store.discard(session)
+
+        #expect(try fixture.store.runningSessions().isEmpty)
+    }
+
+    @Test("A pause never outlives the day: at the closing time it ends where the break began")
+    func autoStopEndsAPausedTimerAtItsBreak() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+
+        // Noticed the next morning.
+        fixture.clock.now = date(16, 9)
+        let stopped = try fixture.store.applyAutoStop(closing: closing)
+
+        #expect(stopped == 1)
+        #expect(session.status == .completed)
+        #expect(session.stop == date(15, 12, 30))
+        #expect(session.minutes == 198)
+        #expect(session.pausedAt == nil)
+        #expect(session.autoStopped)
+        #expect(session.flags == [.endedOnBreak])
+        #expect(session.syncState == .local)
+    }
+
+    @Test("Before the closing time a paused timer is left on its break")
+    func autoStopLeavesAPausedTimerAloneDuringTheDay() throws {
+        let fixture = try makeFixture(now: date(15, 9, 12))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 12, 30)
+        try fixture.store.pause(session)
+
+        fixture.clock.now = date(15, 20, 59)
+        #expect(try fixture.store.applyAutoStop(closing: closing) == 0)
+        #expect(session.isPaused)
+    }
+
+    @Test("A timer resumed after its break still stops at the closing time, break taken out")
+    func autoStopAfterAResumedBreak() throws {
+        let fixture = try makeFixture(now: date(15, 14))
+        let member = try makeMember(fixture.context)
+        let session = try fixture.store.start(member: member)
+        fixture.clock.now = date(15, 17)
+        try fixture.store.pause(session)
+        fixture.clock.now = date(15, 17, 30)
+        try fixture.store.resume(session)
+
+        fixture.clock.now = date(16, 9)
+        try fixture.store.applyAutoStop(closing: closing)
+
+        #expect(session.stop == date(15, 21))
+        #expect(session.minutes == 7 * 60 - 30)
+        #expect(session.flags == [.stoppedAutomatically])
+    }
+
     // MARK: - Settings
 
     @Test("Settings are created once, with the documented defaults")

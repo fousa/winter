@@ -12,6 +12,9 @@ The app ships in English, Dutch and French ([ADR 0010](decisions/0010-three-lang
 | Running session / timer | `status == .running` | Lopende sessie / timer | Session en cours | A session without a stop time |
 | Material | `Material` | Materiaal | Matériel | What the work was on: an item of zweef.app `material.json` — an aircraft, rolling stock, or a club project (ADR 0020) |
 | Flying / Rolling / Other | `MaterialKind` | Vliegend / Rollend / Overig | Volant / Roulant / Autre | zweef.app's three tabs: `material.json` `category` `kist`, `rollend`, `overig` |
+| Break / paused | `pausedAt`, `WorkBreak` | Pauze / gepauzeerd | Pause / en pause | Time inside a session that is not counted; a paused timer is still a running session (ADR 0022) |
+| Pause / Resume | `SessionStore.pause`, `.resume` | Pauze / Hervatten | Pause / Reprendre | The two buttons on the timer sheet |
+| Ended on a break | `endedOnBreak` | Geëindigd tijdens pauze | Terminée en pause | A session the closing time ended while it was paused; it stops where the break began |
 | Closing time | `closingTime` | Sluitingsuur | Heure de fermeture | The time at which running timers stop automatically |
 | Stopped automatically | `autoStopped` | Automatisch gestopt | Arrêtée automatiquement | A session stopped by the closing time |
 | Stopped by someone else | `stoppedByOther` | Gestopt door iemand anders | Arrêtée par quelqu'un d'autre | Someone stopped another member's timer |

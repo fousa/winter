@@ -48,6 +48,14 @@ Work phase by phase; after each phase, make sure the app builds and the tests pa
 - [x] Configurable task list (TaskDefinition), seeded from the catalog in the setup language. Replaced later by zweef.app's material list (ADR 0020).
 - [x] Reporting language in `AppSettings` and in the setup, used by `RegistrationDescription`. Removed later (ADR 0017, ADR 0019).
 
+## Phase 5 — Pause ([ADR 0022](docs/decisions/0022-pause-within-one-day.md))
+- [x] Breaks in the domain rules: the time worked, the stretches for the description, a long break, the "ended on a break" flag.
+- [x] `WorkSession.pausedAt` and its breaks, with a test that opens a database from before them.
+- [x] `SessionStore.pause` and `resume`, stopping and auto-stopping while paused, undo back onto the break.
+- [x] The "Timer" sheet (Pause, Resume, "Forgot to resume?"), the paused tile, the break badge and flag on the sync screen; `nl` and `fr`.
+- [ ] A native Dutch and a native French speaker read the new strings, like the rest.
+- [ ] At the club: does an hour suit as the moment to ask "forgot to resume?", and are 30, 45 and 60 minutes the right lengths to offer?
+
 ## Phase 6 — Finishing touches
 
 Done in code:

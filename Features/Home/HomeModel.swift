@@ -124,15 +124,23 @@ final class HomeModel {
         }
     }
 
+    /// - Parameter countedBreak: For a timer left on a break: how long the
+    ///   break really was, when the member said so. The break is then ended
+    ///   that long after it began and the session stops now; without it, a
+    ///   paused session stops where its break began (ADR 0022).
     func stop(
         _ session: WorkSession,
         member: Member?,
         material: Material?,
         comment: String? = nil,
+        countedBreak: Minutes? = nil,
         store: SessionStore,
         locale: Locale = .current
     ) {
         do {
+            if let countedBreak, session.isPaused {
+                try store.resume(session, countingBreak: countedBreak)
+            }
             try store.stop(session, material: material, comment: comment)
             feedback += 1
             endSearch()
@@ -148,6 +156,37 @@ final class HomeModel {
         } catch {
             route = nil
         }
+    }
+
+    /// Puts a timer on a break.
+    ///
+    /// No confirmation and no undo chip: the sheet closes, the tile stays in
+    /// "Working now" with its time standing still and "On a break since…"
+    /// under it, and "Resume" takes it back.
+    func pause(_ session: WorkSession, store: SessionStore) {
+        do {
+            try store.pause(session)
+            feedback += 1
+            endSearch()
+        } catch {
+            // The timer is still running, which the tile shows.
+        }
+        route = nil
+    }
+
+    /// Ends a break: the timer runs again.
+    ///
+    /// - Parameter countedBreak: How long a forgotten break really was, or
+    ///   nil to count all of it.
+    func resume(_ session: WorkSession, countedBreak: Minutes? = nil, store: SessionStore) {
+        do {
+            try store.resume(session, countingBreak: countedBreak)
+            feedback += 1
+            endSearch()
+        } catch {
+            // Still on its break, which the tile shows.
+        }
+        route = nil
     }
 
     /// Throws a running timer away instead of saving it.

@@ -84,11 +84,24 @@ final class AppEnvironment {
 
     /// The same sample club, opened by the debug launch arguments `-sampleClub`
     /// and `-sampleScreen` (CONTRIBUTING.md).
-    static func sampleClub(runningSessionCount: Int, withFinishedSessions: Bool, isDemo: Bool) -> AppEnvironment? {
+    ///
+    /// - Parameter pausedMinutes: `-samplePaused`: the first timer is on a
+    ///   break that began this many minutes ago, and the finished sessions
+    ///   include ones with breaks (ADR 0022).
+    static func sampleClub(
+        runningSessionCount: Int,
+        withFinishedSessions: Bool,
+        pausedMinutes: Int? = nil,
+        isDemo: Bool
+    ) -> AppEnvironment? {
         let suite = "app.winter.sample-club"
         guard let container = try? (withFinishedSessions
-            ? SampleData.finishedSessionsContainer(runningSessionCount: runningSessionCount)
-            : SampleData.container(runningSessionCount: runningSessionCount)),
+            ? SampleData.finishedSessionsContainer(
+                runningSessionCount: runningSessionCount,
+                pausedMinutes: pausedMinutes,
+                withBreaks: pausedMinutes != nil
+            )
+            : SampleData.container(runningSessionCount: runningSessionCount, pausedMinutes: pausedMinutes)),
               let defaults = UserDefaults(suiteName: suite)
         else { return nil }
         defaults.removePersistentDomain(forName: suite)

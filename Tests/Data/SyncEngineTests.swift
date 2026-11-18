@@ -373,6 +373,57 @@ struct SyncEngineTests {
         #expect(drafts[0].description == "14:00–21:00")
     }
 
+    @Test("A timer left paused ends where its break began, and that is what is uploaded")
+    @MainActor
+    func endsAPausedTimerAtItsBreak() async throws {
+        let fixture = try makeFixture(now: date(16, 9))
+        let session = try addSession(to: fixture, start: date(15, 9, 12), stop: nil, state: .local, status: .running)
+        session.pausedAt = date(15, 12, 30)
+        try fixture.container.mainContext.save()
+
+        let outcome = await fixture.engine.requestSync(.upload)
+
+        #expect(outcome.autoStopped == 1)
+        let stored = try #require(try fixture.sessions().first)
+        #expect(stored.stop == date(15, 12, 30))
+        #expect(stored.flags == [.endedOnBreak])
+        #expect(stored.syncState == .uploaded)
+        let drafts = await fixture.api.createdDrafts
+        #expect(drafts[0].description == "09:12–12:30")
+        #expect(drafts[0].hours == 3.3)
+    }
+
+    @Test("Upload leaves a timer that is on a break alone")
+    @MainActor
+    func neverUploadsPausedSessions() async throws {
+        let fixture = try makeFixture(now: date(15, 12, 45))
+        let session = try addSession(to: fixture, start: date(15, 9, 12), stop: nil, state: .local, status: .running)
+        session.pausedAt = date(15, 12, 30)
+        try fixture.container.mainContext.save()
+
+        let outcome = await fixture.engine.requestSync(.upload)
+
+        #expect(outcome.uploaded == 0)
+        let stored = try #require(try fixture.sessions().first)
+        #expect(stored.isPaused)
+        #expect(await fixture.api.createdDrafts.isEmpty)
+    }
+
+    @Test("The breaks travel to zweef.app as gaps in the times")
+    @MainActor
+    func breaksAreUploadedAsGaps() async throws {
+        let fixture = try makeFixture(now: date(15, 18))
+        let session = try addSession(to: fixture, start: date(15, 9, 12), stop: date(15, 16, 5))
+        session.breaks = [WorkBreak(start: date(15, 12, 30), end: date(15, 13, 15))]
+        try fixture.container.mainContext.save()
+
+        _ = await fixture.engine.requestSync(.upload)
+
+        let drafts = await fixture.api.createdDrafts
+        #expect(drafts.first?.description == "09:12–12:30 · 13:15–16:05")
+        #expect(drafts.first?.hours == 6.13)
+    }
+
     @Test("The member's comment travels to zweef.app after the times")
     @MainActor
     func commentIsUploaded() async throws {

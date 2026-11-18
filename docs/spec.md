@@ -6,7 +6,7 @@ Members log their maintenance hours on a shared device in the hangar/workshop, w
 ## Roles
 | Role | What | Where |
 |---|---|---|
-| Member | Starts/stops their own session, optionally picks what the work was on and adds a comment | iPhone or iPad |
+| Member | Starts/stops their own session, pauses it for a break, optionally picks what the work was on and adds a comment | iPhone or iPad |
 | Board / maintenance officer | Approves registrations, corrects them | zweef.app |
 
 ## Environment
@@ -29,7 +29,7 @@ Each device has its own local database and uploads its own sessions.
 1. **Home** — member list ("Working now" with the running times, recents, all members; search, letter index), sync status button.
 2. **Start** (sheet) — avatar + name, "Start". A wrong name is closed with the sheet's close button.
 3. **Start** has no confirmation card: the tile moves into "Working now", a haptic fires on a phone, and a large "Jan is working since 14:05 · Undo" confirmation stays at the bottom for 10 s.
-4. **Stop** (sheet) — the person and the running timer, "Stop and save", what the work was on (zweef.app's material) and a comment; "Delete" in the toolbar to delete the timer instead, after a confirmation.
+4. **Timer** (sheet, the stop sheet) — the person and the running timer, "Stop and save" and "Pause" (or "Resume" while paused, ADR 0022), what the work was on (zweef.app's material) and a comment; "Delete" in the toolbar to delete the timer instead, after a confirmation.
 5. **Stop confirmation** — duration, what it was on, "Undo"; stays until someone taps outside it.
 6. **Close day** — removed ([ADR 0018](decisions/0018-no-closing-the-day.md)); the sync screen lists the waiting sessions.
 7. **Synchronisation** — connection, pending/rejected/uploaded sessions, and the prominent "Upload" button: the only way hours leave the device (ADR 0015).
@@ -45,15 +45,24 @@ Each device has its own local database and uploads its own sessions.
 
 ### Stopping
 1. Someone taps the member's tile in "Working now" at the top of the list (their own timer or someone else's). While a timer runs, that is the member's only tile; search finds it there too.
-2. The "Stop" sheet shows the person, the start time and the running duration.
+2. The "Timer" sheet shows the person, the start time and the running duration.
 3. Optional: pick what the work was on from zweef.app's material list, in zweef.app's own three tabs — Flying (the club's aircraft), Rolling (winch, carts, vehicles) and Other (the club's projects) — searchable (ADR 0020). It is sent as `material_id`, with its name as `project`.
 4. Optional: a comment for the board, which goes into the registration after the times; required when the club turned that on (ADR 0019).
 5. "Stop and save" asks first, in an alert ("Stop Jan's timer?", or "Is 3 minutes right?" for a short session); confirming sets `stop = now`, `status = .completed`, `syncState = .local`.
 6. A confirmation card with the summary and "Undo" (which puts the session back to running). No Done button and no timer: it stays until someone taps outside it, and undo is possible for as long as it is up.
 - Stopping someone else's timer is allowed, and is not recorded: the app cannot tell who tapped. `stoppedByOther` and its flag remain only for sessions recorded before the stop sheet's switch was removed.
 
+### Pausing and resuming ([ADR 0022](decisions/0022-pause-within-one-day.md))
+1. Tap the member's tile in "Working now", then "Pause" on the "Timer" sheet. The sheet closes; the tile stays in "Working now" with its time standing still and "On a break since 12:30".
+2. Back from the break: tap the tile, then "Resume". The break is not counted, and the timer runs on.
+- A paused timer is still a running session: `status` stays `.running`, `pausedAt` holds when the break began. An upload leaves it alone.
+- Like stopping, pausing and resuming are open to everyone.
+- "Stop and save" while paused ends the session where the break began (the sheet says "Stopping now saves 09:12–12:30").
+- **Forgot to resume.** Once a break has lasted an hour, the tile reads "Break of 1h05m · forgot to resume?" and the sheet asks how long the break really was: 30 minutes, 45 minutes, an hour, or "Still on a break". Picking a length ends the break that long after it began, and "Keep working" or "Stop and save" then count the time since.
+- **A pause stays within one day.** At the closing time a timer that is still paused ends where its break began, flagged "Ended on a break". Nothing is carried to the next day.
+
 ### Deleting instead of stopping
-1. On the "Stop" sheet, tap "Delete" in the toolbar.
+1. On the "Timer" sheet, tap "Delete" in the toolbar.
 2. An alert asks "Delete Jan's timer?" — "Removed from this device, never sent to zweef.app" — with "Delete" (red) and "Keep working".
 3. "Delete" removes the session entirely; the sheet closes. There is no confirmation card and no undo — the alert was the confirmation.
 - For the timer that was started by mistake, or under the wrong name, once the ten-second undo after starting has passed. Like stopping, it is open to everyone.
@@ -62,22 +71,25 @@ Each device has its own local database and uploads its own sessions.
 ### Uploading
 - There is no closing the day ([ADR 0018](decisions/0018-no-closing-the-day.md)). A finished session waits on the device until someone uploads it.
 
-> Uploading is by hand ([ADR 0015](decisions/0015-manual-upload.md)): "Upload" on the sync screen sends every finished session still waiting and leaves running timers alone. Nothing uploads by itself, so there is no 24-hour safety net any more.
+> Uploading is by hand ([ADR 0015](decisions/0015-manual-upload.md)): "Upload" on the sync screen sends every finished session still waiting and leaves running timers alone, paused ones included. Nothing uploads by itself, so there is no 24-hour safety net any more.
 
 ### Stopping automatically
 - A configurable closing time (21:00 by default, local time).
 - Running timers are stopped with `stop = the closing time` (not `now`) and `autoStopped = true`.
+- A timer that is paused at the closing time is stopped with `stop = the start of its break` and `endedOnBreak = true` as well: nobody was working, so nothing after the break is counted (ADR 0022).
 - Runs: when the app becomes active, on background refresh, and from a timer while the app is in the foreground. Also at app launch, for timers from previous days.
 
 ### Validation and flags
 | Rule | Result |
 |---|---|
-| Duration < 5 min | A confirmation prompt when stopping ("Is 4 minutes right?"); flag "short session" |
-| Duration > 10 h | Flag "long session" |
+| Time worked < 5 min | A confirmation prompt when stopping ("Is 4 minutes right?"); flag "short session" |
+| Time worked > 10 h | Flag "long session" |
 | Stopped automatically | Flag "stopped automatically" |
+| Stopped automatically while paused | Flag "ended on a break", in place of "stopped automatically" |
+| A break of an hour or more, still going | The tile and the sheet ask whether someone forgot to resume; no flag |
 | Overlapping sessions for the same member | Impossible: a member can only have one running session |
 
-Flags are shown in orange on the sync screen's tiles. They do not travel to zweef.app: the description there is the times and the member's comment (ADR 0019).
+Flags are shown in orange on the sync screen's tiles. They do not travel to zweef.app: the description there is the times and the member's comment (ADR 0019). A break shows there as a gap between two time ranges, and the hours are the time worked.
 
 ### Language
 - The app ships in English, Dutch and French, and nothing else ([ADR 0010](decisions/0010-three-languages-en-nl-fr.md)).

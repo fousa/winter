@@ -1,8 +1,14 @@
 import SwiftData
 import SwiftUI
 
-/// The second of the two taps that end an hour, and the only place the app asks
-/// what someone was doing.
+/// The second of the two taps that end an hour — or pause it — and the only
+/// place the app asks what someone was doing.
+///
+/// Titled "Timer" rather than "Stop" since it also pauses and resumes
+/// (ADR 0022). "Pause" sits beside "Stop and save" as the quieter of the two;
+/// on a paused timer "Resume" takes the lead instead. A break that has gone
+/// on for an hour is probably a forgotten resume, so the sheet then asks how
+/// long the break really was before anything is saved.
 ///
 /// It is also where a timer that should never have run is thrown away:
 /// "Delete" in the toolbar removes the session from the device without saving
@@ -32,7 +38,12 @@ struct StopSheet: View {
     let material: [Material]
     /// The club's setting: no stopping without a comment (ADR 0019).
     var requiresComment = false
-    var onStop: (Material?, String?) -> Void
+    /// The material, the comment, and — for a break that was left running —
+    /// how long it really was, when the member said so.
+    var onStop: (Material?, String?, Minutes?) -> Void
+    var onPause: () -> Void
+    /// The same length, when the member goes back to work instead.
+    var onResume: (Minutes?) -> Void
     var onDiscard: () -> Void
     var onDismiss: () -> Void
 
@@ -41,6 +52,9 @@ struct StopSheet: View {
     @State private var comment = ""
     @State private var isConfirmingStop = false
     @State private var isConfirmingDelete = false
+    /// How long a forgotten break really was, in minutes; nil for "still on a
+    /// break", which is also what an ordinary break is.
+    @State private var countedBreak: Minutes?
 
     var body: some View {
         NavigationStack {
@@ -51,7 +65,7 @@ struct StopSheet: View {
                 }
                 .padding(metrics.gutter)
             }
-            .navigationTitle("Stop")
+            .navigationTitle("Timer")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -124,20 +138,28 @@ struct StopSheet: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(member.fullName)
                             .font(.title2.weight(.semibold))
-                        Text("Working since \(session.start.formatted(date: .omitted, time: .shortened))")
-                            .font(.subheadline)
-                            .foregroundStyle(.supporting)
+                        status
                     }
                 }
             }
 
-            // Written as everywhere else ("17m", "1h05m"), so it needs no
-            // "hours : minutes" caption to be read.
-            // Two thirds of the display size: big enough to read from a step
-            // back, small enough that the form sheet needs no scroll.
-            RunningTimerText(start: session.start, size: metrics.displayTimerFontSize * 0.7)
+            timer
 
-            stopButton
+            if isLongBreak {
+                breakQuestion
+            }
+
+            // Side by side while they fit; stacked in French at a large text
+            // size, where "Arrêter et enregistrer" alone fills the row.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) { actions }
+                VStack(alignment: .leading, spacing: 10) { actions }
+            }
+
+            hint
+                .font(.footnote)
+                .foregroundStyle(.supporting)
+                .fixedSize(horizontal: false, vertical: true)
 
             if isMissingComment {
                 // Said next to the disabled button, so nobody wonders why it
@@ -146,6 +168,122 @@ struct StopSheet: View {
                     .font(.footnote)
                     .foregroundStyle(.supporting)
             }
+        }
+    }
+
+    @ViewBuilder
+    private var status: some View {
+        if let pausedAt = session.pausedAt {
+            Text("On a break since \(pausedAt.formatted(date: .omitted, time: .shortened))")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.flag)
+        } else {
+            Text("Working since \(session.start.formatted(date: .omitted, time: .shortened))")
+                .font(.subheadline)
+                .foregroundStyle(.supporting)
+        }
+    }
+
+    /// Written as everywhere else ("17m", "1h05m"), so it needs no
+    /// "hours : minutes" caption to be read. Two thirds of the display size:
+    /// big enough to read from a step back, small enough that the form sheet
+    /// needs no scroll.
+    ///
+    /// On a break the time stands still, greyed, with a pause mark and what it
+    /// is in words. Once the member has said how long a forgotten break
+    /// really was, it shows what will be saved, and ticks again.
+    private var timer: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            if isStandingStill {
+                Image(systemName: "pause.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(.flag)
+                    .accessibilityHidden(true)
+            }
+            RunningTimerText(facts: shownFacts, size: metrics.displayTimerFontSize * 0.7)
+                .foregroundStyle(isStandingStill ? Color.supporting : Color.primary)
+            if isStandingStill {
+                Text("worked so far")
+                    .font(.subheadline)
+                    .foregroundStyle(.supporting)
+            }
+        }
+    }
+
+    /// "Forgot to resume?" — shown once a break has lasted an hour.
+    ///
+    /// The answer is a length, not a clock time: nobody remembers that they
+    /// were back at 13:20, everybody knows lunch took about three quarters of
+    /// an hour. "Still on a break" is selected to begin with, so doing nothing
+    /// invents no hours.
+    private var breakQuestion: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Forgot to resume?")
+                .font(.title3.weight(.semibold))
+            Text("This break has lasted \(HoursFormatter.durationText(minutes: breakSoFar, locale: locale)). How long was it really?")
+                .font(.subheadline)
+                .foregroundStyle(.supporting)
+                .fixedSize(horizontal: false, vertical: true)
+
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) {
+                    breakLengths
+                    stillOnBreak
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) { breakLengths }
+                    stillOnBreak
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    breakLengths
+                    stillOnBreak
+                }
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.flagBackground, in: .rect(cornerRadius: metrics.tileCornerRadius))
+    }
+
+    private var breakLengths: some View {
+        ForEach(SessionRules.breakLengthsOffered, id: \.self) { minutes in
+            choice(
+                Text(HoursFormatter.durationText(minutes: minutes, locale: locale)),
+                isSelected: countedBreak == minutes
+            ) { countedBreak = minutes }
+        }
+    }
+
+    private var stillOnBreak: some View {
+        choice(Text("Still on a break"), isSelected: countedBreak == nil) { countedBreak = nil }
+    }
+
+    /// One answer to the question: filled when chosen, glass when not. Two
+    /// buttons rather than one with a computed style, because the two styles
+    /// are different types.
+    @ViewBuilder
+    private func choice(_ title: Text, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        if isSelected {
+            Button(action: action) { title }
+                .buttonStyle(.glassProminent)
+                .accessibilityAddTraits(.isSelected)
+        } else {
+            Button(action: action) { title }
+                .buttonStyle(.glass)
+        }
+    }
+
+    /// "Stop and save" first while working, as it always was; "Resume" first
+    /// on a break, because that is what someone coming back from lunch is
+    /// here for.
+    @ViewBuilder
+    private var actions: some View {
+        if session.isPaused {
+            resumeButton
+            stopButton
+        } else {
+            stopButton
+            pauseButton
         }
     }
 
@@ -161,6 +299,52 @@ struct StopSheet: View {
         .disabled(isMissingComment)
         .buttonStyle(.glassProminent)
         .tint(.stopAction)
+    }
+
+    /// No question asked: a pause saves nothing and is undone by "Resume".
+    private var pauseButton: some View {
+        Button {
+            onPause()
+            dismiss()
+        } label: {
+            Label("Pause", systemImage: "pause.fill")
+        }
+        .buttonStyle(.glass)
+    }
+
+    /// "Keep working" once a forgotten break has been given its length: the
+    /// timer has in effect been running since, so there is nothing to resume.
+    private var resumeButton: some View {
+        Button {
+            onResume(countedBreak)
+            dismiss()
+        } label: {
+            if countedBreak == nil {
+                Label("Resume", systemImage: "play.fill")
+            } else {
+                Label("Keep working", systemImage: "play.fill")
+            }
+        }
+        .buttonStyle(.glassProminent)
+    }
+
+    /// What the buttons above will do, in a sentence: what a pause is for,
+    /// and — on a break — exactly which times stopping would save.
+    private var hint: Text {
+        guard let pausedAt = session.pausedAt else {
+            return Text("Going for lunch? Pause, and the break is not counted.")
+        }
+        guard let countedBreak else {
+            return Text("Done for the day? Stopping now saves \(timeRange(to: pausedAt)).")
+        }
+        let length = HoursFormatter.durationText(minutes: countedBreak, locale: locale)
+        return Text("Stopping now saves \(timeRange(to: .now)) with a break of \(length).")
+    }
+
+    /// "09:12–12:30", in the device's own way of writing a time.
+    private func timeRange(to end: Date) -> String {
+        let from = session.start.formatted(date: .omitted, time: .shortened)
+        return "\(from)–\(end.formatted(date: .omitted, time: .shortened))"
     }
 
     // MARK: - What and why
@@ -232,15 +416,45 @@ struct StopSheet: View {
 
     // MARK: - Actions
 
+    /// The session as the sheet shows it and as stopping would save it: with
+    /// a forgotten break cut down to the length the member picked.
+    private var shownFacts: SessionFacts {
+        var facts = session.facts
+        if let pausedAt = facts.pausedAt, let countedBreak {
+            facts.breaks.append(
+                WorkBreak(start: pausedAt, end: pausedAt.addingTimeInterval(Double(countedBreak) * 60))
+            )
+            facts.pausedAt = nil
+        }
+        return facts
+    }
+
+    /// On a break, and not told otherwise: the time shown does not move.
+    private var isStandingStill: Bool {
+        shownFacts.pausedAt != nil
+    }
+
+    private var breakSoFar: Minutes {
+        guard let pausedAt = session.pausedAt else { return 0 }
+        return SessionRules.duration(start: pausedAt, stop: .now)
+    }
+
+    private var isLongBreak: Bool {
+        guard let pausedAt = session.pausedAt else { return false }
+        return SessionRules.isLongBreak(since: pausedAt, now: .now)
+    }
+
+    /// The time worked that stopping now would save.
+    private var workedMinutes: Minutes {
+        SessionRules.workedMinutes(of: shownFacts, now: .now)
+    }
+
     private var isShortSession: Bool {
-        guard let minutes = SessionRules.duration(of: SessionFacts(start: session.start, stop: .now))
-        else { return false }
-        return SessionRules.isShortSession(minutes: minutes)
+        SessionRules.isShortSession(minutes: workedMinutes)
     }
 
     private var shortSessionQuestion: Text {
-        let minutes = SessionRules.duration(start: session.start, stop: .now)
-        return Text("Is \(HoursFormatter.durationText(minutes: minutes, locale: locale)) right?")
+        Text("Is \(HoursFormatter.durationText(minutes: workedMinutes, locale: locale)) right?")
     }
 
     private var stopQuestion: Text {
@@ -258,7 +472,7 @@ struct StopSheet: View {
     }
 
     private func stop() {
-        onStop(selectedMaterial, comment)
+        onStop(selectedMaterial, comment, countedBreak)
         dismiss()
     }
 
@@ -318,10 +532,26 @@ extension MaterialKind {
         .environment(\.locale, Locale(identifier: "fr"))
 }
 
+#Preview("iPad · on a break", traits: .landscapeLeft) {
+    StopSheetPreview(pausedMinutes: 12)
+}
+
+#Preview("iPhone · forgot to resume") {
+    StopSheetPreview(pausedMinutes: 215)
+}
+
+#Preview("French · forgot to resume") {
+    StopSheetPreview(pausedMinutes: 215)
+        .environment(\.locale, Locale(identifier: "fr"))
+}
+
 /// Builds a sheet from the sample club, so the previews share one setup.
 private struct StopSheetPreview: View {
+    /// How long ago the member went on a break, or nil if they are working.
+    var pausedMinutes: Int?
+
     var body: some View {
-        let container = try! SampleData.container(runningSessionCount: 1)
+        let container = try! SampleData.container(runningSessionCount: 1, pausedMinutes: pausedMinutes)
         let context = container.mainContext
         let session = try! context.fetch(FetchDescriptor<WorkSession>()).first!
         let member = try! context.fetch(FetchDescriptor<Member>()).first { $0.zweefId == session.memberId }
@@ -331,7 +561,9 @@ private struct StopSheetPreview: View {
             session: session,
             member: member,
             material: material,
-            onStop: { _, _ in },
+            onStop: { _, _, _ in },
+            onPause: {},
+            onResume: { _ in },
             onDiscard: {},
             onDismiss: {}
         )
